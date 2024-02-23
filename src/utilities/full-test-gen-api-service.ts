@@ -8,7 +8,7 @@ import {createWriteStream, existsSync } from 'node:fs';
 import {pipeline} from 'node:stream';
 import {promisify} from 'node:util';
 
-// Use dev env if SCRIPTIQ_API_SERVER is not set.
+// Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer = process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
 
 /**

@@ -1,0 +1,523 @@
+:root {
+	--offset-small: 4px;
+	--offset-base: 8px;
+	--offset-large: 16px;
+	--offset-xlarge: 24px;
+	--border-radius-base: 4px;
+	--border-radius-large: 24px;
+	--color-sauce-coral: #EE805A;
+	--color-sauce-green: #3DDC91;
+	--color-sauce-yellow: #FFCD48;
+	--color-sauce-dark: #142222;
+	--color-link: #27B974;
+	--color-sauce-lighter-coral: #F1997B;
+	--sauce-font-sans: "DM Sans";
+	--sauce-font-mono: "DM Mono";
+	--font-size-base: 14px;
+}
+
+
+/* ---------NORMALIZE--------- */
+
+* {
+	box-sizing: border-box !important;
+}
+
+
+/* ---------BASICS--------- */
+
+body {
+	padding: var(--offset-large);
+	margin: 0;
+	color: var(--vscode-foreground);
+	font-size: var(--font-size-base);
+	font-weight: var(--vscode-font-weight);
+	font-family: var(--sauce-font-sans);
+	line-height: 1.25;
+}
+
+a:hover,
+a:active {
+	color: var(--vscode-textLink-activeForeground);
+}
+
+h5, 
+h6 {
+	font-family: var(--sauce-font-mono);
+	font-weight: bold;
+	margin-top: 0;
+}
+
+h5 {
+	font-size: 1.25em;
+}
+
+h6 {
+	font-size: 1.125em;
+	margin-bottom: 0.5em;
+}
+
+p {
+	margin-bottom: 1em;
+}
+
+code {
+	font-size: var(--vscode-editor-font-size);
+	font-family: var(--sauce-font-mono);
+}
+
+pre {
+	white-space: pre-wrap;
+}
+
+
+/* Base button class */
+.button {
+	padding: var(--offset-base) var(--offset-large);
+	font-family: var(--sauce-font-mono);
+	text-align: center;
+	transition: all 0.15s ease-in-out;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.button:focus {
+	outline-color: var(--vscode-focusBorder);
+}
+
+
+/* Green filled button */
+
+.button-primary {
+	background: var(--color-sauce-green);
+	border-radius: var(--border-radius-large);
+	color: var(--color-sauce-dark);
+	border: 1px solid var(--color-sauce-green);
+}
+
+.button-primary:hover {
+	border: 1px solid var(--color-sauce-dark);
+	background: var(--color-sauce-yellow);
+}
+
+
+/* Green text button */
+
+.button-text {
+	background: none;
+	border: none;
+	color: var(--color-link);
+	font-family: var(--sauce-font-mono);
+}
+
+.button-text:hover {
+	color: var(--color-sauce-green);
+	background: none;
+	border: none;
+}
+
+
+/* Other button modifiers */
+.button.button-large {
+	padding: var(--offset-large) var(--offset-xlarge);
+	font-size: 1.1em;
+}
+
+.button-add-row {
+	padding: var(--offset-small) var(--offset-base);
+	background: var(--color-sauce-green);
+	border-radius: var(--border-radius-large);
+	color: var(--color-sauce-dark);
+	border: 1px solid var(--color-sauce-green);
+	display: block;
+	margin-bottom: 10px;
+}
+
+.button-minus-row {
+	padding: var(--offset-small) var(--offset-base);
+	background: var(--color-sauce-coral);
+	border-radius: var(--border-radius-large);
+	color: var(--color-sauce-dark);
+	border: 1px solid var(--color-sauce-coral);
+	display: inline !important;
+}
+
+/* todo - check where it's used */
+button .risky {
+	color: #fff;
+	background-color: var(--color-sauce-coral);
+	border-color: var(--color-sauce-coral)
+}
+
+
+/* ---------FORMS--------- */
+
+label {
+	display: inline-block;
+	text-transform: uppercase;
+	letter-spacing: 0.2px;
+	font-family: var(--sauce-font-sans);
+	font-weight: bold;
+	font-size: 0.85rem;
+	margin-bottom: var(--offset-base);
+	vertical-align: middle;
+}
+
+input:not([type='checkbox']):not([type='radio']),
+textarea {
+	display: block;
+	width: 100%;
+	max-width: 720px;
+	font-family: var(--sauce-font-sans);
+	padding: var(--offset-base) var(--offset-base);
+	border-radius: var(--border-radius-base);
+	color: var(--vscode-input-foreground);
+	background-color: var(--vscode-input-background);
+	border: 1px solid rgba(0,0,0,0.15);
+	margin-bottom: var(--offset-large);
+}
+
+input.short {
+	width: 160px !important;
+}
+
+input[type='radio'], 
+input[type='checkbox'] {
+	accent-color: var(--color-sauce-green); 
+	width: var(--offset-large);
+	height: var(--offset-large);
+}
+
+input[type='radio'] + label,
+input[type='checkbox'] + label {
+	text-transform: none;
+	display: inline-block;
+	font-size: 1em !important;
+	margin-left: var(--offset-small);
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--vscode-input-placeholderForeground);
+}
+
+.screen-desc-assert-input {
+	max-width: 720px - 42px;
+	width: calc(100% - 42px) !important;
+	margin-left: 10px;
+	display: inline !important;
+}
+
+/* ---------OTHER--------- */
+
+.test-header {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.code {
+	white-space: pre-wrap;
+}
+
+/* ---------SIDEBAR LAYOUT--------- */
+
+.intro-container {
+    text-align: center;
+}
+
+.intro-container h5 {
+	margin-bottom: 0;
+}
+
+.sidebar-footer {
+	bottom: 0;
+	width: calc(100% - 32px);
+	position: absolute;
+	font-size: 0.85em;
+	font-family: var(--sauce-font-sans);
+	background: var(--vscode-sideBar-background);
+	text-align: center;
+}
+
+
+/* Tabs */
+
+.nav.nav-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	padding-left: 0;
+	border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+  
+.nav-tabs li a {
+	background: none;
+	display: inline-block;
+	border-bottom: 2px solid transparent;
+	color: var(--vscode-foreground);
+	text-decoration: none;
+	padding: var(--offset-base);
+}
+  
+.nav-tabs li a:hover,
+.nav-tabs li a:focus {
+	border-color: var(--color-link);
+	color: var(--color-link);
+}
+  
+.nav-tabs li.active a {
+	color: var(--color-link);
+	border-bottom: 2px solid var(--color-sauce-green);
+}
+
+
+/* For showing/hiding tabs */
+
+.tab-content > .tab-pane {
+	display: none;
+}
+
+.tab-content > .active {
+	display: block;
+}
+
+
+/* History items */
+
+.history-block {
+	margin-bottom: var(--offset-base);
+}
+
+.history-instance {
+	position: relative;
+	z-index: 3;
+	line-height: 1.5;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 100%;
+	overflow: hidden;
+	display: inline-block;
+	color: var(--vscode-foreground);
+	font-family: var(--sauce-font-sans);
+	cursor: pointer;
+	padding-right: var(--offset-large);
+}
+
+.fa-trash {
+	visibility: hidden;
+	float: right;
+	position: relative;
+	z-index: 4;
+	margin-top: -20px;
+}
+
+.fa-trash:hover {
+	visibility: visible;
+}
+
+.history-instance:hover + .fa-trash {
+	visibility: visible;
+}
+
+.history-selected, .history-instance:hover {
+	color: var(--vscode-textLink-activeForeground);
+}
+
+
+/* -----------OPTIONS FORM------------- */
+
+/* Collapsible behaviour overrides for accordion-like behaviours */
+
+.collapsible {
+	padding: 0 !important;
+	font-size: 1em;
+	text-transform: none;
+}
+
+.collapsible-icon {
+	display: inline-block;
+	height: 16px;
+	width: 16px;
+	transform:rotate(-90deg);
+	transition: all 0.15s ease-in-out;
+	background-image: url('icons/icn-chevron-down.svg');
+	vertical-align: middle;
+}
+
+.active .collapsible-icon {
+	transform:rotate(0deg);
+}
+
+.collapsible-icon.reverse {
+	transform:rotate(-180deg);
+}
+
+
+/* Style for the collapsible content. Note: hidden by default */
+
+.additional-settings {
+	display: none;
+	overflow: hidden;
+	padding: var(--offset-large);
+	color: var(--vscode-foreground);
+	border-left: 1px solid var(--color-sauce-green);
+}
+
+
+/* Styles for the generated device checkboxes */
+
+.device-checkboxes,
+#test-header {
+	display: none;
+}
+
+.checkbox-container {
+    display: flex;
+	width: 100%;
+	gap: var(--offset-xlarge);
+	justify-content: start;
+	padding-left: var(--offset-large);
+}
+
+
+/* -------------TEST OUUTPUT---------------- */
+
+.test-container {
+    display: flex;
+	width: 100%;
+	gap: var(--offset-large);
+	margin-top: var(--offset-large);
+	justify-content: start;
+}
+
+.resizer {
+	background-color: var(--color-link);
+    cursor: ew-resize;
+    width: 2px;
+	margin-top: 20px;
+}
+
+.resizer:hover {
+	background-color: var(--color-sauce-green);
+}
+
+.test-step-right {
+    flex: 1;
+}   
+
+
+/* Loader style */
+
+.test-status-header {
+	color: var(--color-sauce-coral);
+	font-family: var(--sauce-font-mono);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.6em;
+}
+
+.code-block {
+	position: relative;
+	font-family: var(--sauce-font-mono);
+	font-size: 1em;
+	color: var(--vscode-foreground);
+	background-color: var(--vscode-sideBar-background);
+	border-radius: var(--offset-base) var(--offset-base) 0 0;
+	padding: var(--offset-base);
+	white-space: pre-wrap;
+} 
+
+.step-block {
+	font-size: 0.85em;
+	font-family: var(--sauce-font-sans);
+	padding: var(--offset-base);
+	background-color: var(--vscode-sideBar-background);
+	margin-top: 2px; 
+	border-radius: 0 0 0 0;
+}
+
+.end-step-block {
+	border-radius: 0 0 var(--offset-base) var(--offset-base);
+}
+
+/* Thumbs up & down buttons */
+.thumb {
+	position: relative;
+	float:right;
+	margin-left: var(--offset-base);
+	z-index: 2;
+	width: var(--offset-large);
+	height: var(--offset-large);
+}
+
+.thumb:not(:checked) {
+	filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%);
+}
+
+.thumb:checked {
+	filter: invert(85%) sepia(41%) saturate(7496%) hue-rotate(325deg) brightness(104%) contrast(87%);
+}
+
+.script-save-buttons {
+	position: absolute;
+	top: var(--offset-base);
+	right: var(--offset-base);
+	width: var(--offset-large);
+	height: var(--offset-large);
+	filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%);
+}
+
+.script-save-buttons:hover {
+	filter: invert(85%) sepia(41%) saturate(7496%) hue-rotate(325deg) brightness(104%) contrast(87%);
+}
+
+.script-save-buttons:active {
+	filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%);
+}
+
+
+
+/* -------------CODE EDITOR STYLES--------------- */
+
+.code-comment {
+	color: rgb(255, 143, 143);/*rgb(106, 2, 2)*/
+  }
+
+.code-string {
+	color: var(--color-sauce-green)/*rgb(13, 137, 13)*/;
+}
+
+.code-class {
+	color: rgb(255, 145, 255);/*rgb(62, 4, 62)*/
+}
+
+.code-parameter {
+	color: rgb(139, 139, 249);/*darkblue*/
+}
+
+.code-number {
+	color:rgb(1, 228, 228);/*rgb(1, 96, 96)*/
+}
+
+.code-created-class {
+	color: rgb(255, 132, 24);/*rgb(62, 4, 62)*/
+}
+
+
+/* ---------UTILITY CLASSES--------- */
+
+.mt-30 {
+	margin-top: 30px !important;
+}
+
+.pl-0 {
+	padding-left: 0;
+}
+
+.flex-container {
+    display: flex;
+	width: 100%;
+	gap: 50px;
+	justify-content: start;
+}

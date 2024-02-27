@@ -96,11 +96,10 @@ export class TestGenerationPanel {
         'icons',
         'Lowcode_icon_white.png',
       ]);
-      const icon = {
+      panel.iconPath = {
         light: logoMainPath,
         dark: logoMainPath,
       };
-      panel.iconPath = icon;
 
       TestGenerationPanel.currentPanel = new TestGenerationPanel(
         context,

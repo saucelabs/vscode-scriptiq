@@ -23,11 +23,11 @@ export class TestGenerationPanel {
   public extensionUri: vscode.Uri;
   // public imageDirPath: vscode.Uri;
   public mediaPath: vscode.Uri;
-  private readonly _panel: vscode.WebviewPanel;
-  private _testID: string;
-  private _disposables: vscode.Disposable[] = [];
-  private _context: vscode.ExtensionContext;
-  public _canOpenWindows: boolean = true;
+  private readonly panel: vscode.WebviewPanel;
+  private testID: string;
+  private disposables: vscode.Disposable[] = [];
+  private ctx: vscode.ExtensionContext;
+  public canOpenWindows: boolean = true;
   private loadHistory: boolean = false;
 
   private constructor(
@@ -36,22 +36,22 @@ export class TestGenerationPanel {
     extensionUri: vscode.Uri,
     loadHistory: boolean = false,
   ) {
-    this._context = context;
-    this._panel = panel;
-    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+    this.ctx = context;
+    this.panel = panel;
+    this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     this.loadHistory = loadHistory;
 
     this.extensionUri = extensionUri;
-    // this.imageDirPath = getAsWebviewUri(this._panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
-    this.mediaPath = getAsWebviewUri(this._panel.webview, extensionUri, [
+    // this.imageDirPath = getAsWebviewUri(this.panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
+    this.mediaPath = getAsWebviewUri(this.panel.webview, extensionUri, [
       'media',
     ]);
-    this._testID = '0';
-    this._panel.webview.html = this._getWebviewContent(
-      this._panel.webview,
+    this.testID = '0';
+    this.panel.webview.html = this.getWebviewContent(
+      this.panel.webview,
       extensionUri,
     );
-    this._setWebviewMessageListener(this._panel.webview, extensionUri);
+    this.setWebviewMessageListener(this.panel.webview, extensionUri);
   }
 
   /**
@@ -63,16 +63,16 @@ export class TestGenerationPanel {
   ) {
     // if exist show
     if (TestGenerationPanel.currentPanel) {
-      if (!TestGenerationPanel.currentPanel._canOpenWindows) {
+      if (!TestGenerationPanel.currentPanel.canOpenWindows) {
         const responseMessage = `Cannot open other panels while test running.`;
         vscode.window.showInformationMessage(responseMessage);
         return;
       }
-      TestGenerationPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
+      TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
       if (loadHistory) {
         TestGenerationPanel.currentPanel.reloadHistoryInstance();
       } else {
-        TestGenerationPanel.currentPanel._panel.webview.postMessage({
+        TestGenerationPanel.currentPanel.panel.webview.postMessage({
           command: 'clear',
         });
       }
@@ -107,7 +107,7 @@ export class TestGenerationPanel {
         extensionUri,
         loadHistory,
       );
-      TestGenerationPanel.currentPanel._canOpenWindows = true;
+      TestGenerationPanel.currentPanel.canOpenWindows = true;
 
       if (loadHistory) {
         TestGenerationPanel.currentPanel.reloadHistoryInstance();
@@ -122,10 +122,10 @@ export class TestGenerationPanel {
     TestGenerationPanel.currentPanel?.removeImageDir();
     TestGenerationPanel.currentPanel = undefined;
 
-    this._panel.dispose();
+    this.panel.dispose();
 
-    while (this._disposables.length) {
-      const disposable = this._disposables.pop();
+    while (this.disposables.length) {
+      const disposable = this.disposables.pop();
       if (disposable) {
         disposable.dispose();
       }
@@ -135,7 +135,7 @@ export class TestGenerationPanel {
   /**
    * Add listeners to catch messages from mainview js.
    */
-  private _setWebviewMessageListener(
+  private setWebviewMessageListener(
     webview: vscode.Webview,
     extensionUri: vscode.Uri,
   ) {
@@ -155,7 +155,7 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            let historyList = getStoreData(this._context, 'history');
+            let historyList = getStoreData(this.ctx, 'history');
             for (let x = 0; x < historyList.length; x++) {
               if (historyList[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
@@ -165,7 +165,7 @@ export class TestGenerationPanel {
             if (historyList.length == max_history_len) {
               const removed_test = historyList.pop();
               vscode.workspace.fs.delete(
-                getHistoryUri(this._context, [removed_test.testID]),
+                getHistoryUri(this.ctx, [removed_test.testID]),
                 { recursive: true },
               );
             }
@@ -175,7 +175,7 @@ export class TestGenerationPanel {
               testID: message.data.testID,
             };
             historyList = [newHistory].concat(historyList);
-            setStoreData(this._context, historyList, 'history');
+            setStoreData(this.ctx, historyList, 'history');
             vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
 
             // Save the results in the to remove from machine
@@ -191,7 +191,7 @@ export class TestGenerationPanel {
               uint8Array,
             );
             vscode.workspace.fs.copy(
-              getHistoryUri(this._context, [message.data.testID]),
+              getHistoryUri(this.ctx, [message.data.testID]),
               vscode.Uri.joinPath(
                 extensionUri,
                 'media',
@@ -225,13 +225,13 @@ export class TestGenerationPanel {
 
           case 'copy-image':
             console.log(message.testID);
-            if (this._testID !== message.testID) {
+            if (this.testID !== message.testID) {
               console.log('REMOVE PREVIOUS IMAGE DIR!');
               this.removeImageDir();
             }
             console.log('COPY IN IMAGE DIR');
             vscode.workspace.fs.copy(
-              getHistoryUri(this._context, [message.testID]),
+              getHistoryUri(this.ctx, [message.testID]),
               vscode.Uri.joinPath(
                 extensionUri,
                 'media',
@@ -240,27 +240,24 @@ export class TestGenerationPanel {
               ),
               { overwrite: true },
             );
-            this._testID = message.testID;
+            this.testID = message.testID;
             console.log('copied');
             return;
 
           case 'can-open-window':
-            this._canOpenWindows = true;
+            this.canOpenWindows = true;
             return;
         }
       },
       undefined,
-      this._disposables,
+      this.disposables,
     );
   }
 
   /**
    * Returns HTML content of Webview panel.
    */
-  private _getWebviewContent(
-    webview: vscode.Webview,
-    extensionUri: vscode.Uri,
-  ) {
+  private getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
     // get uris from out directory based on vscode.extensionUri
     const webviewUri = getAsWebviewUri(webview, extensionUri, [
       'media',
@@ -373,7 +370,7 @@ export class TestGenerationPanel {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
       const outputFileURI = this.getTestDataFileURI(testID);
-      this._canOpenWindows = false;
+      this.canOpenWindows = false;
       askToTestGenerationAPIAsStream(
         goal,
         apk,
@@ -388,7 +385,7 @@ export class TestGenerationPanel {
         dirURI,
         outputFileURI,
       ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',
           data: test,
         });
@@ -436,7 +433,7 @@ export class TestGenerationPanel {
         startActions,
         prev_goal,
       ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',
           data: test,
         });
@@ -448,15 +445,15 @@ export class TestGenerationPanel {
   }
 
   private getTestDirURI(testID: string) {
-    return getHistoryUri(this._context, [testID]);
+    return getHistoryUri(this.ctx, [testID]);
   }
 
   private getTestDataFileURI(testID: string) {
-    return getHistoryUri(this._context, [testID, 'data.json']);
+    return getHistoryUri(this.ctx, [testID, 'data.json']);
   }
 
   private accessSauceCredentials() {
-    const storeData = getStoreData(this._context, 'sauce_api');
+    const storeData = getStoreData(this.ctx, 'sauce_api');
     let credentialsAvailable = true;
     let sauceUsername, sauceAccessKey, data_center;
     if (storeData === undefined) {
@@ -487,23 +484,22 @@ export class TestGenerationPanel {
    * Reload history instance.
    */
   private reloadHistoryInstance() {
-    const currHistory = getStoreData(this._context, 'curr_history');
-    const storeData = getStoreData(this._context, 'history')[currHistory];
+    const currHistory = getStoreData(this.ctx, 'curr_history');
+    const storeData = getStoreData(this.ctx, 'history')[currHistory];
     if (storeData === undefined || storeData === null || storeData === '') {
       vscode.window.showInformationMessage(
         'Please run a test before reloading!',
       );
     } else {
       console.log(storeData);
-      resendGeneratedTest(
-        storeData,
-        getHistoryUri(this._context, []),
-      ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
-          command: 'history',
-          data: test,
-        });
-      });
+      resendGeneratedTest(storeData, getHistoryUri(this.ctx, [])).subscribe(
+        (test) => {
+          TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+            command: 'history',
+            data: test,
+          });
+        },
+      );
     }
   }
 
@@ -511,13 +507,13 @@ export class TestGenerationPanel {
    * Remove dir of images for testID from media folder.
    */
   private removeImageDir() {
-    if (this._testID !== '0') {
+    if (this.testID !== '0') {
       vscode.workspace.fs.delete(
         vscode.Uri.joinPath(
           this.extensionUri,
           'media',
           'screenshots',
-          this._testID,
+          this.testID,
         ),
         { recursive: true },
       );

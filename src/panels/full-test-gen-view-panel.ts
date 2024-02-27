@@ -12,7 +12,6 @@ import {
   resendGeneratedTest,
   askToTestGenerationAPIAsStream,
 } from '../utilities/full-test-gen-api-service';
-// import { Test } from "mocha";
 
 const max_history_len = 100;
 

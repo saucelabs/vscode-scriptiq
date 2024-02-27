@@ -59,25 +59,13 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
         case 'save-credentials': {
           const storeData = getStoreData(this._context, 'sauce_api');
           if (storeData !== undefined) {
-            if (
-              message.data.sauceUsername === undefined ||
-              message.data.sauceUsername === null ||
-              message.data.sauceUsername === ''
-            ) {
+            if (!message.data.sauceUsername) {
               message.data.sauceUsername = storeData.sauceUsername;
             }
-            if (
-              message.data.sauceAccessKey === undefined ||
-              message.data.sauceAccessKey === null ||
-              message.data.sauceAccessKey === ''
-            ) {
+            if (!message.data.sauceAccessKey) {
               message.data.sauceAccessKey = storeData.sauceAccessKey;
             }
-            if (
-              message.data.data_center === undefined ||
-              message.data.data_center === null ||
-              message.data.data_center === ''
-            ) {
+            if (!message.data.data_center) {
               message.data.data_center = storeData.data_center;
             }
           }

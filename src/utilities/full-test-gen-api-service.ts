@@ -25,7 +25,7 @@ export function askToTestGenerationAPIAsStream(
   testID: string,
   dirURI: vscode.Uri,
   outputURI: vscode.Uri,
-  start_actions: any = undefined,
+  startActions: any = undefined,
   prev_goal: string = '',
 ): Observable<string> {
   return new Observable<string>((observer) => {
@@ -41,7 +41,7 @@ export function askToTestGenerationAPIAsStream(
         num_steps: maxTestSteps,
         device_names: devices,
         platform_version: platformVersion,
-        start_actions: start_actions,
+        start_actions: startActions,
         assertions: assertions,
       }),
       headers: {
@@ -57,7 +57,7 @@ export function askToTestGenerationAPIAsStream(
       }
     }
 
-    const full_data: any = {
+    const fullData: any = {
       all_steps: [],
       testID: testID,
       apk: apk,
@@ -91,10 +91,10 @@ export function askToTestGenerationAPIAsStream(
                     observer.next(data);
                     console.log('job generated, general info');
                     vscode.workspace.fs.createDirectory(dirURI);
-                    full_data.selected_device_name = data.selected_device_name;
-                    full_data.selected_platform_version =
+                    fullData.selected_device_name = data.selected_device_name;
+                    fullData.selected_platform_version =
                       data.selected_platform_version;
-                    full_data.img_ratio = data.img_ratio;
+                    fullData.img_ratio = data.img_ratio;
                   } else {
                     observer.next(data);
                     // console.log(`Received step ${data.step_data.step_num}`);
@@ -108,33 +108,31 @@ export function askToTestGenerationAPIAsStream(
                     );
                     console.log('STEP INFO');
                     console.log(data.step_data);
-                    full_data.all_steps.push(data.step_data);
+                    fullData.all_steps.push(data.step_data);
                   }
                 } else if (data.header === 'Done') {
-                  if (full_data.all_steps.length > 0) {
+                  if (fullData.all_steps.length > 0) {
                     const encoder = new TextEncoder();
-                    const uint8Array = encoder.encode(
-                      JSON.stringify(full_data),
-                    );
+                    const uint8Array = encoder.encode(JSON.stringify(fullData));
                     console.log('Output data.json');
                     console.log(outputURI.path);
                     vscode.workspace.fs.writeFile(outputURI, uint8Array);
-                    observer.next(full_data);
+                    observer.next(fullData);
                   }
-                  const finished_flag: any = {
+                  const finishedFlag: any = {
                     finished: true,
                   };
-                  observer.next(finished_flag);
+                  observer.next(finishedFlag);
                 } else {
                   observer.next(data);
                 }
               }
             }
           }
-          const finished_flag: any = {
+          const finishedFlag: any = {
             finished: true,
           };
-          observer.next(finished_flag);
+          observer.next(finishedFlag);
         }
       })
       .catch((err: Error) => {

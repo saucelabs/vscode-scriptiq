@@ -204,7 +204,7 @@ function generateFullTestDisplay() {
   const all_step_data = data.all_steps;
   testHeader.style.display = 'block';
 
-  var start_actions = [];
+  var startActions = [];
   for (var ident of all_step_data) {
     var action = {
       potential_identifiers: ident.potential_identifiers,
@@ -215,14 +215,14 @@ function generateFullTestDisplay() {
       event_llm_output: ident.event_llm_output,
       prev_event: ident.previous_events,
     };
-    start_actions.push(action);
+    startActions.push(action);
   }
 
   const editData = {
     apk: data.apk,
     device_name: data.selected_device_name,
     platform_version: data.selected_platform_version,
-    start_actions: start_actions,
+    startActions: startActions,
     prev_goal: data.goal,
   };
 
@@ -643,7 +643,7 @@ function addEditTestInteractions(i, edit_data) {
         goal: newGoalInput.value,
         apk: edit_data.apk,
         maxTestSteps: newMaxStepsInput.value,
-        start_actions: edit_data.start_actions.slice(0, i),
+        startActions: edit_data.startActions.slice(0, i),
         devices: [edit_data.device_name],
         platform_version: edit_data.platform_version,
         prev_goal: edit_data.prev_goal,

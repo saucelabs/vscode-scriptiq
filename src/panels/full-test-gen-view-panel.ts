@@ -216,7 +216,7 @@ export class TestGenerationPanel {
               message.data.goal,
               message.data.apk,
               message.data.maxTestSteps,
-              message.data.start_actions,
+              message.data.startActions,
               message.data.devices,
               message.data.platform_version,
               message.data.prev_goal,
@@ -403,7 +403,7 @@ export class TestGenerationPanel {
     goal: string,
     apk: string,
     maxTestSteps: number,
-    start_actions: any,
+    startActions: any,
     devices: Array<string>,
     platform_version: string,
     prev_goal: string,
@@ -433,7 +433,7 @@ export class TestGenerationPanel {
         testID,
         dirURI,
         outputFileURI,
-        start_actions,
+        startActions,
         prev_goal,
       ).subscribe((test) => {
         TestGenerationPanel.currentPanel?._panel.webview.postMessage({

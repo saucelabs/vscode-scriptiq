@@ -200,7 +200,7 @@ export function resendGeneratedTest(
   });
 }
 
-export function sendUserRatingAPI(
+export function sendUserRating(
   rating: string,
   stepNum: number,
   testRecord: any,

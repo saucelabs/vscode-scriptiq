@@ -44,8 +44,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   /**
-   * Add listener for event comes from js.
-   * @param webview :vscode.Webview
+   * Add listener for events from js.
    */
   private addReceiveMessageEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
@@ -143,7 +142,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   /**
-   * start main panel.
+   * Start main panel.
    */
   private startTestGenerationWebViewPanel(): void {
     vscode.commands.executeCommand('testGeneration.start');

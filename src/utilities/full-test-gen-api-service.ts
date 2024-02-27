@@ -12,15 +12,6 @@ import { promisify } from 'node:util';
 const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
 
-/**
- * Create asnyc request to ScriptIQ api and gets stream.
- * @param goal of the test.
- * @param apk to test the app.
- * @param sauceUsername sauce labs username.
- * @param sauceAccessKey sauce labs access key.
- * @param data_center sauce labs data center to run test on.
- * @returns
- */
 export function askToTestGenerationAPIAsStream(
   goal: string,
   apk: string,
@@ -153,13 +144,8 @@ export function askToTestGenerationAPIAsStream(
 }
 
 /**
- * Checks if an image is already downloaded, if not downloads from test url.
- * @param imgURL url to screenshot from job .
- * @param img_out_name name of local file.
- * @param curr_img_dir name of the dir to output the image into.
- * @param sauceUsername sauce labs username.
- * @param sauceAccessKey sauce labs access key.
- * @returns
+ * Download image from imgURL and save it to `curr_img_dir/img_out_name`.
+ * Skips download if file already exists.
  */
 export async function downloadImage(
   imgURL: any,
@@ -201,10 +187,6 @@ export async function downloadImage(
   }
 }
 
-/**
- * Create asnyc request to ScriptIQ api and gets stream.
- * @param data previously run test.
- */
 export function resendGeneratedTest(
   data: any,
   storagePath: any,
@@ -220,12 +202,6 @@ export function resendGeneratedTest(
   });
 }
 
-/**
- * Create asnyc request to ScriptIQ api and gets stream.
- * @param rating provided by user.
- * @param step_num that user rated.
- * @param job_id id of the job they are rating.
- */
 export function sendUserRatingAPI(
   rating: string,
   step_num: number,

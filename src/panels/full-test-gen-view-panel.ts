@@ -31,12 +31,6 @@ export class TestGenerationPanel {
   public _canOpenWindows: boolean = true;
   private loadHistory: boolean = false;
 
-  /**
-   * Constructor
-   * @param context :vscode.ExtensionContext.
-   * @param panel :vscode.WebviewPanel.
-   * @param extensionUri :vscode.Uri.
-   */
   private constructor(
     context: vscode.ExtensionContext,
     panel: vscode.WebviewPanel,
@@ -63,7 +57,6 @@ export class TestGenerationPanel {
 
   /**
    * Render method of webview that is triggered from "extension.ts" file.
-   * @param context :vscode.ExtensionContext.
    */
   public static render(
     context: vscode.ExtensionContext,
@@ -143,7 +136,6 @@ export class TestGenerationPanel {
 
   /**
    * Add listeners to catch messages from mainview js.
-   * @param webview :vscode.Webview.
    */
   private _setWebviewMessageListener(
     webview: vscode.Webview,
@@ -265,10 +257,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Gets Html content of webview panel.
-   * @param webview :vscode.Webview.
-   * @param extensionUri :vscode.Uri.
-   * @returns string;
+   * Returns HTML content of Webview panel.
    */
   private _getWebviewContent(
     webview: vscode.Webview,
@@ -364,8 +353,6 @@ export class TestGenerationPanel {
 
   /**
    * Send APK and Goal to generate test using an LLM.
-   * @param goal :string
-   * @param apk :string
    */
   private askTestGenerationLLM(
     goal: string,
@@ -417,8 +404,6 @@ export class TestGenerationPanel {
 
   /**
    * Send APK and Goal to generate test using an LLM.
-   * @param goal :string
-   * @param apk :string
    */
   private askEditTestLLM(
     goal: string,
@@ -521,10 +506,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Send APK and Goal to generate test using an LLM.
-   * @param rating :string
-   * @param step_num :number
-   * @param job_id :string
+   * Submit user rating.
    */
   private sendUserRatingData(
     rating: string,
@@ -559,7 +541,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Remove dir of images for testID from media folder
+   * Remove dir of images for testID from media folder.
    */
   private removeImageDir() {
     if (this._testID !== '0') {

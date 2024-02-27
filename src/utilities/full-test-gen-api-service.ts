@@ -85,7 +85,7 @@ export function askToTestGenerationAPIAsStream(
             console.log('chunk');
             console.log(chunk);
 
-            let json_components = chunk.split('{"header":');
+            const json_components = chunk.split('{"header":');
             console.log(json_components);
             for (const component of json_components) {
               console.log('component');
@@ -108,10 +108,9 @@ export function askToTestGenerationAPIAsStream(
                     observer.next(data);
                     // console.log(`Received step ${data.step_data.step_num}`);
                     // console.log(`Getting img: ${data.img_data.img_url}`);
-                    var img_data = data.img_data;
                     await downloadImage(
-                      img_data.img_url,
-                      img_data.img_out_name,
+                      data.img_data.img_url,
+                      data.img_data.img_out_name,
                       dirURI.path,
                       sauceUsername,
                       sauceAccessKey,

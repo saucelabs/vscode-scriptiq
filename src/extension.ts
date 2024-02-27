@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "sauce-scriptiq" is now active!',
   );
 
-  var history_list = getStoreData(context, 'history');
+  const history_list = getStoreData(context, 'history');
   // setStoreData(context, [], "history");
   if (history_list === undefined) {
     setStoreData(context, [], 'history');

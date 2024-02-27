@@ -163,9 +163,9 @@ export class TestGenerationPanel {
               }
             }
             if (historyList.length == max_history_len) {
-              const removed_test = historyList.pop();
+              const removedTest = historyList.pop();
               vscode.workspace.fs.delete(
-                getHistoryUri(this.ctx, [removed_test.testID]),
+                getHistoryUri(this.ctx, [removedTest.testID]),
                 { recursive: true },
               );
             }

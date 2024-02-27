@@ -75,10 +75,11 @@
     "package": "webpack --mode production --devtool hidden-source-map",
     "build-tests": "tsc -p . --outDir out",
     "pretest": "npm run build && npm run build-tests",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint .",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@eslint/js": "8.57.0",
     "@types/mocha": "10.0.6",
     "@types/node": "20.11.20",
     "@types/vscode": "1.86.0",
@@ -86,12 +87,14 @@
     "@typescript-eslint/parser": "7.0.2",
     "@vscode/test-electron": "2.3.9",
     "eslint": "8.56.0",
+    "eslint-config-prettier": "9.1.0",
     "glob": "10.3.10",
     "mocha": "10.3.0",
     "prettier": "3.2.5",
     "pretty-quick": "4.0.0",
     "ts-loader": "9.5.1",
     "typescript": "5.3.3",
+    "typescript-eslint": "7.1.0",
     "webpack": "5.90.3",
     "webpack-cli": "5.1.4"
   },

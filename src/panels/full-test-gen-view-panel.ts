@@ -460,7 +460,7 @@ export class TestGenerationPanel {
     let credentialsAvailable = true;
     let sauceUsername, sauceAccessKey, data_center;
     if (storeData === undefined) {
-      vscode.window.showInformationMessage('Please add your credentials!');
+      vscode.window.showErrorMessage('Please add your credentials!');
       credentialsAvailable = false;
     } else {
       sauceUsername = storeData.sauceUsername;
@@ -474,21 +474,21 @@ export class TestGenerationPanel {
         sauceUsername === null ||
         sauceUsername === ''
       ) {
-        vscode.window.showInformationMessage('Please add your Username!');
+        vscode.window.showErrorMessage('Please add your Username!');
         credentialsAvailable = false;
       } else if (
         sauceAccessKey === undefined ||
         sauceAccessKey === null ||
         sauceAccessKey === ''
       ) {
-        vscode.window.showInformationMessage('Please add your Access Key!');
+        vscode.window.showErrorMessage('Please add your Access Key!');
         credentialsAvailable = false;
       } else if (
         data_center === undefined ||
         data_center === null ||
         data_center === ''
       ) {
-        vscode.window.showInformationMessage('Please add your Data Center!');
+        vscode.window.showErrorMessage('Please add your Data Center!');
         credentialsAvailable = false;
       }
     }

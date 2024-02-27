@@ -29,6 +29,7 @@ export class TestGenerationPanel {
   private _disposables: vscode.Disposable[] = [];
   private _context: vscode.ExtensionContext;
   public _canOpenWindows: boolean = true;
+  private loadHistory: boolean = false;
 
   /**
    * Constructor
@@ -45,6 +46,7 @@ export class TestGenerationPanel {
     this._context = context;
     this._panel = panel;
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+    this.loadHistory = loadHistory;
 
     this.extensionUri = extensionUri;
     // this.imageDirPath = getAsWebviewUri(this._panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
@@ -162,8 +164,8 @@ export class TestGenerationPanel {
               message.data.assertions,
             );
             return;
-          case 'save-steps':
-            var history_list = getStoreData(this._context, 'history');
+          case 'save-steps': {
+            let history_list = getStoreData(this._context, 'history');
             for (let x = 0; x < history_list.length; x++) {
               if (history_list[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
@@ -171,13 +173,13 @@ export class TestGenerationPanel {
               }
             }
             if (history_list.length == max_history_len) {
-              let removed_test = history_list.pop();
+              const removed_test = history_list.pop();
               vscode.workspace.fs.delete(
                 getHistoryUri(this._context, [removed_test.testID]),
                 { recursive: true },
               );
             }
-            var newHistory = {
+            const newHistory = {
               goal: message.data.goal,
               apk: message.data.apk,
               testID: message.data.testID,
@@ -210,6 +212,7 @@ export class TestGenerationPanel {
               { overwrite: true },
             );
             return;
+          }
           case 'send-user-rating':
             this.sendUserRatingData(
               message.data.rating,
@@ -386,9 +389,9 @@ export class TestGenerationPanel {
     } else if (apk === undefined || apk === null || apk === '') {
       vscode.window.showInformationMessage('Please add an APK!');
     } else {
-      var testID = this.getTestCandidateID();
-      var dirURI = this.getTestDirURI(testID);
-      var outputFileURI = this.getTestDataFileURI(testID);
+      const testID = this.getTestCandidateID();
+      const dirURI = this.getTestDirURI(testID);
+      const outputFileURI = this.getTestDataFileURI(testID);
       this._canOpenWindows = false;
       askToTestGenerationAPIAsStream(
         goal,
@@ -439,9 +442,9 @@ export class TestGenerationPanel {
     } else if (goal === undefined || goal === null || goal === '') {
       vscode.window.showInformationMessage('Please add a Goal!');
     } else {
-      var testID = this.getTestCandidateID();
-      var dirURI = this.getTestDirURI(testID);
-      var outputFileURI = this.getTestDataFileURI(testID);
+      const testID = this.getTestCandidateID();
+      const dirURI = this.getTestDirURI(testID);
+      const outputFileURI = this.getTestDataFileURI(testID);
       askToTestGenerationAPIAsStream(
         goal,
         apk,
@@ -479,8 +482,8 @@ export class TestGenerationPanel {
 
   private accessSauceCredentials() {
     const storeData = getStoreData(this._context, 'sauce_api');
-    var credentialsAvailable = true;
-    var sauceUsername, sauceAccessKey, data_center;
+    let credentialsAvailable = true;
+    let sauceUsername, sauceAccessKey, data_center;
     if (storeData === undefined) {
       vscode.window.showInformationMessage('Please add your credentials!');
       credentialsAvailable = false;

@@ -57,7 +57,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           this.startTestGenerationWebViewPanel();
           break;
 
-        case 'save-credentials':
+        case 'save-credentials': {
           const storeData = getStoreData(this._context, 'sauce_api');
           if (storeData !== undefined) {
             if (
@@ -83,10 +83,12 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             }
           }
           setStoreData(this._context, message.data, 'sauce_api');
-          vscode.window.showInformationMessage('Credentials saved successfully.');
+          vscode.window.showInformationMessage(
+            'Credentials saved successfully.',
+          );
           webview.html = this._getHtmlForWebview(webview);
           break;
-
+        }
         case 'load-language':
           this.updateHistoryLinks();
           break;
@@ -95,8 +97,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           this.updateHistoryLinks();
           break;
 
-        case 'load-history':
-          var history_list = getStoreData(this._context, 'history');
+        case 'load-history': {
+          const history_list = getStoreData(this._context, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
               history_n = x;
@@ -108,9 +110,10 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             vscode.commands.executeCommand('testLoadHistory.start');
           }
           break;
+        }
 
-        case 'delete-history':
-          var history_list = getStoreData(this._context, 'history');
+        case 'delete-history': {
+          const history_list = getStoreData(this._context, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
               history_n = x;
@@ -134,6 +137,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             vscode.commands.executeCommand('testGeneration.start');
           }
           break;
+        }
       }
     }, undefined);
   }

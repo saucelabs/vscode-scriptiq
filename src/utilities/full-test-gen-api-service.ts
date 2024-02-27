@@ -121,7 +121,7 @@ export function askToTestGenerationAPIAsStream(
                     vscode.workspace.fs.writeFile(outputURI, uint8Array);
                     observer.next(full_data);
                   }
-                  var finished_flag: any = {
+                  const finished_flag: any = {
                     finished: true,
                   };
                   observer.next(finished_flag);
@@ -131,7 +131,7 @@ export function askToTestGenerationAPIAsStream(
               }
             }
           }
-          var finished_flag: any = {
+          const finished_flag: any = {
             finished: true,
           };
           observer.next(finished_flag);

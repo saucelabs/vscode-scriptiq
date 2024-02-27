@@ -360,11 +360,7 @@ export class TestGenerationPanel {
     platform_version: string,
     assertions: Array<string>,
   ) {
-    var credentialsAvailable: boolean,
-      sauceUsername: string,
-      sauceAccessKey: string,
-      data_center: string;
-    [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
+    const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
       this.accessSauceCredentials();
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
     if (!credentialsAvailable) {
@@ -412,11 +408,7 @@ export class TestGenerationPanel {
     platform_version: string,
     prev_goal: string,
   ) {
-    var credentialsAvailable: boolean,
-      sauceUsername: string,
-      sauceAccessKey: string,
-      data_center: string;
-    [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
+    const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
       this.accessSauceCredentials();
 
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');

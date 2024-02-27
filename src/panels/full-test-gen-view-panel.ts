@@ -204,7 +204,7 @@ export class TestGenerationPanel {
             return;
           }
           case 'send-user-rating':
-            this.sendUserRatingData(
+            sendUserRating(
               message.data.rating,
               message.data.step,
               message.data.test_record,
@@ -481,13 +481,6 @@ export class TestGenerationPanel {
       }
     }
     return [credentialsAvailable, sauceUsername, sauceAccessKey, data_center];
-  }
-
-  /**
-   * Submit user rating.
-   */
-  private sendUserRatingData(rating: string, stepNum: number, testRecord: any) {
-    sendUserRating(rating, stepNum, testRecord);
   }
 
   /**

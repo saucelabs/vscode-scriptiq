@@ -15,7 +15,7 @@ const scriptiqServer =
 export function askToTestGenerationAPIAsStream(
   goal: string,
   apk: string,
-  max_test_steps: number,
+  maxTestSteps: number,
   sauceUsername: string,
   sauceAccessKey: string,
   data_center: string,
@@ -38,7 +38,7 @@ export function askToTestGenerationAPIAsStream(
         sauce_data_center: data_center,
         apk: apk,
         goal: goal,
-        num_steps: max_test_steps,
+        num_steps: maxTestSteps,
         device_names: devices,
         platform_version: platformVersion,
         start_actions: start_actions,
@@ -63,7 +63,7 @@ export function askToTestGenerationAPIAsStream(
       apk: apk,
       goal: goal,
       user_screen_descs: assertions,
-      max_test_steps: max_test_steps,
+      maxTestSteps: maxTestSteps,
       devices: devices,
       platform_version: platformVersion,
       data_center: data_center,
@@ -204,15 +204,15 @@ export function resendGeneratedTest(
 
 export function sendUserRatingAPI(
   rating: string,
-  step_num: number,
-  test_record: any,
+  stepNum: number,
+  testRecord: any,
 ) {
   fetch(`${scriptiqServer}/gather_user_rating`, {
     method: 'POST',
     body: JSON.stringify({
       rating: rating,
-      step_num: step_num,
-      test_record: test_record,
+      step_num: stepNum,
+      test_record: testRecord,
     }),
     headers: {
       'Content-Type': 'application/json',

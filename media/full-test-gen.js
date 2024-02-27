@@ -25,7 +25,7 @@ const testHeader = document.getElementById('test-header');
 const assertContainer = document.getElementById('assert-container');
 const outputLanguageDiv = document.getElementById('output-language-div');
 
-const maxTestSteps = document.getElementById('max_test_steps');
+const maxTestSteps = document.getElementById('max-test-steps');
 const platformVersion = document.getElementById('platform_number');
 
 // Declare Styles
@@ -165,7 +165,7 @@ function handleAskClick() {
       goal: goalText.value,
       apk: apkText.value,
       assertions: assertInputDescs,
-      max_test_steps: maxTestSteps.value,
+      maxTestSteps: maxTestSteps.value,
       devices: selectedDevices,
       platform_version: platformVersion.value,
     },
@@ -642,7 +642,7 @@ function addEditTestInteractions(i, edit_data) {
       data: {
         goal: newGoalInput.value,
         apk: edit_data.apk,
-        max_test_steps: newMaxStepsInput.value,
+        maxTestSteps: newMaxStepsInput.value,
         start_actions: edit_data.start_actions.slice(0, i),
         devices: [edit_data.device_name],
         platform_version: edit_data.platform_version,

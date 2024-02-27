@@ -148,22 +148,22 @@ export class TestGenerationPanel {
             this.askTestGenerationLLM(
               message.data.goal,
               message.data.apk,
-              message.data.max_test_steps,
+              message.data.maxTestSteps,
               message.data.devices,
               message.data.platform_version,
               message.data.assertions,
             );
             return;
           case 'save-steps': {
-            let history_list = getStoreData(this._context, 'history');
-            for (let x = 0; x < history_list.length; x++) {
-              if (history_list[x].testID == message.data.testID) {
+            let historyList = getStoreData(this._context, 'history');
+            for (let x = 0; x < historyList.length; x++) {
+              if (historyList[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
                 return;
               }
             }
-            if (history_list.length == max_history_len) {
-              const removed_test = history_list.pop();
+            if (historyList.length == max_history_len) {
+              const removed_test = historyList.pop();
               vscode.workspace.fs.delete(
                 getHistoryUri(this._context, [removed_test.testID]),
                 { recursive: true },
@@ -174,8 +174,8 @@ export class TestGenerationPanel {
               apk: message.data.apk,
               testID: message.data.testID,
             };
-            history_list = [newHistory].concat(history_list);
-            setStoreData(this._context, history_list, 'history');
+            historyList = [newHistory].concat(historyList);
+            setStoreData(this._context, historyList, 'history');
             vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
 
             // Save the results in the to remove from machine
@@ -215,7 +215,7 @@ export class TestGenerationPanel {
             this.askEditTestLLM(
               message.data.goal,
               message.data.apk,
-              message.data.max_test_steps,
+              message.data.maxTestSteps,
               message.data.start_actions,
               message.data.devices,
               message.data.platform_version,
@@ -313,8 +313,8 @@ export class TestGenerationPanel {
                 <h6>Test limits</h6>
                 <p>ScriptIQ likes to generate as many steps as it can. Help it to stay focused by telling it when it should stop.</p>
                 <div class="form-container">
-                    <label for="max_test_steps">Cut off test steps at</label>
-                    <input type="number" class="short" id="max_test_steps" value="10" />
+                    <label for="max-test-steps">Cut off test steps at</label>
+                    <input type="number" class="short" id="max-test-steps" value="10" />
                 </div>
                 <h6 class="mt-30">Device Settings</h6>
                 <div class="form-container">
@@ -355,7 +355,7 @@ export class TestGenerationPanel {
   private askTestGenerationLLM(
     goal: string,
     apk: string,
-    max_test_steps: number,
+    maxTestSteps: number,
     devices: Array<string>,
     platform_version: string,
     assertions: Array<string>,
@@ -377,7 +377,7 @@ export class TestGenerationPanel {
       askToTestGenerationAPIAsStream(
         goal,
         apk,
-        max_test_steps,
+        maxTestSteps,
         sauceUsername,
         sauceAccessKey,
         data_center,
@@ -402,7 +402,7 @@ export class TestGenerationPanel {
   private askEditTestLLM(
     goal: string,
     apk: string,
-    max_test_steps: number,
+    maxTestSteps: number,
     start_actions: any,
     devices: Array<string>,
     platform_version: string,
@@ -423,7 +423,7 @@ export class TestGenerationPanel {
       askToTestGenerationAPIAsStream(
         goal,
         apk,
-        max_test_steps,
+        maxTestSteps,
         sauceUsername,
         sauceAccessKey,
         data_center,
@@ -469,25 +469,13 @@ export class TestGenerationPanel {
 
       vscode.commands.executeCommand('clearHistoryLinkSelection.start');
 
-      if (
-        sauceUsername === undefined ||
-        sauceUsername === null ||
-        sauceUsername === ''
-      ) {
+      if (!sauceUsername) {
         vscode.window.showErrorMessage('Please add your Username!');
         credentialsAvailable = false;
-      } else if (
-        sauceAccessKey === undefined ||
-        sauceAccessKey === null ||
-        sauceAccessKey === ''
-      ) {
+      } else if (!sauceAccessKey) {
         vscode.window.showErrorMessage('Please add your Access Key!');
         credentialsAvailable = false;
-      } else if (
-        data_center === undefined ||
-        data_center === null ||
-        data_center === ''
-      ) {
+      } else if (!data_center) {
         vscode.window.showErrorMessage('Please add your Data Center!');
         credentialsAvailable = false;
       }
@@ -498,12 +486,8 @@ export class TestGenerationPanel {
   /**
    * Submit user rating.
    */
-  private sendUserRatingData(
-    rating: string,
-    step_num: number,
-    test_record: any,
-  ) {
-    sendUserRatingAPI(rating, step_num, test_record);
+  private sendUserRatingData(rating: string, stepNum: number, testRecord: any) {
+    sendUserRatingAPI(rating, stepNum, testRecord);
   }
 
   /**

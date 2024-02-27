@@ -207,7 +207,7 @@ export class TestGenerationPanel {
             sendUserRating(
               message.data.rating,
               message.data.step,
-              message.data.test_record,
+              message.data.testRecord,
             );
             return;
 

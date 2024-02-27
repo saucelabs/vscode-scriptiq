@@ -538,9 +538,9 @@ function reorderCodeOptions(i) {
  * add the thumbs up/down for user feedback
  * @param {Element} container the element with the code container where the user feedback buttons are added.
  * @param {number} i the step number
- * @param {dict} test_record the record of the full test generated
+ * @param {dict} testRecord the record of the full test generated
  */
-function addUserInputButtons(container, i, test_record) {
+function addUserInputButtons(container, i, testRecord) {
   var thumbsDownButton = document.createElement('img');
   thumbsDownButton.classList.add('thumb');
   thumbsDownButton.src = `${mediaPath}/icons/icn-thumbs-down.svg`;
@@ -551,9 +551,9 @@ function addUserInputButtons(container, i, test_record) {
 
   thumbsUpButton.onclick = function () {
     if (!this.checked) {
-      sendUserRating('like', i, test_record);
+      sendUserRating('like', i, testRecord);
     } else {
-      sendUserRating('norating', i, test_record);
+      sendUserRating('norating', i, testRecord);
     }
     this.checked = !this.checked;
     if (this.checked && thumbsDownButton.checked) {
@@ -562,9 +562,9 @@ function addUserInputButtons(container, i, test_record) {
   };
   thumbsDownButton.onclick = function () {
     if (!this.checked) {
-      sendUserRating('dislike', i, test_record);
+      sendUserRating('dislike', i, testRecord);
     } else {
-      sendUserRating('norating', i, test_record);
+      sendUserRating('norating', i, testRecord);
     }
     this.checked = !this.checked;
     if (this.checked && thumbsUpButton.checked) {
@@ -787,15 +787,15 @@ function generateTestOutputInteractables(
  * Sends rating to API to log
  * @param {string} rating provided by user (liked, disliked, no-rating)
  * @param {number} step that the user rated
- * @param {dict} test_record information on the generated test
+ * @param {dict} testRecord information on the generated test
  */
-function sendUserRating(rating, step, test_record) {
+function sendUserRating(rating, step, testRecord) {
   console.log('Sending User Rating');
-  let copied_test_record = Object.assign({}, test_record);
-  copied_test_record.step_data = test_record.step_data[step];
+  let testRecordCopy = Object.assign({}, testRecord);
+  testRecordCopy.step_data = testRecord.step_data[step];
   vscode.postMessage({
     command: 'send-user-rating',
-    data: { rating: rating, step: step, test_record: copied_test_record },
+    data: { rating: rating, step: step, testRecord: testRecordCopy },
   });
 }
 

@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { rmSync } from 'node:fs';
 import {
   getNonce,
   setStoreData,
@@ -12,6 +11,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
 
   private _view?: vscode.WebviewView;
+  private ctx?: vscode.WebviewViewResolveContext;
+  private cancelToken?: vscode.CancellationToken;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
@@ -21,9 +22,11 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken,
+    token: vscode.CancellationToken,
   ) {
     this._view = webviewView;
+    this.ctx = context;
+    this.cancelToken = token;
 
     webviewView.webview.options = {
       // Allow scripts in the webview
@@ -41,8 +44,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   /**
-   * Add listener for event comes from js.
-   * @param webview :vscode.Webview
+   * Add listener for events from js.
    */
   private addReceiveMessageEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
@@ -54,7 +56,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           this.startTestGenerationWebViewPanel();
           break;
 
-        case 'save-credentials':
+        case 'save-credentials': {
           const storeData = getStoreData(this._context, 'sauce_api');
           if (storeData !== undefined) {
             if (
@@ -80,12 +82,12 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             }
           }
           setStoreData(this._context, message.data, 'sauce_api');
-          // console.log(message.data);
-          const responseMessage = `Credentials saved successfully.`;
-          vscode.window.showInformationMessage(responseMessage);
+          vscode.window.showInformationMessage(
+            'Credentials saved successfully.',
+          );
           webview.html = this._getHtmlForWebview(webview);
           break;
-
+        }
         case 'load-language':
           this.updateHistoryLinks();
           break;
@@ -94,8 +96,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           this.updateHistoryLinks();
           break;
 
-        case 'load-history':
-          var history_list = getStoreData(this._context, 'history');
+        case 'load-history': {
+          const history_list = getStoreData(this._context, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
               history_n = x;
@@ -107,9 +109,10 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             vscode.commands.executeCommand('testLoadHistory.start');
           }
           break;
+        }
 
-        case 'delete-history':
-          var history_list = getStoreData(this._context, 'history');
+        case 'delete-history': {
+          const history_list = getStoreData(this._context, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
               history_n = x;
@@ -133,12 +136,13 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             vscode.commands.executeCommand('testGeneration.start');
           }
           break;
+        }
       }
     }, undefined);
   }
 
   /**
-   * start main panel.
+   * Start main panel.
    */
   private startTestGenerationWebViewPanel(): void {
     vscode.commands.executeCommand('testGeneration.start');
@@ -149,7 +153,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public updateHistoryLinks(selected: number = -1): void {
-    var history_list = getStoreData(this._context, 'history');
+    const history_list = getStoreData(this._context, 'history');
     for (let x = 0; x < history_list.length; x++) {
       if ('goal' in history_list[x]) {
         history_list[x].name = getHistoryName(history_list[x]);
@@ -181,7 +185,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
     const nonce = getNonce();
 
     const storeData = getStoreData(this._context, 'sauce_api');
-    var username = '',
+    let username = '',
       accesskey = '',
       data_center = '';
     if (storeData !== undefined) {
@@ -196,7 +200,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
       }
     }
 
-    var settingsTabButton, historyTabButton, settingsTabData, historyTabData;
+    let settingsTabButton, historyTabButton, settingsTabData, historyTabData;
     if (username === '' && accesskey === '' && data_center === '') {
       settingsTabButton = ' class="active"';
       historyTabButton = '';

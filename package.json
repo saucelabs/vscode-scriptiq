@@ -77,7 +77,8 @@
     "pretest": "npm run build && npm run build-tests",
     "lint": "prettier --check '**/*.{js,ts,mjs,cjs}' && eslint .",
     "fmt": "prettier --write '**/*.{js,ts,mjs,cjs}'",
-    "test": "node ./out/test/runTest.js"
+    "test": "vscode-test",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",
@@ -86,10 +87,12 @@
     "@types/vscode": "1.86.0",
     "@typescript-eslint/eslint-plugin": "7.0.2",
     "@typescript-eslint/parser": "7.0.2",
+    "@vscode/test-cli": "0.0.6",
     "@vscode/test-electron": "2.3.9",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "glob": "10.3.10",
+    "husky": "9.0.11",
     "mocha": "10.3.0",
     "prettier": "3.2.5",
     "pretty-quick": "4.0.0",

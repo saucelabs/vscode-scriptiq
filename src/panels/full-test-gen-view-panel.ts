@@ -12,7 +12,6 @@ import {
   resendGeneratedTest,
   askToTestGenerationAPIAsStream,
 } from '../utilities/full-test-gen-api-service';
-// import { Test } from "mocha";
 
 const max_history_len = 100;
 
@@ -29,13 +28,8 @@ export class TestGenerationPanel {
   private _disposables: vscode.Disposable[] = [];
   private _context: vscode.ExtensionContext;
   public _canOpenWindows: boolean = true;
+  private loadHistory: boolean = false;
 
-  /**
-   * Constructor
-   * @param context :vscode.ExtensionContext.
-   * @param panel :vscode.WebviewPanel.
-   * @param extensionUri :vscode.Uri.
-   */
   private constructor(
     context: vscode.ExtensionContext,
     panel: vscode.WebviewPanel,
@@ -45,6 +39,7 @@ export class TestGenerationPanel {
     this._context = context;
     this._panel = panel;
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+    this.loadHistory = loadHistory;
 
     this.extensionUri = extensionUri;
     // this.imageDirPath = getAsWebviewUri(this._panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
@@ -61,7 +56,6 @@ export class TestGenerationPanel {
 
   /**
    * Render method of webview that is triggered from "extension.ts" file.
-   * @param context :vscode.ExtensionContext.
    */
   public static render(
     context: vscode.ExtensionContext,
@@ -102,11 +96,10 @@ export class TestGenerationPanel {
         'icons',
         'Lowcode_icon_white.png',
       ]);
-      const icon = {
+      panel.iconPath = {
         light: logoMainPath,
         dark: logoMainPath,
       };
-      panel.iconPath = icon;
 
       TestGenerationPanel.currentPanel = new TestGenerationPanel(
         context,
@@ -141,7 +134,6 @@ export class TestGenerationPanel {
 
   /**
    * Add listeners to catch messages from mainview js.
-   * @param webview :vscode.Webview.
    */
   private _setWebviewMessageListener(
     webview: vscode.Webview,
@@ -162,8 +154,8 @@ export class TestGenerationPanel {
               message.data.assertions,
             );
             return;
-          case 'save-steps':
-            var history_list = getStoreData(this._context, 'history');
+          case 'save-steps': {
+            let history_list = getStoreData(this._context, 'history');
             for (let x = 0; x < history_list.length; x++) {
               if (history_list[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
@@ -171,13 +163,13 @@ export class TestGenerationPanel {
               }
             }
             if (history_list.length == max_history_len) {
-              let removed_test = history_list.pop();
+              const removed_test = history_list.pop();
               vscode.workspace.fs.delete(
                 getHistoryUri(this._context, [removed_test.testID]),
                 { recursive: true },
               );
             }
-            var newHistory = {
+            const newHistory = {
               goal: message.data.goal,
               apk: message.data.apk,
               testID: message.data.testID,
@@ -210,6 +202,7 @@ export class TestGenerationPanel {
               { overwrite: true },
             );
             return;
+          }
           case 'send-user-rating':
             this.sendUserRatingData(
               message.data.rating,
@@ -262,10 +255,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Gets Html content of webview panel.
-   * @param webview :vscode.Webview.
-   * @param extensionUri :vscode.Uri.
-   * @returns string;
+   * Returns HTML content of Webview panel.
    */
   private _getWebviewContent(
     webview: vscode.Webview,
@@ -361,8 +351,6 @@ export class TestGenerationPanel {
 
   /**
    * Send APK and Goal to generate test using an LLM.
-   * @param goal :string
-   * @param apk :string
    */
   private askTestGenerationLLM(
     goal: string,
@@ -372,11 +360,7 @@ export class TestGenerationPanel {
     platform_version: string,
     assertions: Array<string>,
   ) {
-    var credentialsAvailable: boolean,
-      sauceUsername: string,
-      sauceAccessKey: string,
-      data_center: string;
-    [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
+    const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
       this.accessSauceCredentials();
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
     if (!credentialsAvailable) {
@@ -386,9 +370,9 @@ export class TestGenerationPanel {
     } else if (apk === undefined || apk === null || apk === '') {
       vscode.window.showInformationMessage('Please add an APK!');
     } else {
-      var testID = this.getTestCandidateID();
-      var dirURI = this.getTestDirURI(testID);
-      var outputFileURI = this.getTestDataFileURI(testID);
+      const testID = this.getTestCandidateID();
+      const dirURI = this.getTestDirURI(testID);
+      const outputFileURI = this.getTestDataFileURI(testID);
       this._canOpenWindows = false;
       askToTestGenerationAPIAsStream(
         goal,
@@ -414,8 +398,6 @@ export class TestGenerationPanel {
 
   /**
    * Send APK and Goal to generate test using an LLM.
-   * @param goal :string
-   * @param apk :string
    */
   private askEditTestLLM(
     goal: string,
@@ -426,11 +408,7 @@ export class TestGenerationPanel {
     platform_version: string,
     prev_goal: string,
   ) {
-    var credentialsAvailable: boolean,
-      sauceUsername: string,
-      sauceAccessKey: string,
-      data_center: string;
-    [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
+    const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
       this.accessSauceCredentials();
 
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
@@ -439,9 +417,9 @@ export class TestGenerationPanel {
     } else if (goal === undefined || goal === null || goal === '') {
       vscode.window.showInformationMessage('Please add a Goal!');
     } else {
-      var testID = this.getTestCandidateID();
-      var dirURI = this.getTestDirURI(testID);
-      var outputFileURI = this.getTestDataFileURI(testID);
+      const testID = this.getTestCandidateID();
+      const dirURI = this.getTestDirURI(testID);
+      const outputFileURI = this.getTestDataFileURI(testID);
       askToTestGenerationAPIAsStream(
         goal,
         apk,
@@ -479,8 +457,8 @@ export class TestGenerationPanel {
 
   private accessSauceCredentials() {
     const storeData = getStoreData(this._context, 'sauce_api');
-    var credentialsAvailable = true;
-    var sauceUsername, sauceAccessKey, data_center;
+    let credentialsAvailable = true;
+    let sauceUsername, sauceAccessKey, data_center;
     if (storeData === undefined) {
       vscode.window.showInformationMessage('Please add your credentials!');
       credentialsAvailable = false;
@@ -518,10 +496,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Send APK and Goal to generate test using an LLM.
-   * @param rating :string
-   * @param step_num :number
-   * @param job_id :string
+   * Submit user rating.
    */
   private sendUserRatingData(
     rating: string,
@@ -556,7 +531,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Remove dir of images for testID from media folder
+   * Remove dir of images for testID from media folder.
    */
   private removeImageDir() {
     if (this._testID !== '0') {

@@ -16,6 +16,11 @@ module.exports = ts.config(
     },
   },
   {
+    rules: {
+      // Long term, we should disallow the use of 'any'. But for now, we'll just
+      // warn, and fix them as we go.
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
     languageOptions: {
       globals: {
         __dirname: true,

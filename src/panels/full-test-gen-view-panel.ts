@@ -1,6 +1,17 @@
-import * as vscode from "vscode";
-import { getStoreData, setStoreData, getNonce, getAsWebviewUri, getVSCodeUri, getHistoryUri } from '../utilities/utilities-service';
-import { sendUserRatingAPI, resendGeneratedTest, askToTestGenerationAPIAsStream } from "../utilities/full-test-gen-api-service";
+import * as vscode from 'vscode';
+import {
+  getStoreData,
+  setStoreData,
+  getNonce,
+  getAsWebviewUri,
+  getVSCodeUri,
+  getHistoryUri,
+} from '../utilities/utilities-service';
+import {
+  sendUserRatingAPI,
+  resendGeneratedTest,
+  askToTestGenerationAPIAsStream,
+} from '../utilities/full-test-gen-api-service';
 // import { Test } from "mocha";
 
 const max_history_len = 100;
@@ -9,188 +20,274 @@ const max_history_len = 100;
  * Webview panel class
  */
 export class TestGenerationPanel {
-    public static currentPanel: TestGenerationPanel | undefined;
-    public extensionUri: vscode.Uri;
-    // public imageDirPath: vscode.Uri;
-    public mediaPath: vscode.Uri;
-    private readonly _panel: vscode.WebviewPanel;
-    private _testID: string;
-    private _disposables: vscode.Disposable[] = [];
-    private _context: vscode.ExtensionContext;
-    public _canOpenWindows: boolean = true;
+  public static currentPanel: TestGenerationPanel | undefined;
+  public extensionUri: vscode.Uri;
+  // public imageDirPath: vscode.Uri;
+  public mediaPath: vscode.Uri;
+  private readonly _panel: vscode.WebviewPanel;
+  private _testID: string;
+  private _disposables: vscode.Disposable[] = [];
+  private _context: vscode.ExtensionContext;
+  public _canOpenWindows: boolean = true;
 
-    /**
-     * Constructor
-     * @param context :vscode.ExtensionContext.
-     * @param panel :vscode.WebviewPanel.
-     * @param extensionUri :vscode.Uri.
-     */
-    private constructor(context: vscode.ExtensionContext, panel: vscode.WebviewPanel, extensionUri: vscode.Uri, loadHistory: boolean=false) {
-        this._context = context;
-        this._panel = panel;
-        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-        
-        this.extensionUri = extensionUri;
-        // this.imageDirPath = getAsWebviewUri(this._panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
-        this.mediaPath = getAsWebviewUri(this._panel.webview, extensionUri, ['media']);
-        this._testID = "0";
-        this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri);
-        this._setWebviewMessageListener(this._panel.webview, extensionUri);     
+  /**
+   * Constructor
+   * @param context :vscode.ExtensionContext.
+   * @param panel :vscode.WebviewPanel.
+   * @param extensionUri :vscode.Uri.
+   */
+  private constructor(
+    context: vscode.ExtensionContext,
+    panel: vscode.WebviewPanel,
+    extensionUri: vscode.Uri,
+    loadHistory: boolean = false,
+  ) {
+    this._context = context;
+    this._panel = panel;
+    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
+    this.extensionUri = extensionUri;
+    // this.imageDirPath = getAsWebviewUri(this._panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
+    this.mediaPath = getAsWebviewUri(this._panel.webview, extensionUri, [
+      'media',
+    ]);
+    this._testID = '0';
+    this._panel.webview.html = this._getWebviewContent(
+      this._panel.webview,
+      extensionUri,
+    );
+    this._setWebviewMessageListener(this._panel.webview, extensionUri);
+  }
+
+  /**
+   * Render method of webview that is triggered from "extension.ts" file.
+   * @param context :vscode.ExtensionContext.
+   */
+  public static render(
+    context: vscode.ExtensionContext,
+    loadHistory: boolean = false,
+  ) {
+    // if exist show
+    if (TestGenerationPanel.currentPanel) {
+      if (!TestGenerationPanel.currentPanel._canOpenWindows) {
+        const responseMessage = `Cannot open other panels while test running.`;
+        vscode.window.showInformationMessage(responseMessage);
+        return;
+      }
+      TestGenerationPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
+      if (loadHistory) {
+        TestGenerationPanel.currentPanel.reloadHistoryInstance();
+      } else {
+        TestGenerationPanel.currentPanel._panel.webview.postMessage({
+          command: 'clear',
+        });
+      }
+    } else {
+      // if not exist create a new one.
+      const extensionUri: vscode.Uri = context.extensionUri;
+      const panel = vscode.window.createWebviewPanel(
+        'test-generation',
+        'Ask ScriptIQ',
+        vscode.ViewColumn.One,
+        {
+          // Enable javascript in the webview.
+          enableScripts: true,
+          // Restrict the webview to only load resources from the `out` directory.
+          localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'media')],
+        },
+      );
+
+      const logoMainPath = getVSCodeUri(extensionUri, [
+        'media',
+        'icons',
+        'Lowcode_icon_white.png',
+      ]);
+      const icon = {
+        light: logoMainPath,
+        dark: logoMainPath,
+      };
+      panel.iconPath = icon;
+
+      TestGenerationPanel.currentPanel = new TestGenerationPanel(
+        context,
+        panel,
+        extensionUri,
+        loadHistory,
+      );
+      TestGenerationPanel.currentPanel._canOpenWindows = true;
+
+      if (loadHistory) {
+        TestGenerationPanel.currentPanel.reloadHistoryInstance();
+      }
     }
+  }
 
-    /**
-     * Render method of webview that is triggered from "extension.ts" file.
-     * @param context :vscode.ExtensionContext.
-    */
-    public static render(context: vscode.ExtensionContext, loadHistory: boolean = false) {
-        // if exist show 
-        if (TestGenerationPanel.currentPanel) {
-            if (!TestGenerationPanel.currentPanel._canOpenWindows) {
-                const responseMessage = `Cannot open other panels while test running.`;
-                vscode.window.showInformationMessage(responseMessage);
+  /**
+   * Dispose panel.
+   */
+  public dispose() {
+    TestGenerationPanel.currentPanel?.removeImageDir();
+    TestGenerationPanel.currentPanel = undefined;
+
+    this._panel.dispose();
+
+    while (this._disposables.length) {
+      const disposable = this._disposables.pop();
+      if (disposable) {
+        disposable.dispose();
+      }
+    }
+  }
+
+  /**
+   * Add listeners to catch messages from mainview js.
+   * @param webview :vscode.Webview.
+   */
+  private _setWebviewMessageListener(
+    webview: vscode.Webview,
+    extensionUri: vscode.Uri,
+  ) {
+    webview.onDidReceiveMessage(
+      (message: any) => {
+        const command = message.command;
+
+        switch (command) {
+          case 'press-generate-button':
+            this.askTestGenerationLLM(
+              message.data.goal,
+              message.data.apk,
+              message.data.max_test_steps,
+              message.data.devices,
+              message.data.platform_version,
+              message.data.assertions,
+            );
+            return;
+          case 'save-steps':
+            var history_list = getStoreData(this._context, 'history');
+            for (let x = 0; x < history_list.length; x++) {
+              if (history_list[x].testID == message.data.testID) {
+                console.log("Reloading history, don't save");
                 return;
+              }
             }
-            TestGenerationPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
-            if (loadHistory) {
-                TestGenerationPanel.currentPanel.reloadHistoryInstance();
-            } else {
-                TestGenerationPanel.currentPanel._panel.webview.postMessage({ command: 'clear' });
+            if (history_list.length == max_history_len) {
+              let removed_test = history_list.pop();
+              vscode.workspace.fs.delete(
+                getHistoryUri(this._context, [removed_test.testID]),
+                { recursive: true },
+              );
             }
-        } else {
-            // if not exist create a new one.
-            const extensionUri: vscode.Uri = context.extensionUri;
-            const panel = vscode.window.createWebviewPanel("test-generation", "Ask ScriptIQ", vscode.ViewColumn.One, {
-                // Enable javascript in the webview.
-                enableScripts: true,
-                // Restrict the webview to only load resources from the `out` directory.
-                localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'media')]
-            });
-
-            const logoMainPath = getVSCodeUri(extensionUri, ['media', 'icons', 'Lowcode_icon_white.png']);
-            const icon = {
-                "light": logoMainPath,
-                "dark": logoMainPath
+            var newHistory = {
+              goal: message.data.goal,
+              apk: message.data.apk,
+              testID: message.data.testID,
             };
-            panel.iconPath = icon;
+            history_list = [newHistory].concat(history_list);
+            setStoreData(this._context, history_list, 'history');
+            vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
 
-            TestGenerationPanel.currentPanel = new TestGenerationPanel(context, panel, extensionUri, loadHistory);
-            TestGenerationPanel.currentPanel._canOpenWindows = true;
-            
-            if (loadHistory) {
-                TestGenerationPanel.currentPanel.reloadHistoryInstance();
-            } 
-        }
-    }
+            // Save the results in the to remove from machine
+            const encoder = new TextEncoder();
+            const uint8Array = encoder.encode(JSON.stringify(message.data));
+            vscode.workspace.fs.writeFile(
+              vscode.Uri.joinPath(
+                extensionUri,
+                'media',
+                'data',
+                message.data.testID + '.json',
+              ),
+              uint8Array,
+            );
+            vscode.workspace.fs.copy(
+              getHistoryUri(this._context, [message.data.testID]),
+              vscode.Uri.joinPath(
+                extensionUri,
+                'media',
+                'data',
+                'screenshots',
+                message.data.testID,
+              ),
+              { overwrite: true },
+            );
+            return;
+          case 'send-user-rating':
+            this.sendUserRatingData(
+              message.data.rating,
+              message.data.step,
+              message.data.test_record,
+            );
+            return;
 
-    /**
-     * Dispose panel.
-     */
-    public dispose() {
-        TestGenerationPanel.currentPanel?.removeImageDir();
-        TestGenerationPanel.currentPanel = undefined;
+          case 'edit-test-button':
+            this.askEditTestLLM(
+              message.data.goal,
+              message.data.apk,
+              message.data.max_test_steps,
+              message.data.start_actions,
+              message.data.devices,
+              message.data.platform_version,
+              message.data.prev_goal,
+            );
+            return;
 
-        this._panel.dispose();
-
-        while (this._disposables.length) {
-            const disposable = this._disposables.pop();
-            if (disposable) {
-                disposable.dispose();
+          case 'copy-image':
+            console.log(message.testID);
+            if (this._testID !== message.testID) {
+              console.log('REMOVE PREVIOUS IMAGE DIR!');
+              this.removeImageDir();
             }
+            console.log('COPY IN IMAGE DIR');
+            vscode.workspace.fs.copy(
+              getHistoryUri(this._context, [message.testID]),
+              vscode.Uri.joinPath(
+                extensionUri,
+                'media',
+                'screenshots',
+                message.testID,
+              ),
+              { overwrite: true },
+            );
+            this._testID = message.testID;
+            console.log('copied');
+            return;
+
+          case 'can-open-window':
+            this._canOpenWindows = true;
+            return;
         }
-    }
+      },
+      undefined,
+      this._disposables,
+    );
+  }
 
-    /**
-     * Add listeners to catch messages from mainview js.
-     * @param webview :vscode.Webview.
-     */
-    private _setWebviewMessageListener(webview: vscode.Webview, extensionUri: vscode.Uri) {
-        webview.onDidReceiveMessage(
-            (message: any) => {
-                const command = message.command;
+  /**
+   * Gets Html content of webview panel.
+   * @param webview :vscode.Webview.
+   * @param extensionUri :vscode.Uri.
+   * @returns string;
+   */
+  private _getWebviewContent(
+    webview: vscode.Webview,
+    extensionUri: vscode.Uri,
+  ) {
+    // get uris from out directory based on vscode.extensionUri
+    const webviewUri = getAsWebviewUri(webview, extensionUri, [
+      'media',
+      'full-test-gen.js',
+    ]);
+    const nonce = getNonce();
+    const styleVSCodeUri = getAsWebviewUri(webview, extensionUri, [
+      'media',
+      'vscode.css',
+    ]);
+    const logoMainPath = getAsWebviewUri(webview, extensionUri, [
+      'media',
+      'icons',
+      'Lowcode_icon_black.png',
+    ]);
 
-                switch (command) {
-                    case "press-generate-button":
-                        this.askTestGenerationLLM(message.data.goal, message.data.apk, message.data.max_test_steps, 
-                            message.data.devices, message.data.platform_version, message.data.assertions);
-                        return;
-                    case "save-steps":
-                        var history_list = getStoreData(this._context, 'history');
-                        for (let x=0; x< history_list.length; x++) {
-                            if (history_list[x].testID == message.data.testID) {
-                                console.log("Reloading history, don't save");
-                                return;
-                            }
-                        }
-                        if ( history_list.length == max_history_len ) {
-                            let removed_test = history_list.pop();
-                            vscode.workspace.fs.delete(getHistoryUri(this._context, [removed_test.testID]), { recursive: true })
-                        }
-                        var newHistory = {
-                            goal: message.data.goal,
-                            apk: message.data.apk,
-                            testID: message.data.testID
-                        };
-                        history_list = [newHistory].concat(history_list);
-                        setStoreData(this._context, history_list, 'history');
-                        vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
-
-                        // Save the results in the to remove from machine
-                        const encoder = new TextEncoder();
-                        const uint8Array = encoder.encode(JSON.stringify(message.data));
-                        vscode.workspace.fs.writeFile(
-                            vscode.Uri.joinPath(extensionUri, 'media', 'data', message.data.testID+".json"), uint8Array);
-                        vscode.workspace.fs.copy(getHistoryUri(this._context, [message.data.testID]), 
-                            vscode.Uri.joinPath(extensionUri, 'media', 'data', 'screenshots', message.data.testID), 
-                            {overwrite: true});
-                        return;
-                    case "send-user-rating":
-                        this.sendUserRatingData(message.data.rating, message.data.step, message.data.test_record);
-                        return;
-
-                    case "edit-test-button":
-                        this.askEditTestLLM(message.data.goal, message.data.apk, message.data.max_test_steps, message.data.start_actions,
-                            message.data.devices, message.data.platform_version, message.data.prev_goal);
-                        return;
-
-                    case "copy-image":
-                        console.log(message.testID)
-                        if (this._testID !== message.testID) {
-                            console.log("REMOVE PREVIOUS IMAGE DIR!")
-                            this.removeImageDir();
-                        }
-                        console.log("COPY IN IMAGE DIR")
-                        vscode.workspace.fs.copy(getHistoryUri(this._context, [message.testID]), 
-                                                 vscode.Uri.joinPath(extensionUri, 'media', 'screenshots', message.testID), 
-                                                 {overwrite: true});
-                        this._testID = message.testID;
-                        console.log("copied");
-                        return;
-
-                    case "can-open-window":
-                        this._canOpenWindows = true;
-                        return;
-                }
-            },
-            undefined,
-            this._disposables
-        );
-    }
-
-    /**
-     * Gets Html content of webview panel.
-     * @param webview :vscode.Webview.
-     * @param extensionUri :vscode.Uri.
-     * @returns string;
-     */
-    private _getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
-        // get uris from out directory based on vscode.extensionUri
-        const webviewUri = getAsWebviewUri(webview, extensionUri, ["media", "full-test-gen.js"]);
-        const nonce = getNonce();
-        const styleVSCodeUri = getAsWebviewUri(webview, extensionUri, ['media', 'vscode.css']);
-        const logoMainPath = getAsWebviewUri(webview, extensionUri, ['media', 'icons', 'Lowcode_icon_black.png']);
-
-        return /*html*/ `
+    return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
           <head>
@@ -260,138 +357,218 @@ export class TestGenerationPanel {
           </body>
         </html>
         `;
-    }
+  }
 
-
-    /**
-     * Send APK and Goal to generate test using an LLM.
-     * @param goal :string
-     * @param apk :string
-     */
-    private askTestGenerationLLM(goal: string, apk: string, max_test_steps: number, devices: Array<string>, 
-                                 platform_version: string, assertions: Array<string>) {
-        var credentialsAvailable: boolean, sauceUsername: string, sauceAccessKey: string, data_center: string;
-        [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] = this.accessSauceCredentials();
-        vscode.commands.executeCommand('clearHistoryLinkSelection.start');
-        if (!credentialsAvailable) {
-            return;
-        } else if (goal === undefined || goal === null || goal === '') {
-            vscode.window.showInformationMessage('Please add a Goal!');
-        } else if (apk === undefined || apk === null || apk === '') {
-            vscode.window.showInformationMessage('Please add an APK!');
-        }
-        else {
-            var testID = this.getTestCandidateID();
-            var dirURI = this.getTestDirURI(testID);
-            var outputFileURI = this.getTestDataFileURI(testID);
-            this._canOpenWindows = false;
-            askToTestGenerationAPIAsStream(goal, apk, max_test_steps, sauceUsername, sauceAccessKey, data_center, 
-                                           devices, platform_version, assertions, testID, dirURI, outputFileURI).subscribe(test => {
-                TestGenerationPanel.currentPanel?._panel.webview.postMessage({ command: 'test', data: test });
-            });
-        }
-    }
-
-    /**
-     * Send APK and Goal to generate test using an LLM.
-     * @param goal :string
-     * @param apk :string
-     */
-    private askEditTestLLM(goal: string, apk: string, max_test_steps: number, start_actions: any, devices: Array<string>, 
-                           platform_version: string, prev_goal: string) {
-        var credentialsAvailable: boolean, sauceUsername: string, sauceAccessKey: string, data_center: string;
-        [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] = this.accessSauceCredentials();
-
-        vscode.commands.executeCommand('clearHistoryLinkSelection.start');
-        if (!credentialsAvailable) {
-            return;
-        } else if (goal === undefined || goal === null || goal === '') {
-            vscode.window.showInformationMessage('Please add a Goal!');
-        }
-        else {
-            var testID = this.getTestCandidateID();
-            var dirURI = this.getTestDirURI(testID);
-            var outputFileURI = this.getTestDataFileURI(testID);
-            askToTestGenerationAPIAsStream(goal, apk, max_test_steps, sauceUsername, sauceAccessKey, data_center, devices, 
-                platform_version, [], testID, dirURI, outputFileURI, start_actions, prev_goal).subscribe(test => {
-            TestGenerationPanel.currentPanel?._panel.webview.postMessage({ command: 'test', data: test });
+  /**
+   * Send APK and Goal to generate test using an LLM.
+   * @param goal :string
+   * @param apk :string
+   */
+  private askTestGenerationLLM(
+    goal: string,
+    apk: string,
+    max_test_steps: number,
+    devices: Array<string>,
+    platform_version: string,
+    assertions: Array<string>,
+  ) {
+    var credentialsAvailable: boolean,
+      sauceUsername: string,
+      sauceAccessKey: string,
+      data_center: string;
+    [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
+      this.accessSauceCredentials();
+    vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+    if (!credentialsAvailable) {
+      return;
+    } else if (goal === undefined || goal === null || goal === '') {
+      vscode.window.showInformationMessage('Please add a Goal!');
+    } else if (apk === undefined || apk === null || apk === '') {
+      vscode.window.showInformationMessage('Please add an APK!');
+    } else {
+      var testID = this.getTestCandidateID();
+      var dirURI = this.getTestDirURI(testID);
+      var outputFileURI = this.getTestDataFileURI(testID);
+      this._canOpenWindows = false;
+      askToTestGenerationAPIAsStream(
+        goal,
+        apk,
+        max_test_steps,
+        sauceUsername,
+        sauceAccessKey,
+        data_center,
+        devices,
+        platform_version,
+        assertions,
+        testID,
+        dirURI,
+        outputFileURI,
+      ).subscribe((test) => {
+        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+          command: 'test',
+          data: test,
         });
-        }
-}
-    private getTestCandidateID() {
-        return new Date().valueOf().toString();
+      });
     }
+  }
 
-    private getTestDirURI(testID: string) {
-        return getHistoryUri(this._context, [testID]);
+  /**
+   * Send APK and Goal to generate test using an LLM.
+   * @param goal :string
+   * @param apk :string
+   */
+  private askEditTestLLM(
+    goal: string,
+    apk: string,
+    max_test_steps: number,
+    start_actions: any,
+    devices: Array<string>,
+    platform_version: string,
+    prev_goal: string,
+  ) {
+    var credentialsAvailable: boolean,
+      sauceUsername: string,
+      sauceAccessKey: string,
+      data_center: string;
+    [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
+      this.accessSauceCredentials();
+
+    vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+    if (!credentialsAvailable) {
+      return;
+    } else if (goal === undefined || goal === null || goal === '') {
+      vscode.window.showInformationMessage('Please add a Goal!');
+    } else {
+      var testID = this.getTestCandidateID();
+      var dirURI = this.getTestDirURI(testID);
+      var outputFileURI = this.getTestDataFileURI(testID);
+      askToTestGenerationAPIAsStream(
+        goal,
+        apk,
+        max_test_steps,
+        sauceUsername,
+        sauceAccessKey,
+        data_center,
+        devices,
+        platform_version,
+        [],
+        testID,
+        dirURI,
+        outputFileURI,
+        start_actions,
+        prev_goal,
+      ).subscribe((test) => {
+        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+          command: 'test',
+          data: test,
+        });
+      });
     }
+  }
+  private getTestCandidateID() {
+    return new Date().valueOf().toString();
+  }
 
-    private getTestDataFileURI(testID: string) {
-        return getHistoryUri(this._context, [testID, "data.json"]);
+  private getTestDirURI(testID: string) {
+    return getHistoryUri(this._context, [testID]);
+  }
+
+  private getTestDataFileURI(testID: string) {
+    return getHistoryUri(this._context, [testID, 'data.json']);
+  }
+
+  private accessSauceCredentials() {
+    const storeData = getStoreData(this._context, 'sauce_api');
+    var credentialsAvailable = true;
+    var sauceUsername, sauceAccessKey, data_center;
+    if (storeData === undefined) {
+      vscode.window.showInformationMessage('Please add your credentials!');
+      credentialsAvailable = false;
+    } else {
+      sauceUsername = storeData.sauceUsername;
+      sauceAccessKey = storeData.sauceAccessKey;
+      data_center = storeData.data_center;
+
+      vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+
+      if (
+        sauceUsername === undefined ||
+        sauceUsername === null ||
+        sauceUsername === ''
+      ) {
+        vscode.window.showInformationMessage('Please add your Username!');
+        credentialsAvailable = false;
+      } else if (
+        sauceAccessKey === undefined ||
+        sauceAccessKey === null ||
+        sauceAccessKey === ''
+      ) {
+        vscode.window.showInformationMessage('Please add your Access Key!');
+        credentialsAvailable = false;
+      } else if (
+        data_center === undefined ||
+        data_center === null ||
+        data_center === ''
+      ) {
+        vscode.window.showInformationMessage('Please add your Data Center!');
+        credentialsAvailable = false;
+      }
     }
+    return [credentialsAvailable, sauceUsername, sauceAccessKey, data_center];
+  }
 
-    private accessSauceCredentials() {
-        const storeData = getStoreData(this._context, 'sauce_api');
-        var credentialsAvailable = true;
-        var sauceUsername, sauceAccessKey, data_center;
-        if (storeData === undefined) {
-            vscode.window.showInformationMessage('Please add your credentials!');
-            credentialsAvailable = false;
-        } else {
-            sauceUsername = storeData.sauceUsername;
-            sauceAccessKey = storeData.sauceAccessKey;
-            data_center = storeData.data_center;
-        
-            vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+  /**
+   * Send APK and Goal to generate test using an LLM.
+   * @param rating :string
+   * @param step_num :number
+   * @param job_id :string
+   */
+  private sendUserRatingData(
+    rating: string,
+    step_num: number,
+    test_record: any,
+  ) {
+    sendUserRatingAPI(rating, step_num, test_record);
+  }
 
-            if (sauceUsername === undefined || sauceUsername === null || sauceUsername === '') {
-                vscode.window.showInformationMessage('Please add your Username!');
-                credentialsAvailable = false;
-            } else if (sauceAccessKey === undefined || sauceAccessKey === null || sauceAccessKey === '') {
-                vscode.window.showInformationMessage('Please add your Access Key!');
-                credentialsAvailable = false;
-            } else if (data_center === undefined || data_center === null || data_center === '') {
-                vscode.window.showInformationMessage('Please add your Data Center!');
-                credentialsAvailable = false;
-            } 
-        }
-        return [credentialsAvailable, sauceUsername, sauceAccessKey, data_center];
+  /**
+   * Reload history instance.
+   */
+  private reloadHistoryInstance() {
+    const currHistory = getStoreData(this._context, 'curr_history');
+    const storeData = getStoreData(this._context, 'history')[currHistory];
+    if (storeData === undefined || storeData === null || storeData === '') {
+      vscode.window.showInformationMessage(
+        'Please run a test before reloading!',
+      );
+    } else {
+      console.log(storeData);
+      resendGeneratedTest(
+        storeData,
+        getHistoryUri(this._context, []),
+      ).subscribe((test) => {
+        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+          command: 'history',
+          data: test,
+        });
+      });
     }
+  }
 
-    /**
-     * Send APK and Goal to generate test using an LLM.
-     * @param rating :string
-     * @param step_num :number
-     * @param job_id :string
-     */
-    private sendUserRatingData(rating: string, step_num: number, test_record: any) {
-        sendUserRatingAPI(rating, step_num, test_record);
+  /**
+   * Remove dir of images for testID from media folder
+   */
+  private removeImageDir() {
+    if (this._testID !== '0') {
+      vscode.workspace.fs.delete(
+        vscode.Uri.joinPath(
+          this.extensionUri,
+          'media',
+          'screenshots',
+          this._testID,
+        ),
+        { recursive: true },
+      );
     }
-
-    /**
-     * Reload history instance.
-     */
-    private reloadHistoryInstance() {
-        const currHistory = getStoreData(this._context, 'curr_history');
-        const storeData = getStoreData(this._context, 'history')[currHistory];
-        if (storeData === undefined || storeData === null || storeData === '') {
-            vscode.window.showInformationMessage('Please run a test before reloading!');
-        }
-        else {
-            console.log(storeData);
-            resendGeneratedTest(storeData, getHistoryUri(this._context, [])).subscribe(test => {
-                TestGenerationPanel.currentPanel?._panel.webview.postMessage({ command: 'history', data: test });
-            });
-        }
-    }
-
-
-    /**
-     * Remove dir of images for testID from media folder
-     */
-    private removeImageDir() {
-        if (this._testID !== "0") {
-            vscode.workspace.fs.delete(vscode.Uri.joinPath(this.extensionUri, 'media', 'screenshots', this._testID), {"recursive": true});
-        }
-    }
+  }
 }

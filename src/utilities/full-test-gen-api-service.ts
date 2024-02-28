@@ -16,8 +16,8 @@ export function askToTestGenerationAPIAsStream(
   goal: string,
   apk: string,
   maxTestSteps: number,
-  sauceUsername: string,
-  sauceAccessKey: string,
+  username: string,
+  accessKey: string,
   region: string,
   devices: any,
   platformVersion: string,
@@ -33,8 +33,8 @@ export function askToTestGenerationAPIAsStream(
     const response = fetch(`${scriptiqServer}/gen_full_test`, {
       method: 'POST',
       body: JSON.stringify({
-        sauce_username: sauceUsername,
-        sauce_api_key: sauceAccessKey,
+        sauce_username: username,
+        sauce_api_key: accessKey,
         sauce_data_center: region,
         apk: apk,
         goal: goal,
@@ -103,8 +103,8 @@ export function askToTestGenerationAPIAsStream(
                       data.img_data.img_url,
                       data.img_data.img_out_name,
                       dirURI.path,
-                      sauceUsername,
-                      sauceAccessKey,
+                      username,
+                      accessKey,
                     );
                     console.log('STEP INFO');
                     console.log(data.step_data);
@@ -149,8 +149,8 @@ export async function downloadImage(
   imgURL: any,
   imgName: any,
   imgDir: any,
-  sauceUsername: string,
-  sauceAccessKey: string,
+  username: string,
+  accessKey: string,
 ) {
   const localURLFName = imgDir + '/' + imgName;
 
@@ -164,7 +164,7 @@ export async function downloadImage(
       const streamPipeline = promisify(pipeline);
       const response: any = await fetch(imgURL, {
         headers: {
-          Authorization: 'Basic ' + btoa(sauceUsername + ':' + sauceAccessKey),
+          Authorization: 'Basic ' + btoa(username + ':' + accessKey),
         },
       });
 

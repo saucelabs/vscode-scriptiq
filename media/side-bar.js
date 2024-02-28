@@ -10,12 +10,8 @@ const startTestGeneration = document.getElementById(
   'start-test-generation-button',
 );
 const saveButton = document.getElementById('save-button-id');
-const sauceUsernameTextField = document.getElementById(
-  'sauce-username-text-field-id',
-);
-const sauceAccessKeyTextField = document.getElementById(
-  'sauce-access-key-text-field-id',
-);
+const usernameTextField = document.getElementById('username-text-field-id');
+const accessKeyTextField = document.getElementById('access-key-text-field-id');
 const regionTextField = document.getElementById('region-text-field-id');
 
 const sauceOrange = '#F1997B';
@@ -38,8 +34,8 @@ function main() {
     const message = event.data; // The json data that the extension sent
     switch (message.command) {
       case 'settings-exist':
-        sauceUsernameTextField.value = message.data.sauceUsername;
-        sauceAccessKeyTextField.value = message.data.sauceAccessKey;
+        usernameTextField.value = message.data.username;
+        accessKeyTextField.value = message.data.accessKey;
         regionTextField.value = message.data.region;
         break;
       case 'update-history-links':
@@ -74,8 +70,8 @@ function handleStartButtonClick() {
 function handleSaveClick() {
   console.log('Handling save');
   const data = {
-    sauceUsername: sauceUsernameTextField?.value,
-    sauceAccessKey: sauceAccessKeyTextField?.value,
+    username: usernameTextField?.value,
+    accessKey: accessKeyTextField?.value,
     region: regionTextField?.value,
   };
   console.log(data);

@@ -62,8 +62,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 
         case 'save-credentials': {
           if (
-            !message.data.sauceUsername ||
-            !message.data.sauceAccessKey ||
+            !message.data.username ||
+            !message.data.accessKey ||
             !message.data.region
           ) {
             vscode.window.showErrorMessage(
@@ -73,8 +73,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           }
 
           this.store.saveCredentials({
-            username: message.data.sauceUsername,
-            accessKey: message.data.sauceAccessKey,
+            username: message.data.username,
+            accessKey: message.data.accessKey,
             region: message.data.region,
           });
           vscode.window.showInformationMessage(
@@ -239,12 +239,12 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 				</div>
 				<h5>Sauce Labs Credentials</h5>
 				<div class="form-container">
-					<label for="sauce-username-text-field-id">Sauce Username</label>
-					<input id="sauce-username-text-field-id" value="${creds?.username ?? ''}" placeholder="e.g. oauth-test-user-12345" />							
+					<label for="username-text-field-id">Sauce Username</label>
+					<input id="username-text-field-id" value="${creds?.username ?? ''}" placeholder="e.g. oauth-test-user-12345" />							
 				</div>		
 				<div class="form-container">
-					<label for="sauce-access-key-text-field-id">Sauce Access Key</label>
-					<input id="sauce-access-key-text-field-id" value="${creds?.accessKey ?? ''}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />				
+					<label for="access-key-text-field-id">Sauce Access Key</label>
+					<input id="access-key-text-field-id" value="${creds?.accessKey ?? ''}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />				
 				</div>
 				<div class="form-container">
 					<label for="region-text-field-id">Sauce Labs Region</label>

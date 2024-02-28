@@ -100,9 +100,9 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
         }
 
         case 'delete-history': {
-          const history_list = getStoreData(this.ctx, 'history');
-          for (let x = 0; x < history_list.length; x++) {
-            if (message.data == history_list[x].testID) {
+          const historyList = getStoreData(this.ctx, 'history');
+          for (let x = 0; x < historyList.length; x++) {
+            if (message.data == historyList[x].testID) {
               historyIndex = x;
               break;
             }
@@ -118,8 +118,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             );
             console.log('file removed');
 
-            history_list.splice(historyIndex, 1);
-            setStoreData(this.ctx, history_list, 'history');
+            historyList.splice(historyIndex, 1);
+            setStoreData(this.ctx, historyList, 'history');
             this.updateHistoryLinks();
             vscode.commands.executeCommand('testGeneration.start');
           }

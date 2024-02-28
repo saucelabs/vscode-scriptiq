@@ -10,13 +10,13 @@ import {
 export class SideBarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
 
-  private _view?: vscode.WebviewView;
-  private ctx?: vscode.WebviewViewResolveContext;
+  private view?: vscode.WebviewView;
+  private viewCtx?: vscode.WebviewViewResolveContext;
   private cancelToken?: vscode.CancellationToken;
 
   constructor(
-    private readonly _extensionUri: vscode.Uri,
-    private readonly _context: vscode.ExtensionContext,
+    private readonly extensionUri: vscode.Uri,
+    private readonly ctx: vscode.ExtensionContext,
   ) {}
 
   public resolveWebviewView(
@@ -24,8 +24,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
     context: vscode.WebviewViewResolveContext,
     token: vscode.CancellationToken,
   ) {
-    this._view = webviewView;
-    this.ctx = context;
+    this.view = webviewView;
+    this.viewCtx = context;
     this.cancelToken = token;
 
     webviewView.webview.options = {
@@ -33,12 +33,12 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
 
       localResourceRoots: [
-        this._extensionUri,
-        vscode.Uri.joinPath(this._extensionUri, 'media', 'images'),
+        this.extensionUri,
+        vscode.Uri.joinPath(this.extensionUri, 'media', 'images'),
       ],
     };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    webviewView.webview.html = this.getHTMLForWebview(webviewView.webview);
 
     this.addReceiveMessageEvents(webviewView.webview);
   }
@@ -49,7 +49,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   private addReceiveMessageEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
       const command = message.command;
-      let history_n = -1;
+      let historyIndex = -1;
       switch (command) {
         case 'start-test-generation-command':
           // vscode.window.showInformationMessage("Opening window");
@@ -57,35 +57,23 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'save-credentials': {
-          const storeData = getStoreData(this._context, 'sauce_api');
-          if (storeData !== undefined) {
-            if (
-              message.data.sauceUsername === undefined ||
-              message.data.sauceUsername === null ||
-              message.data.sauceUsername === ''
-            ) {
+          const storeData = getStoreData(this.ctx, 'sauce_api');
+          if (storeData) {
+            if (!message.data.sauceUsername) {
               message.data.sauceUsername = storeData.sauceUsername;
             }
-            if (
-              message.data.sauceAccessKey === undefined ||
-              message.data.sauceAccessKey === null ||
-              message.data.sauceAccessKey === ''
-            ) {
+            if (!message.data.sauceAccessKey) {
               message.data.sauceAccessKey = storeData.sauceAccessKey;
             }
-            if (
-              message.data.data_center === undefined ||
-              message.data.data_center === null ||
-              message.data.data_center === ''
-            ) {
+            if (!message.data.data_center) {
               message.data.data_center = storeData.data_center;
             }
           }
-          setStoreData(this._context, message.data, 'sauce_api');
+          setStoreData(this.ctx, message.data, 'sauce_api');
           vscode.window.showInformationMessage(
             'Credentials saved successfully.',
           );
-          webview.html = this._getHtmlForWebview(webview);
+          webview.html = this.getHTMLForWebview(webview);
           break;
         }
         case 'load-language':
@@ -97,41 +85,41 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'load-history': {
-          const history_list = getStoreData(this._context, 'history');
+          const history_list = getStoreData(this.ctx, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
-              history_n = x;
+              historyIndex = x;
               break;
             }
           }
-          if (history_n >= 0) {
-            setStoreData(this._context, history_n, 'curr_history');
+          if (historyIndex >= 0) {
+            setStoreData(this.ctx, historyIndex, 'curr_history');
             vscode.commands.executeCommand('testLoadHistory.start');
           }
           break;
         }
 
         case 'delete-history': {
-          const history_list = getStoreData(this._context, 'history');
-          for (let x = 0; x < history_list.length; x++) {
-            if (message.data == history_list[x].testID) {
-              history_n = x;
+          const historyList = getStoreData(this.ctx, 'history');
+          for (let x = 0; x < historyList.length; x++) {
+            if (message.data == historyList[x].testID) {
+              historyIndex = x;
               break;
             }
           }
-          if (history_n >= 0) {
-            // setStoreData(this._context, history_n, "curr_history");
-            console.log('DELETE HISTORY: ', history_n);
+          if (historyIndex >= 0) {
+            // setStoreData(this.ctx, historyIndex, "curr_history");
+            console.log('DELETE HISTORY: ', historyIndex);
             console.log(message.data);
 
             vscode.workspace.fs.delete(
-              getHistoryUri(this._context, [message.data]),
+              getHistoryUri(this.ctx, [message.data]),
               { recursive: true },
             );
             console.log('file removed');
 
-            history_list.splice(history_n, 1);
-            setStoreData(this._context, history_list, 'history');
+            historyList.splice(historyIndex, 1);
+            setStoreData(this.ctx, historyList, 'history');
             this.updateHistoryLinks();
             vscode.commands.executeCommand('testGeneration.start');
           }
@@ -149,19 +137,19 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public clearHistoryLinkSelection(): void {
-    this._view?.webview.postMessage({ command: 'clear-history-links' });
+    this.view?.webview.postMessage({ command: 'clear-history-links' });
   }
 
   public updateHistoryLinks(selected: number = -1): void {
-    const history_list = getStoreData(this._context, 'history');
-    for (let x = 0; x < history_list.length; x++) {
-      if ('goal' in history_list[x]) {
-        history_list[x].name = getHistoryName(history_list[x]);
+    const historyList = getStoreData(this.ctx, 'history');
+    for (let x = 0; x < historyList.length; x++) {
+      if ('goal' in historyList[x]) {
+        historyList[x].name = getHistoryName(historyList[x]);
       }
     }
-    this._view?.webview.postMessage({
+    this.view?.webview.postMessage({
       command: 'update-history-links',
-      data: history_list,
+      data: historyList,
       selected: selected,
     });
   }
@@ -170,21 +158,21 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
     this.updateHistoryLinks(0);
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
+  private getHTMLForWebview(webview: vscode.Webview) {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'media', 'side-bar.js'),
+      vscode.Uri.joinPath(this.extensionUri, 'media', 'side-bar.js'),
     );
 
     // Do the same for the stylesheet.
     const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'),
+      vscode.Uri.joinPath(this.extensionUri, 'media', 'vscode.css'),
     );
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
-    const storeData = getStoreData(this._context, 'sauce_api');
+    const storeData = getStoreData(this.ctx, 'sauce_api');
     let username = '',
       accesskey = '',
       data_center = '';

@@ -16,9 +16,7 @@ const sauceUsernameTextField = document.getElementById(
 const sauceAccessKeyTextField = document.getElementById(
   'sauce-access-key-text-field-id',
 );
-const dataCenterTextField = document.getElementById(
-  'data_center-text-field-id',
-);
+const regionTextField = document.getElementById('region-text-field-id');
 
 const sauceOrange = '#F1997B';
 
@@ -40,12 +38,9 @@ function main() {
     const message = event.data; // The json data that the extension sent
     switch (message.command) {
       case 'settings-exist':
-        const sauceUsername = message.data.sauceUsername;
-        const sauceAccessKey = message.data.sauceAccessKey;
-        const data_center = message.data.data_center;
-        sauceUsernameTextField.value = sauceUsername;
-        sauceAccessKeyTextField.value = sauceAccessKey;
-        dataCenterTextField.value = data_center;
+        sauceUsernameTextField.value = message.data.sauceUsername;
+        sauceAccessKeyTextField.value = message.data.sauceAccessKey;
+        regionTextField.value = message.data.region;
         break;
       case 'update-history-links':
         document.getElementById('history-links').innerHTML = '';
@@ -81,7 +76,7 @@ function handleSaveClick() {
   const data = {
     sauceUsername: sauceUsernameTextField?.value,
     sauceAccessKey: sauceAccessKeyTextField?.value,
-    data_center: dataCenterTextField?.value,
+    region: regionTextField?.value,
   };
   console.log(data);
   vscode.postMessage({

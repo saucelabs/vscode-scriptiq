@@ -66,7 +66,7 @@ export function askToTestGenerationAPIAsStream(
       max_test_steps: maxTestSteps,
       devices: devices,
       platform_version: platformVersion,
-      data_center: region,
+      region: region,
     };
     response
       .then(async (res) => {

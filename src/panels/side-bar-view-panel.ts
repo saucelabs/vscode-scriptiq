@@ -64,7 +64,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           if (
             !message.data.sauceUsername ||
             !message.data.sauceAccessKey ||
-            !message.data.data_center
+            !message.data.region
           ) {
             vscode.window.showErrorMessage(
               'Cannot save incomplete credentials.',
@@ -75,7 +75,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           this.store.saveCredentials({
             username: message.data.sauceUsername,
             accessKey: message.data.sauceAccessKey,
-            region: message.data.data_center,
+            region: message.data.region,
           });
           vscode.window.showInformationMessage(
             'Credentials saved successfully.',
@@ -247,8 +247,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 					<input id="sauce-access-key-text-field-id" value="${creds?.accessKey ?? ''}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />				
 				</div>
 				<div class="form-container">
-					<label for="data_center-text-field-id">Sauce Labs Data Center</label>
-					<input id="data_center-text-field-id" value="${creds?.region ?? ''}" placeholder="e.g. us-west-1" />				
+					<label for="region-text-field-id">Sauce Labs Region</label>
+					<input id="region-text-field-id" value="${creds?.region ?? ''}" placeholder="e.g. us-west-1" />				
 				</div>
 				<div class="form-container">
 					<button id="save-button-id" class="button button-primary">Save</button>

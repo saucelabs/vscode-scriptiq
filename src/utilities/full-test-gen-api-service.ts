@@ -202,7 +202,7 @@ export function resendGeneratedTest(
   });
 }
 
-export function sendUserRatingAPI(
+export function sendUserRating(
   rating: string,
   step_num: number,
   test_record: any,

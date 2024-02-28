@@ -8,7 +8,7 @@ import {
   getHistoryUri,
 } from '../utilities/utilities-service';
 import {
-  sendUserRatingAPI,
+  sendUserRating,
   resendGeneratedTest,
   askToTestGenerationAPIAsStream,
 } from '../utilities/full-test-gen-api-service';
@@ -500,7 +500,7 @@ export class TestGenerationPanel {
     step_num: number,
     test_record: any,
   ) {
-    sendUserRatingAPI(rating, step_num, test_record);
+    sendUserRating(rating, step_num, test_record);
   }
 
   /**

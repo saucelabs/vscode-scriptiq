@@ -49,7 +49,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   private addReceiveMessageEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
       const command = message.command;
-      let history_n = -1;
+      let historyIndex = -1;
       switch (command) {
         case 'start-test-generation-command':
           // vscode.window.showInformationMessage("Opening window");
@@ -100,12 +100,12 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           const history_list = getStoreData(this.ctx, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
-              history_n = x;
+              historyIndex = x;
               break;
             }
           }
-          if (history_n >= 0) {
-            setStoreData(this.ctx, history_n, 'curr_history');
+          if (historyIndex >= 0) {
+            setStoreData(this.ctx, historyIndex, 'curr_history');
             vscode.commands.executeCommand('testLoadHistory.start');
           }
           break;
@@ -115,13 +115,13 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           const history_list = getStoreData(this.ctx, 'history');
           for (let x = 0; x < history_list.length; x++) {
             if (message.data == history_list[x].testID) {
-              history_n = x;
+              historyIndex = x;
               break;
             }
           }
-          if (history_n >= 0) {
-            // setStoreData(this.ctx, history_n, "curr_history");
-            console.log('DELETE HISTORY: ', history_n);
+          if (historyIndex >= 0) {
+            // setStoreData(this.ctx, historyIndex, "curr_history");
+            console.log('DELETE HISTORY: ', historyIndex);
             console.log(message.data);
 
             vscode.workspace.fs.delete(
@@ -130,7 +130,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             );
             console.log('file removed');
 
-            history_list.splice(history_n, 1);
+            history_list.splice(historyIndex, 1);
             setStoreData(this.ctx, history_list, 'history');
             this.updateHistoryLinks();
             vscode.commands.executeCommand('testGeneration.start');

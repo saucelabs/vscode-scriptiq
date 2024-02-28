@@ -7,6 +7,7 @@ import {
   getHistoryUri,
 } from '../utilities/utilities-service';
 import { Store } from '../store';
+import * as toast from '../toast';
 
 export class SideBarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -56,7 +57,6 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
       let historyIndex = -1;
       switch (command) {
         case 'start-test-generation-command':
-          // vscode.window.showInformationMessage("Opening window");
           this.startTestGenerationWebViewPanel();
           break;
 
@@ -66,9 +66,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             !message.data.accessKey ||
             !message.data.region
           ) {
-            vscode.window.showErrorMessage(
-              'Cannot save incomplete credentials.',
-            );
+            toast.showError('Cannot save incomplete credentials.');
             break;
           }
 
@@ -77,9 +75,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             accessKey: message.data.accessKey,
             region: message.data.region,
           });
-          vscode.window.showInformationMessage(
-            'Credentials saved successfully.',
-          );
+          toast.showInfo('Credentials saved successfully.');
           webview.html = this.getHTMLForWebview(webview);
           break;
         }

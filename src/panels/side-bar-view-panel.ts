@@ -153,15 +153,15 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public updateHistoryLinks(selected: number = -1): void {
-    const history_list = getStoreData(this.ctx, 'history');
-    for (let x = 0; x < history_list.length; x++) {
-      if ('goal' in history_list[x]) {
-        history_list[x].name = getHistoryName(history_list[x]);
+    const historyList = getStoreData(this.ctx, 'history');
+    for (let x = 0; x < historyList.length; x++) {
+      if ('goal' in historyList[x]) {
+        historyList[x].name = getHistoryName(historyList[x]);
       }
     }
     this.view?.webview.postMessage({
       command: 'update-history-links',
-      data: history_list,
+      data: historyList,
       selected: selected,
     });
   }

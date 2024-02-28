@@ -791,11 +791,11 @@ function generateTestOutputInteractables(
  */
 function sendUserRating(rating, step, test_record) {
   console.log('Sending User Rating');
-  let copied_test_record = Object.assign({}, test_record);
-  copied_test_record.step_data = test_record.step_data[step];
+  let testRecordCopy = Object.assign({}, test_record);
+  testRecordCopy.step_data = test_record.step_data[step];
   vscode.postMessage({
     command: 'send-user-rating',
-    data: { rating: rating, step: step, test_record: copied_test_record },
+    data: { rating: rating, step: step, test_record: testRecordCopy },
   });
 }
 

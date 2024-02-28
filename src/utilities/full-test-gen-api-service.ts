@@ -15,18 +15,18 @@ const scriptiqServer =
 export function askToTestGenerationAPIAsStream(
   goal: string,
   apk: string,
-  max_test_steps: number,
+  maxTestSteps: number,
   sauceUsername: string,
   sauceAccessKey: string,
-  data_center: string,
+  region: string,
   devices: any,
   platformVersion: string,
   assertions: Array<string>,
   testID: string,
   dirURI: vscode.Uri,
   outputURI: vscode.Uri,
-  start_actions: any = undefined,
-  prev_goal: string = '',
+  startActions: any = undefined,
+  prevGoal: string = '',
 ): Observable<string> {
   return new Observable<string>((observer) => {
     // 👇️ const response: Response
@@ -35,13 +35,13 @@ export function askToTestGenerationAPIAsStream(
       body: JSON.stringify({
         sauce_username: sauceUsername,
         sauce_api_key: sauceAccessKey,
-        sauce_data_center: data_center,
+        sauce_data_center: region,
         apk: apk,
         goal: goal,
-        num_steps: max_test_steps,
+        num_steps: maxTestSteps,
         device_names: devices,
         platform_version: platformVersion,
-        start_actions: start_actions,
+        start_actions: startActions,
         assertions: assertions,
       }),
       headers: {
@@ -49,11 +49,11 @@ export function askToTestGenerationAPIAsStream(
       },
     });
 
-    if (prev_goal !== '') {
-      if (prev_goal.startsWith('Edit: ')) {
-        goal = 'Edit: ' + goal + ', ' + prev_goal;
+    if (prevGoal !== '') {
+      if (prevGoal.startsWith('Edit: ')) {
+        goal = 'Edit: ' + goal + ', ' + prevGoal;
       } else {
-        goal = 'Edit: ' + goal + ', Orig Goal: ' + prev_goal;
+        goal = 'Edit: ' + goal + ', Orig Goal: ' + prevGoal;
       }
     }
 
@@ -63,10 +63,10 @@ export function askToTestGenerationAPIAsStream(
       apk: apk,
       goal: goal,
       user_screen_descs: assertions,
-      max_test_steps: max_test_steps,
+      max_test_steps: maxTestSteps,
       devices: devices,
       platform_version: platformVersion,
-      data_center: data_center,
+      data_center: region,
     };
     response
       .then(async (res) => {
@@ -121,20 +121,20 @@ export function askToTestGenerationAPIAsStream(
                     vscode.workspace.fs.writeFile(outputURI, uint8Array);
                     observer.next(full_data);
                   }
-                  const finished_flag: any = {
+                  const finishedFlag: any = {
                     finished: true,
                   };
-                  observer.next(finished_flag);
+                  observer.next(finishedFlag);
                 } else {
                   observer.next(data);
                 }
               }
             }
           }
-          const finished_flag: any = {
+          const finishedFlag: any = {
             finished: true,
           };
-          observer.next(finished_flag);
+          observer.next(finishedFlag);
         }
       })
       .catch((err: Error) => {
@@ -144,17 +144,17 @@ export function askToTestGenerationAPIAsStream(
 }
 
 /**
- * Download image from imgURL and save it to `curr_img_dir/img_out_name`.
+ * Download image from imgURL and save it to `imgDir/imgName`.
  * Skips download if file already exists.
  */
 export async function downloadImage(
   imgURL: any,
-  img_out_name: any,
-  curr_img_dir: any,
+  imgName: any,
+  imgDir: any,
   sauceUsername: string,
   sauceAccessKey: string,
 ) {
-  const localURLFName = curr_img_dir + '/' + img_out_name;
+  const localURLFName = imgDir + '/' + imgName;
 
   let x = 0;
   while (!existsSync(localURLFName) && x < 10) {
@@ -202,17 +202,13 @@ export function resendGeneratedTest(
   });
 }
 
-export function sendUserRating(
-  rating: string,
-  step_num: number,
-  test_record: any,
-) {
+export function sendUserRating(rating: string, step: number, testRecord: any) {
   fetch(`${scriptiqServer}/gather_user_rating`, {
     method: 'POST',
     body: JSON.stringify({
       rating: rating,
-      step_num: step_num,
-      test_record: test_record,
+      step_num: step,
+      test_record: testRecord,
     }),
     headers: {
       'Content-Type': 'application/json',

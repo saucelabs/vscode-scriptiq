@@ -155,15 +155,15 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            let history_list = getStoreData(this.ctx, 'history');
-            for (let x = 0; x < history_list.length; x++) {
-              if (history_list[x].testID == message.data.testID) {
+            let historyList = getStoreData(this.ctx, 'history');
+            for (let x = 0; x < historyList.length; x++) {
+              if (historyList[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
                 return;
               }
             }
-            if (history_list.length == max_history_len) {
-              const removed_test = history_list.pop();
+            if (historyList.length == max_history_len) {
+              const removed_test = historyList.pop();
               vscode.workspace.fs.delete(
                 getHistoryUri(this.ctx, [removed_test.testID]),
                 { recursive: true },
@@ -174,8 +174,8 @@ export class TestGenerationPanel {
               apk: message.data.apk,
               testID: message.data.testID,
             };
-            history_list = [newHistory].concat(history_list);
-            setStoreData(this.ctx, history_list, 'history');
+            historyList = [newHistory].concat(historyList);
+            setStoreData(this.ctx, historyList, 'history');
             vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
 
             // Save the results in the to remove from machine
@@ -352,9 +352,9 @@ export class TestGenerationPanel {
   private askTestGenerationLLM(
     goal: string,
     apk: string,
-    max_test_steps: number,
+    maxTestSteps: number,
     devices: Array<string>,
-    platform_version: string,
+    platformVersion: string,
     assertions: Array<string>,
   ) {
     const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
@@ -374,12 +374,12 @@ export class TestGenerationPanel {
       askToTestGenerationAPIAsStream(
         goal,
         apk,
-        max_test_steps,
+        maxTestSteps,
         sauceUsername,
         sauceAccessKey,
         data_center,
         devices,
-        platform_version,
+        platformVersion,
         assertions,
         testID,
         dirURI,
@@ -399,11 +399,11 @@ export class TestGenerationPanel {
   private askEditTestLLM(
     goal: string,
     apk: string,
-    max_test_steps: number,
-    start_actions: any,
+    maxTestSteps: number,
+    startActions: any,
     devices: Array<string>,
-    platform_version: string,
-    prev_goal: string,
+    platformVersion: string,
+    prevGoal: string,
   ) {
     const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
       this.accessSauceCredentials();
@@ -420,18 +420,18 @@ export class TestGenerationPanel {
       askToTestGenerationAPIAsStream(
         goal,
         apk,
-        max_test_steps,
+        maxTestSteps,
         sauceUsername,
         sauceAccessKey,
         data_center,
         devices,
-        platform_version,
+        platformVersion,
         [],
         testID,
         dirURI,
         outputFileURI,
-        start_actions,
-        prev_goal,
+        startActions,
+        prevGoal,
       ).subscribe((test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',

@@ -12,6 +12,7 @@ import {
   resendGeneratedTest,
   askToTestGenerationAPIAsStream,
 } from '../utilities/full-test-gen-api-service';
+import { Store } from '../store';
 
 const max_history_len = 100;
 
@@ -29,6 +30,7 @@ export class TestGenerationPanel {
   private ctx: vscode.ExtensionContext;
   public canOpenWindows: boolean = true;
   private loadHistory: boolean = false;
+  private store: Store;
 
   private constructor(
     context: vscode.ExtensionContext,
@@ -40,6 +42,7 @@ export class TestGenerationPanel {
     this.panel = panel;
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     this.loadHistory = loadHistory;
+    this.store = new Store(context.globalState);
 
     this.extensionUri = extensionUri;
     // this.imageDirPath = getAsWebviewUri(this.panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
@@ -358,10 +361,9 @@ export class TestGenerationPanel {
     platformVersion: string,
     assertions: Array<string>,
   ) {
-    const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
-      this.accessSauceCredentials();
+    const creds = this.accessSauceCredentials();
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
-    if (!credentialsAvailable) {
+    if (!creds) {
       return;
     } else if (goal === undefined || goal === null || goal === '') {
       vscode.window.showErrorMessage('Please add a Goal!');
@@ -376,9 +378,9 @@ export class TestGenerationPanel {
         goal,
         apk,
         maxTestSteps,
-        sauceUsername,
-        sauceAccessKey,
-        data_center,
+        creds.username,
+        creds.accessKey,
+        creds.region,
         devices,
         platformVersion,
         assertions,
@@ -406,11 +408,10 @@ export class TestGenerationPanel {
     platformVersion: string,
     prevGoal: string,
   ) {
-    const [credentialsAvailable, sauceUsername, sauceAccessKey, data_center] =
-      this.accessSauceCredentials();
+    const creds = this.accessSauceCredentials();
 
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
-    if (!credentialsAvailable) {
+    if (!creds) {
       return;
     } else if (goal === undefined || goal === null || goal === '') {
       vscode.window.showErrorMessage('Please add a Goal!');
@@ -422,9 +423,9 @@ export class TestGenerationPanel {
         goal,
         apk,
         maxTestSteps,
-        sauceUsername,
-        sauceAccessKey,
-        data_center,
+        creds.username,
+        creds.accessKey,
+        creds.region,
         devices,
         platformVersion,
         [],
@@ -455,43 +456,25 @@ export class TestGenerationPanel {
   }
 
   private accessSauceCredentials() {
-    const storeData = getStoreData(this.ctx, 'sauce_api');
-    let credentialsAvailable = true;
-    let sauceUsername, sauceAccessKey, data_center;
-    if (storeData === undefined) {
+    const creds = this.store.getCredentials();
+    if (!creds) {
       vscode.window.showErrorMessage('Please add your credentials!');
-      credentialsAvailable = false;
-    } else {
-      sauceUsername = storeData.sauceUsername;
-      sauceAccessKey = storeData.sauceAccessKey;
-      data_center = storeData.data_center;
-
-      vscode.commands.executeCommand('clearHistoryLinkSelection.start');
-
-      if (
-        sauceUsername === undefined ||
-        sauceUsername === null ||
-        sauceUsername === ''
-      ) {
-        vscode.window.showErrorMessage('Please add your Username!');
-        credentialsAvailable = false;
-      } else if (
-        sauceAccessKey === undefined ||
-        sauceAccessKey === null ||
-        sauceAccessKey === ''
-      ) {
-        vscode.window.showErrorMessage('Please add your Access Key!');
-        credentialsAvailable = false;
-      } else if (
-        data_center === undefined ||
-        data_center === null ||
-        data_center === ''
-      ) {
-        vscode.window.showErrorMessage('Please add your Data Center!');
-        credentialsAvailable = false;
-      }
+      return creds;
     }
-    return [credentialsAvailable, sauceUsername, sauceAccessKey, data_center];
+
+    vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+
+    if (!creds.username) {
+      vscode.window.showErrorMessage('Please add your Username!');
+    }
+    if (!creds.accessKey) {
+      vscode.window.showErrorMessage('Please add your Access Key!');
+    }
+    if (!creds.region) {
+      vscode.window.showErrorMessage('Please add your Region!');
+    }
+
+    return creds;
   }
 
   /**

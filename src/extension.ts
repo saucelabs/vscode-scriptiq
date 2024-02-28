@@ -24,7 +24,6 @@ export function activate(context: vscode.ExtensionContext) {
   if (history_list === undefined) {
     setStoreData(context, [], 'history');
   }
-  // context.globalState.update("sauce_api", undefined);
   vscode.workspace.fs.createDirectory(getHistoryUri(context, []));
   vscode.workspace.fs.createDirectory(getScreenshotUri(context));
 

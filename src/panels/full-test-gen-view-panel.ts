@@ -64,8 +64,9 @@ export class TestGenerationPanel {
     // if exist show
     if (TestGenerationPanel.currentPanel) {
       if (!TestGenerationPanel.currentPanel.canOpenWindows) {
-        const responseMessage = `Cannot open other panels while test running.`;
-        vscode.window.showInformationMessage(responseMessage);
+        vscode.window.showErrorMessage(
+          'Cannot open other panels while running tests.',
+        );
         return;
       }
       TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
@@ -363,9 +364,9 @@ export class TestGenerationPanel {
     if (!credentialsAvailable) {
       return;
     } else if (goal === undefined || goal === null || goal === '') {
-      vscode.window.showInformationMessage('Please add a Goal!');
+      vscode.window.showErrorMessage('Please add a Goal!');
     } else if (apk === undefined || apk === null || apk === '') {
-      vscode.window.showInformationMessage('Please add an APK!');
+      vscode.window.showErrorMessage('Please add an APK!');
     } else {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
@@ -412,7 +413,7 @@ export class TestGenerationPanel {
     if (!credentialsAvailable) {
       return;
     } else if (goal === undefined || goal === null || goal === '') {
-      vscode.window.showInformationMessage('Please add a Goal!');
+      vscode.window.showErrorMessage('Please add a Goal!');
     } else {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
@@ -458,7 +459,7 @@ export class TestGenerationPanel {
     let credentialsAvailable = true;
     let sauceUsername, sauceAccessKey, data_center;
     if (storeData === undefined) {
-      vscode.window.showInformationMessage('Please add your credentials!');
+      vscode.window.showErrorMessage('Please add your credentials!');
       credentialsAvailable = false;
     } else {
       sauceUsername = storeData.sauceUsername;
@@ -472,21 +473,21 @@ export class TestGenerationPanel {
         sauceUsername === null ||
         sauceUsername === ''
       ) {
-        vscode.window.showInformationMessage('Please add your Username!');
+        vscode.window.showErrorMessage('Please add your Username!');
         credentialsAvailable = false;
       } else if (
         sauceAccessKey === undefined ||
         sauceAccessKey === null ||
         sauceAccessKey === ''
       ) {
-        vscode.window.showInformationMessage('Please add your Access Key!');
+        vscode.window.showErrorMessage('Please add your Access Key!');
         credentialsAvailable = false;
       } else if (
         data_center === undefined ||
         data_center === null ||
         data_center === ''
       ) {
-        vscode.window.showInformationMessage('Please add your Data Center!');
+        vscode.window.showErrorMessage('Please add your Data Center!');
         credentialsAvailable = false;
       }
     }
@@ -500,9 +501,7 @@ export class TestGenerationPanel {
     const currHistory = getStoreData(this.ctx, 'curr_history');
     const storeData = getStoreData(this.ctx, 'history')[currHistory];
     if (storeData === undefined || storeData === null || storeData === '') {
-      vscode.window.showInformationMessage(
-        'Please run a test before reloading!',
-      );
+      vscode.window.showErrorMessage('Please run a test before reloading!');
     } else {
       console.log(storeData);
       resendGeneratedTest(storeData, getHistoryUri(this.ctx, [])).subscribe(

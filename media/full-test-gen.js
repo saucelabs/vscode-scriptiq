@@ -256,7 +256,7 @@ function generateFullTestDisplay() {
     data.apk,
     data.selected_device_name,
     data.selected_platform_version,
-    data.data_center,
+    data.region,
   );
 }
 
@@ -675,7 +675,7 @@ function generateTestOutputInteractables(
   apk,
   device_name,
   platform_version,
-  data_center,
+  region,
 ) {
   const outputButtonsDiv = document.createElement('div');
   outputButtonsDiv.classList.add('flex-container');
@@ -721,7 +721,7 @@ function generateTestOutputInteractables(
       apk,
       device_name,
       platform_version,
-      data_center,
+      region,
     );
 
     var codeStepText = '';

@@ -137,7 +137,7 @@ export class AppiumJava extends CodeTemplate {
    * @param {string} platform_version
    * @returns string with header
    */
-  scriptHeaderCode(goal, apk, device_name, platform_version, data_center) {
+  scriptHeaderCode(goal, apk, device_name, platform_version, region) {
     return `
 <span ${this.code_class_class}>import</span> com.google.common.collect.<span ${this.code_created_classes_class}>ImmutableMap</span>;
 <span ${this.code_class_class}>import</span> io.appium.java_client.<span ${this.code_created_classes_class}>AppiumDriver</span>;
@@ -182,7 +182,7 @@ public <span ${this.code_class_class}>class</span> <span ${this.code_created_cla
 
         url = <span ${this.code_class_class}>new</span> <span ${this.code_parameter_class}>URL</span>(<span ${this.code_string_class}>"https://"</span> + <span ${this.code_parameter_class}>System</span>.<span ${this.code_parameter_class}>getenv</span>(<span ${this.code_string_class}>"SAUCE_USERNAME"</span>) + <span ${this.code_string_class}>":"</span> +
                        <span ${this.code_parameter_class}>System</span>.<span ${this.code_parameter_class}>getenv</span>(<span ${this.code_string_class}>"SAUCE_ACCESS_KEY"</span>) +
-                       <span ${this.code_string_class}>"@ondemand.${data_center}.saucelabs.com/wd/hub"</span>);
+                       <span ${this.code_string_class}>"@ondemand.${region}.saucelabs.com/wd/hub"</span>);
 
         <span ${this.code_comment_class}>// For all capabilities please check
         // http://appium.io/docs/en/writing-running-appium/caps/#general-capabilities

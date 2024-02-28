@@ -133,7 +133,7 @@ export class AppiumPython extends CodeTemplate {
    * @param {string} platform_version
    * @returns string with header
    */
-  scriptHeaderCode(goal, apk, device_name, platform_version, data_center) {
+  scriptHeaderCode(goal, apk, device_name, platform_version, region) {
     return `<span ${this.code_parameter_class}>import</span> os
 
 <span ${this.code_parameter_class}>from</span> appium <span ${this.code_parameter_class}>import</span> webdriver
@@ -162,7 +162,7 @@ dc[<span ${this.code_string_class}>'sauce:options'</span>][<span ${this.code_str
 dc[<span ${this.code_string_class}>'sauce:options'</span>][<span ${this.code_string_class}>"accessKey"</span>] = os.environ[<span ${this.code_string_class}>"SAUCE_ACCESS_KEY"</span>]
 
 options = <span ${this.code_class_class}>UiAutomator2Options</span>().load_capabilities(dc)
-url = <span ${this.code_string_class}>'https://ondemand.${data_center}.saucelabs.com/wd/hub'</span> 
+url = <span ${this.code_string_class}>'https://ondemand.${region}.saucelabs.com/wd/hub'</span> 
 
 driver = webdriver.<span ${this.code_class_class}>Remote</span>(url, <span ${this.code_parameter_class}}>options</span>=options)
 driver.implicitly_wait(<span ${this.code_number_class}>60</span>)

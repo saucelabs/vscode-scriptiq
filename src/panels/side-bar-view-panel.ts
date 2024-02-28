@@ -6,6 +6,7 @@ import {
   getHistoryName,
   getHistoryUri,
 } from '../utilities/utilities-service';
+import { Store } from '../store';
 
 export class SideBarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -13,11 +14,14 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   private view?: vscode.WebviewView;
   private viewCtx?: vscode.WebviewViewResolveContext;
   private cancelToken?: vscode.CancellationToken;
+  private store: Store;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
     private readonly ctx: vscode.ExtensionContext,
-  ) {}
+  ) {
+    this.store = new Store(ctx.globalState);
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -40,13 +44,13 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getHTMLForWebview(webviewView.webview);
 
-    this.addReceiveMessageEvents(webviewView.webview);
+    this.subscribeToWebviewEvents(webviewView.webview);
   }
 
   /**
    * Add listener for events from js.
    */
-  private addReceiveMessageEvents(webview: vscode.Webview) {
+  private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
       const command = message.command;
       let historyIndex = -1;
@@ -57,19 +61,22 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'save-credentials': {
-          const storeData = getStoreData(this.ctx, 'sauce_api');
-          if (storeData) {
-            if (!message.data.sauceUsername) {
-              message.data.sauceUsername = storeData.sauceUsername;
-            }
-            if (!message.data.sauceAccessKey) {
-              message.data.sauceAccessKey = storeData.sauceAccessKey;
-            }
-            if (!message.data.data_center) {
-              message.data.data_center = storeData.data_center;
-            }
+          if (
+            !message.data.username ||
+            !message.data.accessKey ||
+            !message.data.region
+          ) {
+            vscode.window.showErrorMessage(
+              'Cannot save incomplete credentials.',
+            );
+            break;
           }
-          setStoreData(this.ctx, message.data, 'sauce_api');
+
+          this.store.saveCredentials({
+            username: message.data.username,
+            accessKey: message.data.accessKey,
+            region: message.data.region,
+          });
           vscode.window.showInformationMessage(
             'Credentials saved successfully.',
           );
@@ -172,24 +179,10 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
-    const storeData = getStoreData(this.ctx, 'sauce_api');
-    let username = '',
-      accesskey = '',
-      data_center = '';
-    if (storeData !== undefined) {
-      if (storeData.sauceUsername !== undefined) {
-        username = storeData.sauceUsername;
-      }
-      if (storeData.sauceAccessKey !== undefined) {
-        accesskey = storeData.sauceAccessKey;
-      }
-      if (storeData.data_center !== undefined) {
-        data_center = storeData.data_center;
-      }
-    }
+    const creds = this.store.getCredentials();
 
     let settingsTabButton, historyTabButton, settingsTabData, historyTabData;
-    if (username === '' && accesskey === '' && data_center === '') {
+    if (!creds?.username && !creds?.accessKey && !creds?.region) {
       settingsTabButton = ' class="active"';
       historyTabButton = '';
       settingsTabData = ' in active';
@@ -246,16 +239,16 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 				</div>
 				<h5>Sauce Labs Credentials</h5>
 				<div class="form-container">
-					<label for="sauce-username-text-field-id">Sauce Username</label>
-					<input id="sauce-username-text-field-id" value="${username}" placeholder="e.g. oauth-test-user-12345" />							
+					<label for="username-text-field-id">Sauce Username</label>
+					<input id="username-text-field-id" value="${creds?.username ?? ''}" placeholder="e.g. oauth-test-user-12345" />							
 				</div>		
 				<div class="form-container">
-					<label for="sauce-access-key-text-field-id">Sauce Access Key</label>
-					<input id="sauce-access-key-text-field-id" value="${accesskey}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />				
+					<label for="access-key-text-field-id">Sauce Access Key</label>
+					<input id="access-key-text-field-id" value="${creds?.accessKey ?? ''}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />				
 				</div>
 				<div class="form-container">
-					<label for="data_center-text-field-id">Sauce Labs Data Center</label>
-					<input id="data_center-text-field-id" value="${data_center}" placeholder="e.g. us-west-1" />				
+					<label for="region-text-field-id">Sauce Labs Region</label>
+					<input id="region-text-field-id" value="${creds?.region ?? ''}" placeholder="e.g. us-west-1" />				
 				</div>
 				<div class="form-container">
 					<button id="save-button-id" class="button button-primary">Save</button>

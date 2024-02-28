@@ -10,15 +10,9 @@ const startTestGeneration = document.getElementById(
   'start-test-generation-button',
 );
 const saveButton = document.getElementById('save-button-id');
-const sauceUsernameTextField = document.getElementById(
-  'sauce-username-text-field-id',
-);
-const sauceAccessKeyTextField = document.getElementById(
-  'sauce-access-key-text-field-id',
-);
-const dataCenterTextField = document.getElementById(
-  'data_center-text-field-id',
-);
+const usernameTextField = document.getElementById('username-text-field-id');
+const accessKeyTextField = document.getElementById('access-key-text-field-id');
+const regionTextField = document.getElementById('region-text-field-id');
 
 const sauceOrange = '#F1997B';
 
@@ -40,12 +34,9 @@ function main() {
     const message = event.data; // The json data that the extension sent
     switch (message.command) {
       case 'settings-exist':
-        const sauceUsername = message.data.sauceUsername;
-        const sauceAccessKey = message.data.sauceAccessKey;
-        const data_center = message.data.data_center;
-        sauceUsernameTextField.value = sauceUsername;
-        sauceAccessKeyTextField.value = sauceAccessKey;
-        dataCenterTextField.value = data_center;
+        usernameTextField.value = message.data.username;
+        accessKeyTextField.value = message.data.accessKey;
+        regionTextField.value = message.data.region;
         break;
       case 'update-history-links':
         document.getElementById('history-links').innerHTML = '';
@@ -79,9 +70,9 @@ function handleStartButtonClick() {
 function handleSaveClick() {
   console.log('Handling save');
   const data = {
-    sauceUsername: sauceUsernameTextField?.value,
-    sauceAccessKey: sauceAccessKeyTextField?.value,
-    data_center: dataCenterTextField?.value,
+    username: usernameTextField?.value,
+    accessKey: accessKeyTextField?.value,
+    region: regionTextField?.value,
   };
   console.log(data);
   vscode.postMessage({

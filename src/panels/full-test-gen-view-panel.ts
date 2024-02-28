@@ -361,7 +361,7 @@ export class TestGenerationPanel {
     platformVersion: string,
     assertions: Array<string>,
   ) {
-    const creds = this.accessSauceCredentials();
+    const creds = this.getCredentials();
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
     if (!creds) {
       return;
@@ -408,7 +408,7 @@ export class TestGenerationPanel {
     platformVersion: string,
     prevGoal: string,
   ) {
-    const creds = this.accessSauceCredentials();
+    const creds = this.getCredentials();
 
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
     if (!creds) {
@@ -455,7 +455,7 @@ export class TestGenerationPanel {
     return getHistoryUri(this.ctx, [testID, 'data.json']);
   }
 
-  private accessSauceCredentials() {
+  private getCredentials() {
     const creds = this.store.getCredentials();
     if (!creds) {
       vscode.window.showErrorMessage('Please add your credentials!');

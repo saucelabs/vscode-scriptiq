@@ -13,6 +13,7 @@ import {
   askToTestGenerationAPIAsStream,
 } from '../utilities/full-test-gen-api-service';
 import { Store } from '../store';
+import * as toast from '../toast';
 
 const max_history_len = 100;
 
@@ -67,9 +68,7 @@ export class TestGenerationPanel {
     // if exist show
     if (TestGenerationPanel.currentPanel) {
       if (!TestGenerationPanel.currentPanel.canOpenWindows) {
-        vscode.window.showErrorMessage(
-          'Cannot open other panels while running tests.',
-        );
+        toast.showError('Cannot open other panels while running tests.');
         return;
       }
       TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
@@ -366,9 +365,9 @@ export class TestGenerationPanel {
     if (!creds) {
       return;
     } else if (goal === undefined || goal === null || goal === '') {
-      vscode.window.showErrorMessage('Please add a Goal!');
+      toast.showError('Please add a Goal!');
     } else if (apk === undefined || apk === null || apk === '') {
-      vscode.window.showErrorMessage('Please add an APK!');
+      toast.showError('Please add an APK!');
     } else {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
@@ -414,7 +413,7 @@ export class TestGenerationPanel {
     if (!creds) {
       return;
     } else if (goal === undefined || goal === null || goal === '') {
-      vscode.window.showErrorMessage('Please add a Goal!');
+      toast.showError('Please add a Goal!');
     } else {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
@@ -458,20 +457,20 @@ export class TestGenerationPanel {
   private getCredentials() {
     const creds = this.store.getCredentials();
     if (!creds) {
-      vscode.window.showErrorMessage('Please add your credentials!');
+      toast.showError('Please add your credentials!');
       return creds;
     }
 
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
 
     if (!creds.username) {
-      vscode.window.showErrorMessage('Please add your Username!');
+      toast.showError('Please add your Username!');
     }
     if (!creds.accessKey) {
-      vscode.window.showErrorMessage('Please add your Access Key!');
+      toast.showError('Please add your Access Key!');
     }
     if (!creds.region) {
-      vscode.window.showErrorMessage('Please add your Region!');
+      toast.showError('Please add your Region!');
     }
 
     return creds;
@@ -484,7 +483,7 @@ export class TestGenerationPanel {
     const currHistory = getStoreData(this.ctx, 'curr_history');
     const storeData = getStoreData(this.ctx, 'history')[currHistory];
     if (storeData === undefined || storeData === null || storeData === '') {
-      vscode.window.showErrorMessage('Please run a test before reloading!');
+      toast.showError('Please run a test before reloading!');
     } else {
       console.log(storeData);
       resendGeneratedTest(storeData, getHistoryUri(this.ctx, [])).subscribe(

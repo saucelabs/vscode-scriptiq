@@ -44,13 +44,13 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getHTMLForWebview(webviewView.webview);
 
-    this.addReceiveMessageEvents(webviewView.webview);
+    this.subscribeToWebviewEvents(webviewView.webview);
   }
 
   /**
    * Add listener for events from js.
    */
-  private addReceiveMessageEvents(webview: vscode.Webview) {
+  private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
       const command = message.command;
       let historyIndex = -1;

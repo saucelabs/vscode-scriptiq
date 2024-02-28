@@ -54,7 +54,7 @@ export class TestGenerationPanel {
       this.panel.webview,
       extensionUri,
     );
-    this.setWebviewMessageListener(this.panel.webview, extensionUri);
+    this.subscribeToWebviewEvents(this.panel.webview, extensionUri);
   }
 
   /**
@@ -139,7 +139,7 @@ export class TestGenerationPanel {
   /**
    * Add listeners to catch messages from mainview js.
    */
-  private setWebviewMessageListener(
+  private subscribeToWebviewEvents(
     webview: vscode.Webview,
     extensionUri: vscode.Uri,
   ) {

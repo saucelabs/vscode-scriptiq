@@ -185,6 +185,7 @@ export async function downloadImage(
   }
 }
 
+// FIXME why is this in the api service?
 export function resendGeneratedTest(
   data: any,
   storagePath: any,

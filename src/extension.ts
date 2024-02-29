@@ -5,6 +5,7 @@ import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
 import { getScreenshotUri } from './utilities/utilities-service';
 import { GlobalStorage } from './storage';
+import * as fs from 'node:fs';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -17,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const storage = new GlobalStorage(context.globalStorageUri);
 
-  vscode.workspace.fs.createDirectory(storage.getHistoryUri());
+  fs.mkdirSync(storage.getHistoryUri().path, { recursive: true });
   vscode.workspace.fs.createDirectory(getScreenshotUri(context));
 
   const testGenerationPanelCommand = vscode.commands.registerCommand(

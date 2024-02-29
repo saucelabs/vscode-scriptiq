@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import { SideBarViewProvider } from './panels/side-bar-view-panel';
 import { TestGenerationPanel } from './panels/full-test-gen-view-panel';
 import { getHistoryUri, getScreenshotUri } from './utilities/utilities-service';
-import { Store } from './store';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -15,13 +14,6 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "sauce-scriptiq" is now active!',
   );
 
-  const store = new Store(context.globalState);
-  const history = store.getHistory();
-  console.log('history', history);
-  if (history === undefined) {
-    // FIXME why do we need to set the history to an empty array here?
-    store.saveHistory([]);
-  }
   vscode.workspace.fs.createDirectory(getHistoryUri(context, []));
   vscode.workspace.fs.createDirectory(getScreenshotUri(context));
 

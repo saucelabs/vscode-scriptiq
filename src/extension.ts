@@ -1,8 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { SideBarViewProvider } from './panels/side-bar-view-panel';
-import { TestGenerationPanel } from './panels/full-test-gen-view-panel';
+import { SidebarViewProvider } from './panels/sidebar';
+import { TestGenerationPanel } from './panels/test-generation';
 import { getHistoryUri, getScreenshotUri } from './utilities/utilities-service';
 
 // This method is called when your extension is activated
@@ -34,11 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(testLoadHistoryCommand);
 
   // Side Bar View Provider
-  const provider = new SideBarViewProvider(context.extensionUri, context);
+  const provider = new SidebarViewProvider(context.extensionUri, context);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      SideBarViewProvider.viewType,
+      SidebarViewProvider.viewType,
       provider,
     ),
   );

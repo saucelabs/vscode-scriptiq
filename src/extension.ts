@@ -27,8 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   const testLoadHistoryCommand = vscode.commands.registerCommand(
     'testLoadHistory.start',
-    () => {
-      TestGenerationPanel.render(context, true);
+    (testID?: string) => {
+      TestGenerationPanel.render(context, testID);
     },
   );
   context.subscriptions.push(testLoadHistoryCommand);

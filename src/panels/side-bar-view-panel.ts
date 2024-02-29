@@ -1,9 +1,5 @@
 import * as vscode from 'vscode';
-import {
-  getNonce,
-  setStoreData,
-  getHistoryUri,
-} from '../utilities/utilities-service';
+import { getNonce, getHistoryUri } from '../utilities/utilities-service';
 import { Store } from '../store';
 import * as toast from '../toast';
 
@@ -87,18 +83,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
 
         case 'load-history': {
           // FIXME shouldn't this be called "load-test-record"?
-          const history = this.store.getHistory();
-          for (let i = 0; i < history.length; i++) {
-            if (message.data == history[i].testID) {
-              historyIndex = i;
-              break;
-            }
-          }
-          if (historyIndex >= 0) {
-            // FIXME shouldn't this be called "active-test-record"?
-            setStoreData(this.ctx, historyIndex, 'curr_history');
-            vscode.commands.executeCommand('testLoadHistory.start');
-          }
+          vscode.commands.executeCommand('testLoadHistory.start', message.data);
           break;
         }
 

@@ -258,7 +258,7 @@ export class TestGenerationPanel {
     // get uris from out directory based on vscode.extensionUri
     const webviewUri = getAsWebviewUri(webview, extensionUri, [
       'media',
-      'full-test-gen.js',
+      'test-generation.js',
     ]);
     const nonce = getNonce();
     const styleVSCodeUri = getAsWebviewUri(webview, extensionUri, [

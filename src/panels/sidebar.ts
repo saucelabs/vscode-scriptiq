@@ -3,7 +3,7 @@ import { getNonce, getHistoryUri } from '../utilities/utilities-service';
 import { Store } from '../store';
 import * as toast from '../toast';
 
-export class SideBarViewProvider implements vscode.WebviewViewProvider {
+export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
 
   private view?: vscode.WebviewView;
@@ -144,7 +144,7 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   private getHTMLForWebview(webview: vscode.Webview) {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, 'media', 'side-bar.js'),
+      vscode.Uri.joinPath(this.extensionUri, 'media', 'sidebar.js'),
     );
 
     // Do the same for the stylesheet.

@@ -158,7 +158,7 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            let history = this.store.getHistory();
+            const history = this.store.getHistory();
             for (let i = 0; i < history.length; i++) {
               if (history[i].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
@@ -179,7 +179,7 @@ export class TestGenerationPanel {
               apk: message.data.apk,
               testID: message.data.testID,
             };
-            history = [newRecord].concat(history);
+            history.unshift(newRecord);
             this.store.saveHistory(history);
             vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
 

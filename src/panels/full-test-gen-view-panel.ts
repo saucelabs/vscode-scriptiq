@@ -471,7 +471,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Reload history instance.
+   * Show the test record in the webview.
    */
   private showTestRecord(testID: string) {
     const testRecord = this.store

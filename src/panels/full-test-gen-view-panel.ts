@@ -158,7 +158,7 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            let history = this.store.getHistory() || [];
+            let history = this.store.getHistory();
             for (let x = 0; x < history.length; x++) {
               if (history[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");

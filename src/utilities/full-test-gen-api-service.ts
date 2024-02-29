@@ -30,7 +30,7 @@ export function askToTestGenerationAPIAsStream(
 ): Observable<string> {
   return new Observable<string>((observer) => {
     // 👇️ const response: Response
-    const response = fetch(`${scriptiqServer}/gen_full_test`, {
+    const response = fetch(`${scriptiqServer}/v1/genTest`, {
       method: 'POST',
       body: JSON.stringify({
         sauce_username: username,
@@ -202,7 +202,7 @@ export function resendGeneratedTest(
 }
 
 export function sendUserRating(rating: string, step: number, testRecord: any) {
-  fetch(`${scriptiqServer}/gather_user_rating`, {
+  fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({
       rating: rating,

@@ -15,7 +15,7 @@ import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
 
-const max_history_len = 100;
+const MAX_HISTORY_LEN = 100;
 
 /**
  * Webview panel class
@@ -165,7 +165,7 @@ export class TestGenerationPanel {
                 return;
               }
             }
-            if (history.length == max_history_len) {
+            if (history.length == MAX_HISTORY_LEN) {
               const removedRecord = history.pop();
               if (removedRecord) {
                 vscode.workspace.fs.delete(

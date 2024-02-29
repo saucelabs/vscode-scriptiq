@@ -2,8 +2,6 @@ import * as vscode from 'vscode';
 import {
   getNonce,
   setStoreData,
-  getStoreData,
-  getHistoryName,
   getHistoryUri,
 } from '../utilities/utilities-service';
 import { Store } from '../store';
@@ -88,14 +86,16 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'load-history': {
-          const history_list = getStoreData(this.ctx, 'history');
-          for (let x = 0; x < history_list.length; x++) {
-            if (message.data == history_list[x].testID) {
-              historyIndex = x;
+          // FIXME shouldn't this be called "load-test-record"?
+          const history = this.store.getHistory();
+          for (let i = 0; i < history.length; i++) {
+            if (message.data == history[i].testID) {
+              historyIndex = i;
               break;
             }
           }
           if (historyIndex >= 0) {
+            // FIXME shouldn't this be called "active-test-record"?
             setStoreData(this.ctx, historyIndex, 'curr_history');
             vscode.commands.executeCommand('testLoadHistory.start');
           }
@@ -103,15 +103,15 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
         }
 
         case 'delete-history': {
-          const historyList = getStoreData(this.ctx, 'history');
-          for (let x = 0; x < historyList.length; x++) {
-            if (message.data == historyList[x].testID) {
-              historyIndex = x;
+          // FIXME shouldn't this be called "delete-test-record"?
+          const history = this.store.getHistory();
+          for (let i = 0; i < history.length; i++) {
+            if (message.data == history[i].testID) {
+              historyIndex = i;
               break;
             }
           }
           if (historyIndex >= 0) {
-            // setStoreData(this.ctx, historyIndex, "curr_history");
             console.log('DELETE HISTORY: ', historyIndex);
             console.log(message.data);
 
@@ -121,8 +121,8 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
             );
             console.log('file removed');
 
-            historyList.splice(historyIndex, 1);
-            setStoreData(this.ctx, historyList, 'history');
+            history.splice(historyIndex, 1);
+            this.store.saveHistory(history);
             this.updateHistoryLinks();
             vscode.commands.executeCommand('testGeneration.start');
           }
@@ -144,15 +144,10 @@ export class SideBarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public updateHistoryLinks(selected: number = -1): void {
-    const historyList = getStoreData(this.ctx, 'history');
-    for (let x = 0; x < historyList.length; x++) {
-      if ('goal' in historyList[x]) {
-        historyList[x].name = getHistoryName(historyList[x]);
-      }
-    }
+    const history = this.store.getHistory();
     this.view?.webview.postMessage({
       command: 'update-history-links',
-      data: historyList,
+      data: history,
       selected: selected,
     });
   }

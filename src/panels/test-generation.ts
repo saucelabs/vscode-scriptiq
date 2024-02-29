@@ -3,16 +3,16 @@ import {
   getNonce,
   getAsWebviewUri,
   getVSCodeUri,
-  getHistoryUri,
 } from '../utilities/utilities-service';
 import {
   sendUserRating,
-  resendGeneratedTest,
   askToTestGenerationAPIAsStream,
 } from '../utilities/full-test-gen-api-service';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
+import * as fs from 'node:fs';
+import { GlobalStorage } from '../storage';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -30,6 +30,7 @@ export class TestGenerationPanel {
   private ctx: vscode.ExtensionContext;
   public canOpenWindows: boolean = true;
   private store: Store;
+  private storage: GlobalStorage;
 
   private constructor(
     context: vscode.ExtensionContext,
@@ -40,6 +41,7 @@ export class TestGenerationPanel {
     this.panel = panel;
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     this.store = new Store(context.globalState);
+    this.storage = new GlobalStorage(context.globalStorageUri);
 
     this.extensionUri = extensionUri;
     // this.imageDirPath = getAsWebviewUri(this.panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
@@ -161,7 +163,7 @@ export class TestGenerationPanel {
               const removedRecord = history.pop();
               if (removedRecord) {
                 vscode.workspace.fs.delete(
-                  getHistoryUri(this.ctx, [removedRecord.testID]),
+                  this.storage.getHistoryUri(removedRecord.testID),
                   { recursive: true },
                 );
               }
@@ -188,7 +190,7 @@ export class TestGenerationPanel {
               uint8Array,
             );
             vscode.workspace.fs.copy(
-              getHistoryUri(this.ctx, [message.data.testID]),
+              this.storage.getHistoryUri(message.data.testID),
               vscode.Uri.joinPath(
                 extensionUri,
                 'media',
@@ -228,7 +230,7 @@ export class TestGenerationPanel {
             }
             console.log('COPY IN IMAGE DIR');
             vscode.workspace.fs.copy(
-              getHistoryUri(this.ctx, [message.testID]),
+              this.storage.getHistoryUri(message.testID),
               vscode.Uri.joinPath(
                 extensionUri,
                 'media',
@@ -441,11 +443,11 @@ export class TestGenerationPanel {
   }
 
   private getTestDirURI(testID: string) {
-    return getHistoryUri(this.ctx, [testID]);
+    return this.storage.getHistoryUri(testID);
   }
 
   private getTestDataFileURI(testID: string) {
-    return getHistoryUri(this.ctx, [testID, 'data.json']);
+    return this.storage.getHistoryUri(testID, 'data.json');
   }
 
   private getCredentials() {
@@ -482,14 +484,15 @@ export class TestGenerationPanel {
       return;
     }
 
-    resendGeneratedTest(testRecord, getHistoryUri(this.ctx, [])).subscribe(
-      (test) => {
-        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          command: 'history',
-          data: test,
-        });
-      },
+    const jsonString = fs.readFileSync(
+      this.storage.getHistoryUri(testID, 'data.json').path,
+      'utf-8',
     );
+    const testData = JSON.parse(jsonString);
+    TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+      command: 'history',
+      data: testData,
+    });
   }
 
   /**

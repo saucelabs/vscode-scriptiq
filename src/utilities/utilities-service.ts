@@ -39,20 +39,6 @@ export function getNonce() {
 /**
  * Uri for history
  */
-export function getHistoryUri(
-  context: vscode.ExtensionContext,
-  pathList: string[],
-) {
-  return vscode.Uri.joinPath(
-    context.globalStorageUri,
-    'scriptiq_history',
-    ...pathList,
-  ); // Also use name in test-generation.ts
-}
-
-/**
- * Uri for history
- */
 export function getScreenshotUri(context: vscode.ExtensionContext) {
   return vscode.Uri.joinPath(context.extensionUri, 'media', 'screenshots'); // Also use name in test-generation.ts
 }

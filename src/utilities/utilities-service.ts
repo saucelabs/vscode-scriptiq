@@ -47,12 +47,12 @@ export function getHistoryUri(
     context.globalStorageUri,
     'scriptiq_history',
     ...pathList,
-  ); // Also use name in full-test-gen-view-panel.ts
+  ); // Also use name in test-generation.ts
 }
 
 /**
  * Uri for history
  */
 export function getScreenshotUri(context: vscode.ExtensionContext) {
-  return vscode.Uri.joinPath(context.extensionUri, 'media', 'screenshots'); // Also use name in full-test-gen-view-panel.ts
+  return vscode.Uri.joinPath(context.extensionUri, 'media', 'screenshots'); // Also use name in test-generation.ts
 }

@@ -66,7 +66,7 @@ export class TestGenerationPanel {
       }
       TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
       if (testID) {
-        TestGenerationPanel.currentPanel.reloadTestRecord(testID);
+        TestGenerationPanel.currentPanel.showTestRecord(testID);
       } else {
         TestGenerationPanel.currentPanel.panel.webview.postMessage({
           command: 'clear',
@@ -105,7 +105,7 @@ export class TestGenerationPanel {
       TestGenerationPanel.currentPanel.canOpenWindows = true;
 
       if (testID) {
-        TestGenerationPanel.currentPanel.reloadTestRecord(testID);
+        TestGenerationPanel.currentPanel.showTestRecord(testID);
       }
     }
   }
@@ -473,7 +473,7 @@ export class TestGenerationPanel {
   /**
    * Reload history instance.
    */
-  private reloadTestRecord(testID: string) {
+  private showTestRecord(testID: string) {
     const testRecord = this.store
       .getHistory()
       .find((record) => record.testID === testID);

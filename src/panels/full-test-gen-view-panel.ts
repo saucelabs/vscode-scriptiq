@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import {
-  getStoreData,
   getNonce,
   getAsWebviewUri,
   getVSCodeUri,
@@ -30,19 +29,16 @@ export class TestGenerationPanel {
   private disposables: vscode.Disposable[] = [];
   private ctx: vscode.ExtensionContext;
   public canOpenWindows: boolean = true;
-  private loadHistory: boolean = false;
   private store: Store;
 
   private constructor(
     context: vscode.ExtensionContext,
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    loadHistory: boolean = false,
   ) {
     this.ctx = context;
     this.panel = panel;
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
-    this.loadHistory = loadHistory;
     this.store = new Store(context.globalState);
 
     this.extensionUri = extensionUri;
@@ -61,10 +57,7 @@ export class TestGenerationPanel {
   /**
    * Render method of webview that is triggered from "extension.ts" file.
    */
-  public static render(
-    context: vscode.ExtensionContext,
-    loadHistory: boolean = false,
-  ) {
+  public static render(context: vscode.ExtensionContext, testID?: string) {
     // if exist show
     if (TestGenerationPanel.currentPanel) {
       if (!TestGenerationPanel.currentPanel.canOpenWindows) {
@@ -72,8 +65,8 @@ export class TestGenerationPanel {
         return;
       }
       TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
-      if (loadHistory) {
-        TestGenerationPanel.currentPanel.reloadHistoryInstance();
+      if (testID) {
+        TestGenerationPanel.currentPanel.showTestRecord(testID);
       } else {
         TestGenerationPanel.currentPanel.panel.webview.postMessage({
           command: 'clear',
@@ -108,12 +101,11 @@ export class TestGenerationPanel {
         context,
         panel,
         extensionUri,
-        loadHistory,
       );
       TestGenerationPanel.currentPanel.canOpenWindows = true;
 
-      if (loadHistory) {
-        TestGenerationPanel.currentPanel.reloadHistoryInstance();
+      if (testID) {
+        TestGenerationPanel.currentPanel.showTestRecord(testID);
       }
     }
   }
@@ -479,17 +471,17 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Reload history instance.
+   * Show the test record in the webview.
    */
-  private reloadHistoryInstance() {
-    const currHistory = getStoreData(this.ctx, 'curr_history');
-    const testRecord = this.store.getHistory()[currHistory];
+  private showTestRecord(testID: string) {
+    const testRecord = this.store
+      .getHistory()
+      .find((record) => record.testID === testID);
     if (!testRecord) {
-      toast.showError('Please run a test before reloading!');
+      toast.showError('Unable to find test record.');
       return;
     }
 
-    console.log(testRecord);
     resendGeneratedTest(testRecord, getHistoryUri(this.ctx, [])).subscribe(
       (test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

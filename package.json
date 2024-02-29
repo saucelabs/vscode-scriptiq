@@ -25,23 +25,11 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "testGeneration.start",
-        "title": "Open Input Window",
-        "category": "Sauce Labs Test Generation"
-      },
-      {
-        "command": "testLoadHistory.start",
-        "title": "Open Input Window with Loaded History",
-        "category": "Sauce Labs Test Generation"
-      }
-    ],
     "viewsContainers": {
       "activitybar": [
         {
           "id": "scriptiq-settings",
-          "title": "Sauce Lab's ScriptIQ",
+          "title": "Sauce Labs ScriptIQ",
           "icon": "./media/icons/Lowcode_icon_white.png"
         }
       ]

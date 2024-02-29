@@ -478,11 +478,10 @@ export class TestGenerationPanel {
       .getHistory()
       .find((record) => record.testID === testID);
     if (!testRecord) {
-      toast.showError('Please run a test before reloading!');
+      toast.showError('Unable to find test record.');
       return;
     }
 
-    console.log(testRecord);
     resendGeneratedTest(testRecord, getHistoryUri(this.ctx, [])).subscribe(
       (test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

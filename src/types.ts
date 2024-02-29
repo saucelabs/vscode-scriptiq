@@ -3,3 +3,9 @@ export interface Credentials {
   accessKey: string;
   region: string;
 }
+
+export interface TestRecord {
+  apk: string;
+  goal: string;
+  testID: string;
+}

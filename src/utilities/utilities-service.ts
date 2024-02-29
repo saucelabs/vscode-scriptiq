@@ -96,19 +96,6 @@ export function getNonce() {
 }
 
 /**
- * Generate a name for a previous test
- */
-export function getHistoryName(history: any) {
-  let name = '';
-  const apk = history.apk;
-  const goal = history.goal;
-  name += apk.substring(0, apk.lastIndexOf('.'));
-  name += ': ';
-  name += goal;
-  return name;
-}
-
-/**
  * Uri for history
  */
 export function getHistoryUri(

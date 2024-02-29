@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Credentials } from './types';
+import { Credentials, TestRecord } from './types';
 
 /**
  * Store allows you to persist and retrieve data. The storage is global and
@@ -26,5 +26,13 @@ export class Store {
 
   saveCredentials(credentials: Credentials) {
     this.save('credentials', credentials);
+  }
+
+  getHistory(): TestRecord[] {
+    return this.get<TestRecord[]>('history') ?? [];
+  }
+
+  saveHistory(history: TestRecord[]) {
+    this.save('history', history);
   }
 }

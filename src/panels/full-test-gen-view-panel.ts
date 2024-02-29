@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import {
   getStoreData,
-  setStoreData,
   getNonce,
   getAsWebviewUri,
   getVSCodeUri,
@@ -14,6 +13,7 @@ import {
 } from '../utilities/full-test-gen-api-service';
 import { Store } from '../store';
 import * as toast from '../toast';
+import { TestRecord } from '../types';
 
 const max_history_len = 100;
 
@@ -158,27 +158,29 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            let historyList = getStoreData(this.ctx, 'history');
-            for (let x = 0; x < historyList.length; x++) {
-              if (historyList[x].testID == message.data.testID) {
+            let history = this.store.getHistory() || [];
+            for (let x = 0; x < history.length; x++) {
+              if (history[x].testID == message.data.testID) {
                 console.log("Reloading history, don't save");
                 return;
               }
             }
-            if (historyList.length == max_history_len) {
-              const removed_test = historyList.pop();
-              vscode.workspace.fs.delete(
-                getHistoryUri(this.ctx, [removed_test.testID]),
-                { recursive: true },
-              );
+            if (history.length == max_history_len) {
+              const removedRecord = history.pop();
+              if (removedRecord) {
+                vscode.workspace.fs.delete(
+                  getHistoryUri(this.ctx, [removedRecord.testID]),
+                  { recursive: true },
+                );
+              }
             }
-            const newHistory = {
+            const newRecord: TestRecord = {
               goal: message.data.goal,
               apk: message.data.apk,
               testID: message.data.testID,
             };
-            historyList = [newHistory].concat(historyList);
-            setStoreData(this.ctx, historyList, 'history');
+            history = [newRecord].concat(history);
+            this.store.saveHistory(history);
             vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
 
             // Save the results in the to remove from machine
@@ -481,20 +483,21 @@ export class TestGenerationPanel {
    */
   private reloadHistoryInstance() {
     const currHistory = getStoreData(this.ctx, 'curr_history');
-    const storeData = getStoreData(this.ctx, 'history')[currHistory];
-    if (storeData === undefined || storeData === null || storeData === '') {
+    const testRecord = this.store.getHistory()[currHistory];
+    if (!testRecord) {
       toast.showError('Please run a test before reloading!');
-    } else {
-      console.log(storeData);
-      resendGeneratedTest(storeData, getHistoryUri(this.ctx, [])).subscribe(
-        (test) => {
-          TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-            command: 'history',
-            data: test,
-          });
-        },
-      );
+      return;
     }
+
+    console.log(testRecord);
+    resendGeneratedTest(testRecord, getHistoryUri(this.ctx, [])).subscribe(
+      (test) => {
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+          command: 'history',
+          data: test,
+        });
+      },
+    );
   }
 
   /**

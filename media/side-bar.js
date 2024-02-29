@@ -39,6 +39,7 @@ function main() {
         regionTextField.value = message.data.region;
         break;
       case 'update-history-links':
+        console.log('Updating history links');
         document.getElementById('history-links').innerHTML = '';
         createHistoryLinks(message.data, message.selected);
         break;
@@ -166,7 +167,8 @@ function createHistoryLinks(history_list, selected) {
         data: history.testID,
       });
     };
-    historyLink.innerHTML = '\u2192 ' + history.name;
+    historyLink.innerHTML =
+      '\u2192 ' + getTestRecordName(history.apk, history.goal);
 
     var trashButton = document.createElement('i');
     trashButton.classList.add('fa', 'fa-trash');
@@ -187,4 +189,12 @@ function resetHistoryLinkColor() {
   for (let historyN = 0; historyN < historyLinkList.length; historyN++) {
     historyLinkList[historyN].classList.remove('history-selected');
   }
+}
+
+function getTestRecordName(apk, goal) {
+  let name = apk.substring(0, apk.lastIndexOf('.'));
+  name += ': ';
+  name += goal;
+
+  return name;
 }

@@ -362,7 +362,6 @@ export class TestGenerationPanel {
       toast.showError('Please add an APK!');
     } else {
       const testID = this.getTestCandidateID();
-      const dirURI = this.getTestDirURI(testID);
       this.canOpenWindows = false;
       askToTestGenerationAPIAsStream(
         goal,
@@ -375,7 +374,6 @@ export class TestGenerationPanel {
         platformVersion,
         assertions,
         testID,
-        dirURI,
         undefined,
         '',
         this.storage,
@@ -409,7 +407,6 @@ export class TestGenerationPanel {
       toast.showError('Please add a Goal!');
     } else {
       const testID = this.getTestCandidateID();
-      const dirURI = this.getTestDirURI(testID);
       askToTestGenerationAPIAsStream(
         goal,
         apk,
@@ -421,7 +418,6 @@ export class TestGenerationPanel {
         platformVersion,
         [],
         testID,
-        dirURI,
         startActions,
         prevGoal,
         this.storage,

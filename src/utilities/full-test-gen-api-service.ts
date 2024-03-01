@@ -1,4 +1,3 @@
-import * as vscode from 'vscode';
 import { fetch } from 'undici';
 import { TextDecoderStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
@@ -20,7 +19,6 @@ export function askToTestGenerationAPIAsStream(
   platformVersion: string,
   assertions: Array<string>,
   testID: string,
-  dirURI: vscode.Uri,
   startActions: any = undefined,
   prevGoal: string = '',
   storage: GlobalStorage,

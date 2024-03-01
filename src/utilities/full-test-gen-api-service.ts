@@ -10,19 +10,19 @@ const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
 
 export function askToTestGenerationAPIAsStream(
+  storage: GlobalStorage,
   goal: string,
   apk: string,
   maxTestSteps: number,
   username: string,
   accessKey: string,
   region: string,
-  devices: any,
+  devices: string[],
   platformVersion: string,
-  assertions: Array<string>,
+  assertions: string[],
   testID: string,
-  startActions: any = undefined,
+  startActions: string[],
   prevGoal: string = '',
-  storage: GlobalStorage,
 ): Observable<string> {
   return new Observable<string>((observer) => {
     // 👇️ const response: Response

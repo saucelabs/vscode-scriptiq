@@ -364,6 +364,7 @@ export class TestGenerationPanel {
       const testID = this.createTestRecordID();
       this.canOpenWindows = false;
       askToTestGenerationAPIAsStream(
+        this.storage,
         goal,
         apk,
         maxTestSteps,
@@ -374,9 +375,8 @@ export class TestGenerationPanel {
         platformVersion,
         assertions,
         testID,
-        undefined,
+        [],
         '',
-        this.storage,
       ).subscribe((test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',
@@ -393,8 +393,8 @@ export class TestGenerationPanel {
     goal: string,
     apk: string,
     maxTestSteps: number,
-    startActions: any,
-    devices: Array<string>,
+    startActions: string[],
+    devices: string[],
     platformVersion: string,
     prevGoal: string,
   ) {
@@ -408,6 +408,7 @@ export class TestGenerationPanel {
     } else {
       const testID = this.createTestRecordID();
       askToTestGenerationAPIAsStream(
+        this.storage,
         goal,
         apk,
         maxTestSteps,
@@ -420,7 +421,6 @@ export class TestGenerationPanel {
         testID,
         startActions,
         prevGoal,
-        this.storage,
       ).subscribe((test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',

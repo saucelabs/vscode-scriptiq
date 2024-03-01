@@ -23,8 +23,8 @@ export function askToTestGenerationAPIAsStream(
   testID: string,
   startActions: string[],
   prevGoal: string = '',
-): Observable<string> {
-  return new Observable<string>((observer) => {
+): Observable<TestRecord | { finished: boolean }> {
+  return new Observable<TestRecord | { finished: boolean }>((observer) => {
     // 👇️ const response: Response
     const response = fetch(`${scriptiqServer}/v1/genTest`, {
       method: 'POST',
@@ -53,7 +53,7 @@ export function askToTestGenerationAPIAsStream(
       }
     }
 
-    const fullData: any = {
+    const fullData: TestRecord = {
       all_steps: [],
       testID: testID,
       apk: apk,
@@ -102,28 +102,26 @@ export function askToTestGenerationAPIAsStream(
                     );
                     console.log('STEP INFO');
                     console.log(data.step_data);
-                    fullData.all_steps.push(data.step_data);
+                    fullData.all_steps?.push(data.step_data);
                   }
                 } else if (data.header === 'Done') {
-                  if (fullData.all_steps.length > 0) {
+                  if (fullData.all_steps && fullData.all_steps?.length > 0) {
                     console.log('Saving Test Record.');
                     storage.saveTestRecord(fullData);
                     observer.next(fullData);
                   }
-                  const finishedFlag: any = {
+                  observer.next({
                     finished: true,
-                  };
-                  observer.next(finishedFlag);
+                  });
                 } else {
                   observer.next(data);
                 }
               }
             }
           }
-          const finishedFlag: any = {
+          observer.next({
             finished: true,
-          };
-          observer.next(finishedFlag);
+          });
         }
       })
       .catch((err: Error) => {

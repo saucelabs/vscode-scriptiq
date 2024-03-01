@@ -434,10 +434,6 @@ export class TestGenerationPanel {
     return new Date().valueOf().toString();
   }
 
-  private getTestDirURI(testID: string) {
-    return this.storage.getHistoryUri(testID);
-  }
-
   private getCredentials() {
     const creds = this.store.getCredentials();
     if (!creds) {

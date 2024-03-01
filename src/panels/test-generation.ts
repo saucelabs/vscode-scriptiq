@@ -354,36 +354,41 @@ export class TestGenerationPanel {
   ) {
     const creds = this.getCredentials();
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+
     if (!creds) {
       return;
-    } else if (!goal) {
-      toast.showError('Please add a Goal!');
-    } else if (!apk) {
-      toast.showError('Please add an APK!');
-    } else {
-      const testID = this.createTestRecordID();
-      this.canOpenWindows = false;
-      askToTestGenerationAPIAsStream(
-        this.storage,
-        goal,
-        apk,
-        maxTestSteps,
-        creds.username,
-        creds.accessKey,
-        creds.region,
-        devices,
-        platformVersion,
-        assertions,
-        testID,
-        [],
-        '',
-      ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          command: 'test',
-          data: test,
-        });
-      });
     }
+    if (!goal) {
+      toast.showError('Please add a Goal!');
+      return;
+    }
+    if (!apk) {
+      toast.showError('Please add an APK!');
+      return;
+    }
+
+    const testID = this.createTestRecordID();
+    this.canOpenWindows = false;
+    askToTestGenerationAPIAsStream(
+      this.storage,
+      goal,
+      apk,
+      maxTestSteps,
+      creds.username,
+      creds.accessKey,
+      creds.region,
+      devices,
+      platformVersion,
+      assertions,
+      testID,
+      [],
+      '',
+    ).subscribe((test) => {
+      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+        command: 'test',
+        data: test,
+      });
+    });
   }
 
   /**

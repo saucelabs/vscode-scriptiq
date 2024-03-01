@@ -443,10 +443,6 @@ export class TestGenerationPanel {
     return this.storage.getHistoryUri(testID);
   }
 
-  private getTestDataFileURI(testID: string) {
-    return this.storage.getHistoryUri(testID, 'data.json');
-  }
-
   private getCredentials() {
     const creds = this.store.getCredentials();
     if (!creds) {

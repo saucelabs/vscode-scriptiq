@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { fetch } from 'undici';
 import { TextDecoderStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
-import * as fs from 'fs';
 
 import { createWriteStream, existsSync } from 'node:fs';
 import { pipeline } from 'node:stream';
@@ -181,22 +180,6 @@ export async function downloadImage(
     }
     x += 1;
   }
-}
-
-// FIXME why is this in the api service?
-export function resendGeneratedTest(
-  data: any,
-  storagePath: any,
-): Observable<string> {
-  return new Observable<string>((observer) => {
-    console.log(`${storagePath.path}/${data.testID}/data.json`);
-    const jsonString = fs.readFileSync(
-      `${storagePath.path}/${data.testID}/data.json`,
-      'utf-8',
-    );
-    const jsonData = JSON.parse(jsonString);
-    observer.next(jsonData);
-  });
 }
 
 export function sendUserRating(rating: string, step: number, testRecord: any) {

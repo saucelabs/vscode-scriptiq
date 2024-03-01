@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { getNonce, getHistoryUri } from '../utilities/utilities-service';
+import { getNonce } from '../utilities/utilities-service';
 import { Store } from '../store';
 import * as toast from '../toast';
+import { GlobalStorage } from '../storage';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -10,12 +11,14 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   private viewCtx?: vscode.WebviewViewResolveContext;
   private cancelToken?: vscode.CancellationToken;
   private store: Store;
+  private storage: GlobalStorage;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
     private readonly ctx: vscode.ExtensionContext,
   ) {
     this.store = new Store(ctx.globalState);
+    this.storage = new GlobalStorage(ctx.globalStorageUri);
   }
 
   public resolveWebviewView(
@@ -97,14 +100,11 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             }
           }
           if (historyIndex >= 0) {
-            console.log('DELETE HISTORY: ', historyIndex);
+            console.log('Deleting historic entry: ', historyIndex);
             console.log(message.data);
 
-            vscode.workspace.fs.delete(
-              getHistoryUri(this.ctx, [message.data]),
-              { recursive: true },
-            );
-            console.log('file removed');
+            this.storage.deleteTestRecord(message.data);
+            console.log('Test Record deleted.');
 
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);

@@ -97,8 +97,6 @@ export function askToTestGenerationAPIAsStream(
                     fullData.img_ratio = data.img_ratio;
                   } else {
                     observer.next(data);
-                    // console.log(`Received step ${data.step_data.step_num}`);
-                    // console.log(`Getting img: ${data.img_data.img_url}`);
                     await downloadImage(
                       data.img_data.img_url,
                       data.img_data.img_out_name,

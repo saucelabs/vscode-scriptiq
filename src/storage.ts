@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import { TestRecord } from './types';
+import { Readable } from 'node:stream';
+import { ReadableStream } from 'node:stream/web';
+import { finished } from 'node:stream/promises';
+import * as path from 'node:path';
 
 /**
  * GlobalStorage allows you to persist and retrieve data. The storage is global
@@ -49,12 +53,23 @@ export class GlobalStorage {
       throw new Error('failed to persist test record: missing ID');
     }
 
-    fs.writeFileSync(
-      this.getHistoryUri(record.testID, 'data.json').path,
-      JSON.stringify(record),
-      {
-        encoding: 'utf-8',
-      },
-    );
+    const dest = this.getHistoryUri(record.testID, 'data.json').path;
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+
+    fs.writeFileSync(dest, JSON.stringify(record), {
+      encoding: 'utf-8',
+    });
+  }
+
+  async saveTestRecordAsset(
+    testID: string,
+    name: string,
+    data: ReadableStream,
+  ) {
+    const dest = this.getHistoryUri(testID, name).path;
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+
+    const fileStream = fs.createWriteStream(dest);
+    await finished(Readable.fromWeb(data).pipe(fileStream));
   }
 }

@@ -3,9 +3,6 @@ import { fetch } from 'undici';
 import { TextDecoderStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
-import { createWriteStream, existsSync } from 'node:fs';
-import { pipeline } from 'node:stream';
-import { promisify } from 'node:util';
 import { GlobalStorage } from '../storage';
 
 // Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
@@ -90,7 +87,6 @@ export function askToTestGenerationAPIAsStream(
                   if ('job_id' in data) {
                     observer.next(data);
                     console.log('job generated, general info');
-                    vscode.workspace.fs.createDirectory(dirURI);
                     fullData.selected_device_name = data.selected_device_name;
                     fullData.selected_platform_version =
                       data.selected_platform_version;
@@ -98,11 +94,12 @@ export function askToTestGenerationAPIAsStream(
                   } else {
                     observer.next(data);
                     await downloadImage(
+                      testID,
                       data.img_data.img_url,
                       data.img_data.img_out_name,
-                      dirURI.path,
                       username,
                       accessKey,
+                      storage,
                     );
                     console.log('STEP INFO');
                     console.log(data.step_data);
@@ -141,42 +138,46 @@ export function askToTestGenerationAPIAsStream(
  * Skips download if file already exists.
  */
 export async function downloadImage(
+  testID: string,
   imgURL: any,
   imgName: any,
-  imgDir: any,
   username: string,
   accessKey: string,
+  storage: GlobalStorage,
 ) {
-  const localURLFName = imgDir + '/' + imgName;
-
-  let x = 0;
-  while (!existsSync(localURLFName) && x < 10) {
-    if (x > 0) {
-      console.log('Try downloading again');
+  for (let attempt = 0; attempt < 10; attempt++) {
+    if (attempt > 0) {
+      console.log('Retrying image download...');
       await new Promise((f) => setTimeout(f, 1000));
     }
     try {
-      const streamPipeline = promisify(pipeline);
-      const response: any = await fetch(imgURL, {
+      const response = await fetch(imgURL, {
         headers: {
           Authorization: 'Basic ' + btoa(username + ':' + accessKey),
         },
       });
 
-      if (!response.ok)
-        throw new Error(`unexpected response ${response.statusText}`);
-
-      streamPipeline(response.body, createWriteStream(localURLFName));
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log('error message: ', error.message);
-        // return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        // return 'An unexpected error occurred';
+      if (response.status === 404) {
+        console.log('Image not found.');
+        continue;
       }
+
+      if (!response.ok) {
+        console.error(`Unexpected response: ${response.statusText}`);
+        continue;
+      }
+
+      if (!response.body) {
+        console.error(`Unexpected response: ${response.statusText}: no body`);
+        continue;
+      }
+
+      console.log('Saving image...');
+      await storage.saveTestRecordAsset(testID, imgName, response.body);
+      return;
+    } catch (error) {
+      console.error('Failed to download image:', error);
     }
-    x += 1;
   }
 }
 

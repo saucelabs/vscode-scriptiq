@@ -5,12 +5,23 @@ import { TestRecord } from './types';
 /**
  * GlobalStorage allows you to persist and retrieve data. The storage is global
  * and not tied a workspace.
+ *
+ * Call `init()` to ensure that the storage is fully initialized before storing
+ * any data.
  */
 export class GlobalStorage {
   private readonly storageUri: vscode.Uri;
 
   constructor(storageUri: vscode.Uri) {
     this.storageUri = storageUri;
+  }
+
+  /**
+   * Initializes the global storage by creating, if necessary, its backing file
+   * structure.
+   */
+  init() {
+    fs.mkdirSync(this.getHistoryUri().path, { recursive: true });
   }
 
   /**

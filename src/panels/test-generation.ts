@@ -404,35 +404,37 @@ export class TestGenerationPanel {
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
-
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+
     if (!creds) {
       return;
-    } else if (!goal) {
-      toast.showError('Please add a Goal!');
-    } else {
-      const testID = this.createTestRecordID();
-      askToTestGenerationAPIAsStream(
-        this.storage,
-        goal,
-        apk,
-        maxTestSteps,
-        creds.username,
-        creds.accessKey,
-        creds.region,
-        devices,
-        platformVersion,
-        [],
-        testID,
-        startActions,
-        prevGoal,
-      ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          command: 'test',
-          data: test,
-        });
-      });
     }
+    if (!goal) {
+      toast.showError('Please add a Goal!');
+      return;
+    }
+
+    const testID = this.createTestRecordID();
+    askToTestGenerationAPIAsStream(
+      this.storage,
+      goal,
+      apk,
+      maxTestSteps,
+      creds.username,
+      creds.accessKey,
+      creds.region,
+      devices,
+      platformVersion,
+      [],
+      testID,
+      startActions,
+      prevGoal,
+    ).subscribe((test) => {
+      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+        command: 'test',
+        data: test,
+      });
+    });
   }
 
   // FIXME should really generate a UUID, even if it's an 8-character one.

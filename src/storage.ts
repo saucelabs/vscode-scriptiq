@@ -48,6 +48,19 @@ export class GlobalStorage {
     fs.rmSync(this.getHistoryUri(id).path, { recursive: true });
   }
 
+  getTestRecord(id: string): TestRecord {
+    if (!id) {
+      throw new Error('failed to retrieve test record: missing ID');
+    }
+
+    const dest = this.getHistoryUri(id, 'data.json').path;
+    const data = fs.readFileSync(dest, {
+      encoding: 'utf-8',
+    });
+
+    return JSON.parse(data);
+  }
+
   saveTestRecord(record: TestRecord) {
     if (!record.testID) {
       throw new Error('failed to persist test record: missing ID');

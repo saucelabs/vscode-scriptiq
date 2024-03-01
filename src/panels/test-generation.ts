@@ -11,7 +11,6 @@ import {
 import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
-import * as fs from 'node:fs';
 import { GlobalStorage } from '../storage';
 
 const MAX_HISTORY_LEN = 100;
@@ -477,14 +476,9 @@ export class TestGenerationPanel {
       return;
     }
 
-    const jsonString = fs.readFileSync(
-      this.storage.getHistoryUri(testID, 'data.json').path,
-      'utf-8',
-    );
-    const testData = JSON.parse(jsonString);
     TestGenerationPanel.currentPanel?.panel.webview.postMessage({
       command: 'history',
-      data: testData,
+      data: this.storage.getTestRecord(testID),
     });
   }
 

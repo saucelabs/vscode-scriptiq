@@ -105,7 +105,7 @@ export function askToTestGenerationAPIAsStream(
                     fullData.all_steps?.push(data.step_data);
                   }
                 } else if (data.header === 'Done') {
-                  if (fullData.all_steps && fullData.all_steps?.length > 0) {
+                  if (fullData.all_steps && fullData.all_steps.length > 0) {
                     console.log('Saving Test Record.');
                     storage.saveTestRecord(fullData);
                     observer.next(fullData);

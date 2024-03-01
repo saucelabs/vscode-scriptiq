@@ -354,36 +354,41 @@ export class TestGenerationPanel {
   ) {
     const creds = this.getCredentials();
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+
     if (!creds) {
       return;
-    } else if (goal === undefined || goal === null || goal === '') {
-      toast.showError('Please add a Goal!');
-    } else if (apk === undefined || apk === null || apk === '') {
-      toast.showError('Please add an APK!');
-    } else {
-      const testID = this.createTestRecordID();
-      this.canOpenWindows = false;
-      askToTestGenerationAPIAsStream(
-        goal,
-        apk,
-        maxTestSteps,
-        creds.username,
-        creds.accessKey,
-        creds.region,
-        devices,
-        platformVersion,
-        assertions,
-        testID,
-        undefined,
-        '',
-        this.storage,
-      ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          command: 'test',
-          data: test,
-        });
-      });
     }
+    if (!goal) {
+      toast.showError('Please add a Goal!');
+      return;
+    }
+    if (!apk) {
+      toast.showError('Please add an APK!');
+      return;
+    }
+
+    const testID = this.createTestRecordID();
+    this.canOpenWindows = false;
+    askToTestGenerationAPIAsStream(
+      this.storage,
+      goal,
+      apk,
+      maxTestSteps,
+      creds.username,
+      creds.accessKey,
+      creds.region,
+      devices,
+      platformVersion,
+      assertions,
+      testID,
+      [],
+      '',
+    ).subscribe((test) => {
+      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+        command: 'test',
+        data: test,
+      });
+    });
   }
 
   /**
@@ -393,41 +398,43 @@ export class TestGenerationPanel {
     goal: string,
     apk: string,
     maxTestSteps: number,
-    startActions: any,
-    devices: Array<string>,
+    startActions: string[],
+    devices: string[],
     platformVersion: string,
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
-
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+
     if (!creds) {
       return;
-    } else if (goal === undefined || goal === null || goal === '') {
-      toast.showError('Please add a Goal!');
-    } else {
-      const testID = this.createTestRecordID();
-      askToTestGenerationAPIAsStream(
-        goal,
-        apk,
-        maxTestSteps,
-        creds.username,
-        creds.accessKey,
-        creds.region,
-        devices,
-        platformVersion,
-        [],
-        testID,
-        startActions,
-        prevGoal,
-        this.storage,
-      ).subscribe((test) => {
-        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          command: 'test',
-          data: test,
-        });
-      });
     }
+    if (!goal) {
+      toast.showError('Please add a Goal!');
+      return;
+    }
+
+    const testID = this.createTestRecordID();
+    askToTestGenerationAPIAsStream(
+      this.storage,
+      goal,
+      apk,
+      maxTestSteps,
+      creds.username,
+      creds.accessKey,
+      creds.region,
+      devices,
+      platformVersion,
+      [],
+      testID,
+      startActions,
+      prevGoal,
+    ).subscribe((test) => {
+      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+        command: 'test',
+        data: test,
+      });
+    });
   }
 
   // FIXME should really generate a UUID, even if it's an 8-character one.

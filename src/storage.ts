@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as fs from 'node:fs';
+import { TestRecord } from './types';
 
 /**
  * GlobalStorage allows you to persist and retrieve data. The storage is global
@@ -20,6 +22,20 @@ export class GlobalStorage {
       this.storageUri,
       'scriptiq_history',
       ...segments,
+    );
+  }
+
+  saveTestRecord(record: TestRecord) {
+    if (!record.testID) {
+      throw new Error('failed to persist test record: missing ID');
+    }
+
+    fs.writeFileSync(
+      this.getHistoryUri(record.testID, 'data.json').path,
+      JSON.stringify(record),
+      {
+        encoding: 'utf-8',
+      },
     );
   }
 }

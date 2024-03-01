@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import { createWriteStream, existsSync } from 'node:fs';
 import { pipeline } from 'node:stream';
 import { promisify } from 'node:util';
+import { GlobalStorage } from '../storage';
 
 // Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer =
@@ -24,9 +25,9 @@ export function askToTestGenerationAPIAsStream(
   assertions: Array<string>,
   testID: string,
   dirURI: vscode.Uri,
-  outputURI: vscode.Uri,
   startActions: any = undefined,
   prevGoal: string = '',
+  storage: GlobalStorage,
 ): Observable<string> {
   return new Observable<string>((observer) => {
     // 👇️ const response: Response
@@ -112,11 +113,8 @@ export function askToTestGenerationAPIAsStream(
                   }
                 } else if (data.header === 'Done') {
                   if (fullData.all_steps.length > 0) {
-                    const encoder = new TextEncoder();
-                    const uint8Array = encoder.encode(JSON.stringify(fullData));
-                    console.log('Output data.json');
-                    console.log(outputURI.path);
-                    vscode.workspace.fs.writeFile(outputURI, uint8Array);
+                    console.log('Saving Test Record.');
+                    storage.saveTestRecord(fullData);
                     observer.next(fullData);
                   }
                   const finishedFlag: any = {

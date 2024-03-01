@@ -367,7 +367,6 @@ export class TestGenerationPanel {
     } else {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
-      const outputFileURI = this.getTestDataFileURI(testID);
       this.canOpenWindows = false;
       askToTestGenerationAPIAsStream(
         goal,
@@ -381,7 +380,9 @@ export class TestGenerationPanel {
         assertions,
         testID,
         dirURI,
-        outputFileURI,
+        undefined,
+        '',
+        this.storage,
       ).subscribe((test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',
@@ -413,7 +414,6 @@ export class TestGenerationPanel {
     } else {
       const testID = this.getTestCandidateID();
       const dirURI = this.getTestDirURI(testID);
-      const outputFileURI = this.getTestDataFileURI(testID);
       askToTestGenerationAPIAsStream(
         goal,
         apk,
@@ -426,9 +426,9 @@ export class TestGenerationPanel {
         [],
         testID,
         dirURI,
-        outputFileURI,
         startActions,
         prevGoal,
+        this.storage,
       ).subscribe((test) => {
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           command: 'test',

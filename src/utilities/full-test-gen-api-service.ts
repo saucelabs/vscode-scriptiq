@@ -139,8 +139,8 @@ export function askToTestGenerationAPIAsStream(
  */
 export async function downloadImage(
   testID: string,
-  imgURL: any,
-  imgName: any,
+  imgURL: string,
+  imgName: string,
   username: string,
   accessKey: string,
   storage: GlobalStorage,

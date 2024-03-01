@@ -361,7 +361,7 @@ export class TestGenerationPanel {
     } else if (apk === undefined || apk === null || apk === '') {
       toast.showError('Please add an APK!');
     } else {
-      const testID = this.getTestCandidateID();
+      const testID = this.createTestRecordID();
       this.canOpenWindows = false;
       askToTestGenerationAPIAsStream(
         goal,
@@ -406,7 +406,7 @@ export class TestGenerationPanel {
     } else if (goal === undefined || goal === null || goal === '') {
       toast.showError('Please add a Goal!');
     } else {
-      const testID = this.getTestCandidateID();
+      const testID = this.createTestRecordID();
       askToTestGenerationAPIAsStream(
         goal,
         apk,
@@ -430,7 +430,8 @@ export class TestGenerationPanel {
     }
   }
 
-  private getTestCandidateID() {
+  // FIXME should really generate a UUID, even if it's an 8-character one.
+  private createTestRecordID() {
     return new Date().valueOf().toString();
   }
 

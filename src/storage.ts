@@ -25,6 +25,14 @@ export class GlobalStorage {
     );
   }
 
+  deleteTestRecord(id: string) {
+    if (!id) {
+      return;
+    }
+
+    fs.rmSync(this.getHistoryUri(id).path, { recursive: true });
+  }
+
   saveTestRecord(record: TestRecord) {
     if (!record.testID) {
       throw new Error('failed to persist test record: missing ID');

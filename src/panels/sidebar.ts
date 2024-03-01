@@ -100,14 +100,11 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             }
           }
           if (historyIndex >= 0) {
-            console.log('DELETE HISTORY: ', historyIndex);
+            console.log('Deleting historic entry: ', historyIndex);
             console.log(message.data);
 
-            vscode.workspace.fs.delete(
-              this.storage.getHistoryUri(message.data),
-              { recursive: true },
-            );
-            console.log('file removed');
+            this.storage.deleteTestRecord(message.data);
+            console.log('Test Record deleted.');
 
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);

@@ -162,10 +162,7 @@ export class TestGenerationPanel {
             if (history.length == MAX_HISTORY_LEN) {
               const removedRecord = history.pop();
               if (removedRecord) {
-                vscode.workspace.fs.delete(
-                  this.storage.getHistoryUri(removedRecord.testID),
-                  { recursive: true },
-                );
+                this.storage.deleteTestRecord(removedRecord.testID);
               }
             }
             const newRecord: TestRecord = {

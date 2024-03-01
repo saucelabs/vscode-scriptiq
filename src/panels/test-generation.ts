@@ -356,9 +356,9 @@ export class TestGenerationPanel {
     vscode.commands.executeCommand('clearHistoryLinkSelection.start');
     if (!creds) {
       return;
-    } else if (goal === undefined || goal === null || goal === '') {
+    } else if (!goal) {
       toast.showError('Please add a Goal!');
-    } else if (apk === undefined || apk === null || apk === '') {
+    } else if (!apk) {
       toast.showError('Please add an APK!');
     } else {
       const testID = this.createTestRecordID();

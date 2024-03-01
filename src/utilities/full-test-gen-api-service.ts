@@ -3,6 +3,7 @@ import { TextDecoderStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../storage';
+import { TestRecord } from '../types';
 
 // Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer =
@@ -179,7 +180,11 @@ export async function downloadImage(
   }
 }
 
-export function sendUserRating(rating: string, step: number, testRecord: any) {
+export function sendUserRating(
+  rating: string,
+  step: number,
+  testRecord: TestRecord,
+) {
   fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({

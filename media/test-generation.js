@@ -787,15 +787,14 @@ function generateTestOutputInteractables(
  * Sends rating to API to log
  * @param {string} rating provided by user (liked, disliked, no-rating)
  * @param {number} step that the user rated
- * @param {dict} test_record information on the generated test
+ * @param {dict} testRecord information on the generated test
  */
-function sendUserRating(rating, step, test_record) {
-  console.log('Sending User Rating');
-  let testRecordCopy = Object.assign({}, test_record);
-  testRecordCopy.step_data = test_record.step_data[step];
+function sendUserRating(rating, step, testRecord) {
+  console.log(`Sending User Rating for step ${step}: ${rating}`);
+  // FIXME test record is missing step information (no step_data or all_steps)
   vscode.postMessage({
     command: 'send-user-rating',
-    data: { rating: rating, step: step, test_record: testRecordCopy },
+    data: { rating: rating, step: step, test_record: testRecord },
   });
 }
 

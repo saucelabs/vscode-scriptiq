@@ -152,7 +152,7 @@ function createHistoryLinks(history_list, selected) {
 
   for (let x = 0; x < history_list.length; x++) {
     let history = history_list[x];
-    var historyLink = document.createElement('div');
+    const historyLink = document.createElement('div');
     if (x === selected) {
       historyLink.classList.add('history-selected');
     }
@@ -169,7 +169,7 @@ function createHistoryLinks(history_list, selected) {
     historyLink.innerHTML =
       '\u2192 ' + getTestRecordName(history.apk, history.goal);
 
-    var trashButton = document.createElement('i');
+    const trashButton = document.createElement('i');
     trashButton.classList.add('fa', 'fa-trash');
     trashButton.onclick = function () {
       console.log(history);

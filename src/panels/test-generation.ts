@@ -13,8 +13,8 @@ import * as toast from '../toast';
 import { TestRecord } from '../types';
 import { GlobalStorage } from '../storage';
 import {
-  CLEAR_HISTORY_LINK_SELECTION,
-  UPDATE_HISTORY_LINKS,
+  executeClearHistoryLinkSelectionCommand,
+  executeUpdateHistoryLinksCommand,
 } from '../commands';
 
 const MAX_HISTORY_LEN = 100;
@@ -175,7 +175,8 @@ export class TestGenerationPanel {
             };
             history.unshift(newRecord);
             this.store.saveHistory(history);
-            vscode.commands.executeCommand(UPDATE_HISTORY_LINKS, 0);
+
+            executeUpdateHistoryLinksCommand(0);
 
             // Save the results in the to remove from machine
             const encoder = new TextEncoder();
@@ -357,7 +358,7 @@ export class TestGenerationPanel {
     assertions: Array<string>,
   ) {
     const creds = this.getCredentials();
-    vscode.commands.executeCommand(CLEAR_HISTORY_LINK_SELECTION);
+    executeClearHistoryLinkSelectionCommand();
 
     if (!creds) {
       return;
@@ -408,7 +409,7 @@ export class TestGenerationPanel {
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
-    vscode.commands.executeCommand(CLEAR_HISTORY_LINK_SELECTION);
+    executeClearHistoryLinkSelectionCommand();
 
     if (!creds) {
       return;
@@ -453,7 +454,7 @@ export class TestGenerationPanel {
       return creds;
     }
 
-    vscode.commands.executeCommand(CLEAR_HISTORY_LINK_SELECTION);
+    executeClearHistoryLinkSelectionCommand();
 
     if (!creds.username) {
       toast.showError('Please add your Username!');

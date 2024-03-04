@@ -6,9 +6,9 @@ import { TestGenerationPanel } from './panels/test-generation';
 import { getScreenshotUri } from './utilities/utilities-service';
 import { GlobalStorage } from './storage';
 import {
-  CLEAR_HISTORY_LINK_SELECTION,
-  SHOW_TEST_GENERATION_PANEL,
-  UPDATE_HISTORY_LINKS,
+  registerClearHistoryLinkSelectionCommand,
+  registerShowTestGenerationPanelCommand,
+  registerUpdateHistoryLinksCommand,
 } from './commands';
 
 // This method is called when your extension is activated
@@ -25,13 +25,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   vscode.workspace.fs.createDirectory(getScreenshotUri(context));
 
-  const testGenerationPanelCommand = vscode.commands.registerCommand(
-    SHOW_TEST_GENERATION_PANEL,
-    (testID?: string) => {
-      TestGenerationPanel.render(context, testID);
-    },
-  );
-  context.subscriptions.push(testGenerationPanelCommand);
+  registerShowTestGenerationPanelCommand(context, (testID?: string) => {
+    TestGenerationPanel.render(context, testID);
+  });
 
   // Side Bar View Provider
   const provider = new SidebarViewProvider(context.extensionUri, context);
@@ -43,21 +39,13 @@ export function activate(context: vscode.ExtensionContext) {
     ),
   );
 
-  const updateHistoryLinksCommand = vscode.commands.registerCommand(
-    UPDATE_HISTORY_LINKS,
-    (selected: number = -1) => {
-      provider.updateHistoryLinks(selected);
-    },
-  );
-  context.subscriptions.push(updateHistoryLinksCommand);
+  registerUpdateHistoryLinksCommand(context, (selected = -1) => {
+    provider.updateHistoryLinks(selected);
+  });
 
-  const clearHistoryLinkSelectionCommand = vscode.commands.registerCommand(
-    CLEAR_HISTORY_LINK_SELECTION,
-    () => {
-      provider.clearHistoryLinkSelection();
-    },
-  );
-  context.subscriptions.push(clearHistoryLinkSelectionCommand);
+  registerClearHistoryLinkSelectionCommand(context, () => {
+    provider.clearHistoryLinkSelection();
+  });
 }
 
 // This method is called when your extension is deactivated

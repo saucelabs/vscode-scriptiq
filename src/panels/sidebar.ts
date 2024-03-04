@@ -51,9 +51,9 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
-      const command = message.action;
+      const action = message.action;
       let historyIndex = -1;
-      switch (command) {
+      switch (action) {
         case 'show-test-generation-panel':
           this.showTestGenerationPanel(message.data);
           break;

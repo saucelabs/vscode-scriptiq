@@ -137,9 +137,9 @@ export class TestGenerationPanel {
   ) {
     webview.onDidReceiveMessage(
       (message: any) => {
-        const command = message.action;
+        const action = message.action;
 
-        switch (command) {
+        switch (action) {
           case 'press-generate-button':
             this.askTestGenerationLLM(
               message.data.goal,

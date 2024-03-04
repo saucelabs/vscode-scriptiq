@@ -121,7 +121,7 @@ function main() {
             generateFullTestDisplay();
           }
           break;
-        case 'history':
+        case 'show-test-record':
           // Append answer.
           testHeader.style.display = 'block';
           console.log('Reading in history');

@@ -477,7 +477,7 @@ export class TestGenerationPanel {
     }
 
     TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-      action: 'history',
+      action: 'show-test-record',
       data: this.storage.getTestRecord(testID),
     });
   }

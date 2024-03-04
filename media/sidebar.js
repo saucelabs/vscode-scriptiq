@@ -60,8 +60,7 @@ function handleStartButtonClick() {
   // Send messages to Panel.
   resetHistoryLinkColor();
   vscode.postMessage({
-    command: 'start-test-generation-command',
-    text: 'start-test-generation',
+    command: 'show-test-generation-panel',
   });
 }
 

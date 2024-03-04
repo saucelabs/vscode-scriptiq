@@ -53,8 +53,8 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       const command = message.command;
       let historyIndex = -1;
       switch (command) {
-        case 'start-test-generation-command':
-          this.startTestGenerationWebViewPanel();
+        case 'show-test-generation-panel':
+          this.showTestGenerationPanel();
           break;
 
         case 'save-credentials': {
@@ -109,7 +109,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);
             this.updateHistoryLinks();
-            vscode.commands.executeCommand('testGeneration.start');
+            vscode.commands.executeCommand('scriptiq.showTestGenerationPanel');
           }
           break;
         }
@@ -120,8 +120,8 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   /**
    * Start main panel.
    */
-  private startTestGenerationWebViewPanel(): void {
-    vscode.commands.executeCommand('testGeneration.start');
+  private showTestGenerationPanel(): void {
+    vscode.commands.executeCommand('scriptiq.showTestGenerationPanel');
   }
 
   public clearHistoryLinkSelection(): void {

@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.fs.createDirectory(getScreenshotUri(context));
 
   const testGenerationPanelCommand = vscode.commands.registerCommand(
-    'testGeneration.start',
+    'scriptiq.showTestGenerationPanel',
     () => {
       TestGenerationPanel.render(context);
     },

@@ -638,7 +638,7 @@ function addEditTestInteractions(i, edit_data) {
 
     // Send messages to Panel.
     vscode.postMessage({
-      action: 'edit-test-button',
+      action: 'generate-edited-test',
       data: {
         goal: newGoalInput.value,
         apk: edit_data.apk,

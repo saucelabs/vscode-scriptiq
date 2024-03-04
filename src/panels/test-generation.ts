@@ -206,7 +206,7 @@ export class TestGenerationPanel {
             );
             return;
 
-          case 'edit-test-button':
+          case 'generate-edited-test':
             this.askEditTestLLM(
               message.data.goal,
               message.data.apk,

@@ -140,7 +140,7 @@ export class TestGenerationPanel {
         const action = message.action;
 
         switch (action) {
-          case 'press-generate-button':
+          case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,
               message.data.apk,

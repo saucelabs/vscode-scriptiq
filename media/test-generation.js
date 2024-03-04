@@ -160,7 +160,7 @@ function handleAskClick() {
 
   // Send messages to Panel.
   vscode.postMessage({
-    action: 'press-generate-button',
+    action: 'generate-test',
     data: {
       goal: goalText.value,
       apk: apkText.value,

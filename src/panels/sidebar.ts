@@ -51,7 +51,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
-      const command = message.command;
+      const command = message.action;
       let historyIndex = -1;
       switch (command) {
         case 'show-test-generation-panel':
@@ -120,13 +120,13 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public clearHistoryLinkSelection(): void {
-    this.view?.webview.postMessage({ command: 'clear-history-links' });
+    this.view?.webview.postMessage({ action: 'clear-history-links' });
   }
 
   public updateHistoryLinks(selected: number = -1): void {
     const history = this.store.getHistory();
     this.view?.webview.postMessage({
-      command: 'update-history-links',
+      action: 'update-history-links',
       data: history,
       selected: selected,
     });

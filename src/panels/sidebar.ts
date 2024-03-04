@@ -55,7 +55,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       let historyIndex = -1;
       switch (command) {
         case 'show-test-generation-panel':
-          this.showTestGenerationPanel();
+          this.showTestGenerationPanel(message.data);
           break;
 
         case 'save-credentials': {
@@ -84,12 +84,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         case 'load-history-links':
           this.updateHistoryLinks();
           break;
-
-        case 'load-history': {
-          // FIXME shouldn't this be called "load-test-record"?
-          vscode.commands.executeCommand('testLoadHistory.start', message.data);
-          break;
-        }
 
         case 'delete-history': {
           // FIXME shouldn't this be called "delete-test-record"?
@@ -121,8 +115,8 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   /**
    * Start main panel.
    */
-  private showTestGenerationPanel(): void {
-    vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL);
+  private showTestGenerationPanel(testID?: string): void {
+    vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL, testID);
   }
 
   public clearHistoryLinkSelection(): void {

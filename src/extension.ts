@@ -23,19 +23,11 @@ export function activate(context: vscode.ExtensionContext) {
 
   const testGenerationPanelCommand = vscode.commands.registerCommand(
     SHOW_TEST_GENERATION_PANEL,
-    () => {
-      TestGenerationPanel.render(context);
-    },
-  );
-  context.subscriptions.push(testGenerationPanelCommand);
-
-  const testLoadHistoryCommand = vscode.commands.registerCommand(
-    'testLoadHistory.start',
     (testID?: string) => {
       TestGenerationPanel.render(context, testID);
     },
   );
-  context.subscriptions.push(testLoadHistoryCommand);
+  context.subscriptions.push(testGenerationPanelCommand);
 
   // Side Bar View Provider
   const provider = new SidebarViewProvider(context.extensionUri, context);

@@ -162,7 +162,7 @@ function createHistoryLinks(history_list, selected) {
       resetHistoryLinkColor();
       this.classList.add('history-selected');
       vscode.postMessage({
-        command: 'load-history',
+        command: 'show-test-generation-panel',
         data: history.testID,
       });
     };

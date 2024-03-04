@@ -27,7 +27,7 @@ export class TestGenerationPanel {
   private testID: string;
   private disposables: vscode.Disposable[] = [];
   private ctx: vscode.ExtensionContext;
-  public canOpenWindows: boolean = true;
+  public testRecordNavigation: boolean = true;
   private store: Store;
   private storage: GlobalStorage;
 
@@ -61,7 +61,7 @@ export class TestGenerationPanel {
   public static render(context: vscode.ExtensionContext, testID?: string) {
     // if exist show
     if (TestGenerationPanel.currentPanel) {
-      if (!TestGenerationPanel.currentPanel.canOpenWindows) {
+      if (!TestGenerationPanel.currentPanel.testRecordNavigation) {
         toast.showError('Cannot open other panels while running tests.');
         return;
       }
@@ -103,7 +103,7 @@ export class TestGenerationPanel {
         panel,
         extensionUri,
       );
-      TestGenerationPanel.currentPanel.canOpenWindows = true;
+      TestGenerationPanel.currentPanel.testRecordNavigation = true;
 
       if (testID) {
         TestGenerationPanel.currentPanel.showTestRecord(testID);
@@ -137,10 +137,10 @@ export class TestGenerationPanel {
   ) {
     webview.onDidReceiveMessage(
       (message: any) => {
-        const command = message.action;
+        const action = message.action;
 
-        switch (command) {
-          case 'press-generate-button':
+        switch (action) {
+          case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,
               message.data.apk,
@@ -206,7 +206,7 @@ export class TestGenerationPanel {
             );
             return;
 
-          case 'edit-test-button':
+          case 'generate-edited-test':
             this.askEditTestLLM(
               message.data.goal,
               message.data.apk,
@@ -239,8 +239,8 @@ export class TestGenerationPanel {
             console.log('copied');
             return;
 
-          case 'can-open-window':
-            this.canOpenWindows = true;
+          case 'enable-test-record-navigation':
+            this.testRecordNavigation = true;
             return;
         }
       },
@@ -368,7 +368,7 @@ export class TestGenerationPanel {
     }
 
     const testID = this.createTestRecordID();
-    this.canOpenWindows = false;
+    this.testRecordNavigation = false;
     askToTestGenerationAPIAsStream(
       this.storage,
       goal,
@@ -385,7 +385,7 @@ export class TestGenerationPanel {
       '',
     ).subscribe((test) => {
       TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'test',
+        action: 'update-test-progress',
         data: test,
       });
     });
@@ -431,7 +431,7 @@ export class TestGenerationPanel {
       prevGoal,
     ).subscribe((test) => {
       TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'test',
+        action: 'update-test-progress',
         data: test,
       });
     });
@@ -477,7 +477,7 @@ export class TestGenerationPanel {
     }
 
     TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-      action: 'history',
+      action: 'show-test-record',
       data: this.storage.getTestRecord(testID),
     });
   }

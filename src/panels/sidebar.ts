@@ -51,9 +51,9 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage((message: any) => {
-      const command = message.action;
+      const action = message.action;
       let historyIndex = -1;
-      switch (command) {
+      switch (action) {
         case 'show-test-generation-panel':
           this.showTestGenerationPanel(message.data);
           break;
@@ -85,8 +85,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           this.updateHistoryLinks();
           break;
 
-        case 'delete-history': {
-          // FIXME shouldn't this be called "delete-test-record"?
+        case 'delete-test-record': {
           const history = this.store.getHistory();
           for (let i = 0; i < history.length; i++) {
             if (message.data == history[i].testID) {

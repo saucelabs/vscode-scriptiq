@@ -96,7 +96,7 @@ function main() {
     window.addEventListener('message', (event) => {
       const message = event.data; // The json data that the extension sent
       switch (message.action) {
-        case 'test':
+        case 'update-test-progress':
           // Append answer.
           if ('status_message' in message.data) {
             testGallery.innerHTML = '';
@@ -108,7 +108,7 @@ function main() {
             testGallery.appendChild(container);
           } else if ('finished' in message.data) {
             vscode.postMessage({
-              action: 'can-open-window',
+              action: 'enable-test-record-navigation',
             });
           } else {
             testGallery.innerHTML = '';
@@ -121,7 +121,7 @@ function main() {
             generateFullTestDisplay();
           }
           break;
-        case 'history':
+        case 'show-test-record':
           // Append answer.
           testHeader.style.display = 'block';
           console.log('Reading in history');
@@ -160,7 +160,7 @@ function handleAskClick() {
 
   // Send messages to Panel.
   vscode.postMessage({
-    action: 'press-generate-button',
+    action: 'generate-test',
     data: {
       goal: goalText.value,
       apk: apkText.value,
@@ -638,7 +638,7 @@ function addEditTestInteractions(i, edit_data) {
 
     // Send messages to Panel.
     vscode.postMessage({
-      action: 'edit-test-button',
+      action: 'generate-edited-test',
       data: {
         goal: newGoalInput.value,
         apk: edit_data.apk,

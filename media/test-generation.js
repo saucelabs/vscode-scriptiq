@@ -96,7 +96,7 @@ function main() {
     window.addEventListener('message', (event) => {
       const message = event.data; // The json data that the extension sent
       switch (message.action) {
-        case 'test':
+        case 'update-test-progress':
           // Append answer.
           if ('status_message' in message.data) {
             testGallery.innerHTML = '';

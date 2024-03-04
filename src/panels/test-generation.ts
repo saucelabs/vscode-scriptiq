@@ -385,7 +385,7 @@ export class TestGenerationPanel {
       '',
     ).subscribe((test) => {
       TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'test',
+        action: 'update-test-progress',
         data: test,
       });
     });
@@ -431,7 +431,7 @@ export class TestGenerationPanel {
       prevGoal,
     ).subscribe((test) => {
       TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'test',
+        action: 'update-test-progress',
         data: test,
       });
     });

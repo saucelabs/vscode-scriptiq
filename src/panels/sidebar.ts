@@ -3,6 +3,7 @@ import { getNonce } from '../utilities/utilities-service';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
+import { SHOW_TEST_GENERATION_PANEL } from '../commands';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -109,7 +110,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);
             this.updateHistoryLinks();
-            vscode.commands.executeCommand('scriptiq.showTestGenerationPanel');
+            vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL);
           }
           break;
         }
@@ -121,7 +122,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
    * Start main panel.
    */
   private showTestGenerationPanel(): void {
-    vscode.commands.executeCommand('scriptiq.showTestGenerationPanel');
+    vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL);
   }
 
   public clearHistoryLinkSelection(): void {

@@ -23,7 +23,7 @@ export const CLEAR_HISTORY_LINK_SELECTION_ID =
 
 export function registerUpdateHistoryLinksCommand(
   ctx: vscode.ExtensionContext,
-  callback: (selected: number) => void,
+  callback: (selected?: number) => void,
 ) {
   ctx.subscriptions.push(
     vscode.commands.registerCommand(UPDATE_HISTORY_LINKS_ID, callback),

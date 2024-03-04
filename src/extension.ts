@@ -5,7 +5,11 @@ import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
 import { getScreenshotUri } from './utilities/utilities-service';
 import { GlobalStorage } from './storage';
-import { SHOW_TEST_GENERATION_PANEL } from './commands';
+import {
+  CLEAR_HISTORY_LINK_SELECTION,
+  SHOW_TEST_GENERATION_PANEL,
+  UPDATE_HISTORY_LINKS,
+} from './commands';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -40,23 +44,15 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const updateHistoryLinksCommand = vscode.commands.registerCommand(
-    'updateHistoryLinks.start',
-    () => {
-      provider.updateHistoryLinks();
+    UPDATE_HISTORY_LINKS,
+    (selected: number = -1) => {
+      provider.updateHistoryLinks(selected);
     },
   );
   context.subscriptions.push(updateHistoryLinksCommand);
 
-  const updateHistoryLinksNewTestCommand = vscode.commands.registerCommand(
-    'updateHistoryLinksNewTest.start',
-    () => {
-      provider.updateHistoryLinksNewTest();
-    },
-  );
-  context.subscriptions.push(updateHistoryLinksNewTestCommand);
-
   const clearHistoryLinkSelectionCommand = vscode.commands.registerCommand(
-    'clearHistoryLinkSelection.start',
+    CLEAR_HISTORY_LINK_SELECTION,
     () => {
       provider.clearHistoryLinkSelection();
     },

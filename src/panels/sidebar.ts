@@ -131,10 +131,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     });
   }
 
-  public updateHistoryLinksNewTest(): void {
-    this.updateHistoryLinks(0);
-  }
-
   private getHTMLForWebview(webview: vscode.Webview) {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(

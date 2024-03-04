@@ -153,7 +153,7 @@ function createHistoryLinks(history_list, selected) {
   for (let x = 0; x < history_list.length; x++) {
     let history = history_list[x];
     var historyLink = document.createElement('div');
-    if (x == selected) {
+    if (x === selected) {
       historyLink.classList.add('history-selected');
     }
     historyLink.classList.add('history-instance');

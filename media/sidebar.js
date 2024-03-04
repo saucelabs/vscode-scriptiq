@@ -24,7 +24,7 @@ function main() {
   startTestGeneration?.addEventListener('click', handleStartButtonClick);
   saveButton?.addEventListener('click', handleSaveClick);
   vscode.postMessage({
-    command: 'load-history-links',
+    action: 'load-history-links',
   });
 
   // createOutputLanguage();
@@ -32,7 +32,7 @@ function main() {
   // Handle messages sent from the extension or panel to the webview
   window.addEventListener('message', (event) => {
     const message = event.data; // The json data that the extension sent
-    switch (message.command) {
+    switch (message.action) {
       case 'settings-exist':
         usernameTextField.value = message.data.username;
         accessKeyTextField.value = message.data.accessKey;
@@ -60,7 +60,7 @@ function handleStartButtonClick() {
   // Send messages to Panel.
   resetHistoryLinkColor();
   vscode.postMessage({
-    command: 'show-test-generation-panel',
+    action: 'show-test-generation-panel',
   });
 }
 
@@ -76,7 +76,7 @@ function handleSaveClick() {
   };
   console.log(data);
   vscode.postMessage({
-    command: 'save-credentials',
+    action: 'save-credentials',
     data: data,
   });
 }
@@ -103,7 +103,7 @@ function createOutputLanguage() {
 
   languageScriptChoice.onclick = function () {
     vscode.postMessage({
-      command: 'load-language',
+      action: 'load-language',
       language: 'appium_python',
     });
   };
@@ -126,7 +126,7 @@ function createOutputLanguage() {
 
   languageScriptChoice.onclick = function () {
     vscode.postMessage({
-      command: 'load-language',
+      action: 'load-language',
       language: 'appium_java',
     });
   };
@@ -162,7 +162,7 @@ function createHistoryLinks(history_list, selected) {
       resetHistoryLinkColor();
       this.classList.add('history-selected');
       vscode.postMessage({
-        command: 'show-test-generation-panel',
+        action: 'show-test-generation-panel',
         data: history.testID,
       });
     };
@@ -174,7 +174,7 @@ function createHistoryLinks(history_list, selected) {
     trashButton.onclick = function () {
       console.log(history);
       vscode.postMessage({
-        command: 'delete-history',
+        action: 'delete-history',
         data: history.testID,
       });
     };

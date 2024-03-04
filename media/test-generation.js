@@ -95,7 +95,7 @@ function main() {
     console.log('LISTENER CREATED');
     window.addEventListener('message', (event) => {
       const message = event.data; // The json data that the extension sent
-      switch (message.command) {
+      switch (message.action) {
         case 'test':
           // Append answer.
           if ('status_message' in message.data) {
@@ -108,13 +108,13 @@ function main() {
             testGallery.appendChild(container);
           } else if ('finished' in message.data) {
             vscode.postMessage({
-              command: 'can-open-window',
+              action: 'can-open-window',
             });
           } else {
             testGallery.innerHTML = '';
             outputScript.innerHTML = '';
             vscode.postMessage({
-              command: 'save-steps',
+              action: 'save-steps',
               data: message.data,
             });
             updateStepDataState(message.data);
@@ -160,7 +160,7 @@ function handleAskClick() {
 
   // Send messages to Panel.
   vscode.postMessage({
-    command: 'press-generate-button',
+    action: 'press-generate-button',
     data: {
       goal: goalText.value,
       apk: apkText.value,
@@ -229,7 +229,7 @@ function generateFullTestDisplay() {
   var timeoutTime = 0;
   // if (!languageChange) {
   vscode.postMessage({
-    command: 'copy-image',
+    action: 'copy-image',
     testID: data.testID,
   });
   timeoutTime = 400;
@@ -638,7 +638,7 @@ function addEditTestInteractions(i, edit_data) {
 
     // Send messages to Panel.
     vscode.postMessage({
-      command: 'edit-test-button',
+      action: 'edit-test-button',
       data: {
         goal: newGoalInput.value,
         apk: edit_data.apk,
@@ -793,7 +793,7 @@ function sendUserRating(rating, step, testRecord) {
   console.log(`Sending User Rating for step ${step}: ${rating}`);
   // FIXME test record is missing step information (no step_data or all_steps)
   vscode.postMessage({
-    command: 'send-user-rating',
+    action: 'send-user-rating',
     data: { rating: rating, step: step, test_record: testRecord },
   });
 }

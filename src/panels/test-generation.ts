@@ -70,7 +70,7 @@ export class TestGenerationPanel {
         TestGenerationPanel.currentPanel.showTestRecord(testID);
       } else {
         TestGenerationPanel.currentPanel.panel.webview.postMessage({
-          command: 'clear',
+          action: 'clear',
         });
       }
     } else {
@@ -137,7 +137,7 @@ export class TestGenerationPanel {
   ) {
     webview.onDidReceiveMessage(
       (message: any) => {
-        const command = message.command;
+        const command = message.action;
 
         switch (command) {
           case 'press-generate-button':
@@ -385,7 +385,7 @@ export class TestGenerationPanel {
       '',
     ).subscribe((test) => {
       TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        command: 'test',
+        action: 'test',
         data: test,
       });
     });
@@ -431,7 +431,7 @@ export class TestGenerationPanel {
       prevGoal,
     ).subscribe((test) => {
       TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        command: 'test',
+        action: 'test',
         data: test,
       });
     });
@@ -477,7 +477,7 @@ export class TestGenerationPanel {
     }
 
     TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-      command: 'history',
+      action: 'history',
       data: this.storage.getTestRecord(testID),
     });
   }

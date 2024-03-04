@@ -108,7 +108,7 @@ function main() {
             testGallery.appendChild(container);
           } else if ('finished' in message.data) {
             vscode.postMessage({
-              action: 'can-open-window',
+              action: 'enable-test-record-navigation',
             });
           } else {
             testGallery.innerHTML = '';

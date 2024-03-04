@@ -5,6 +5,7 @@ import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
 import { getScreenshotUri } from './utilities/utilities-service';
 import { GlobalStorage } from './storage';
+import { SHOW_TEST_GENERATION_PANEL } from './commands';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -21,20 +22,12 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.fs.createDirectory(getScreenshotUri(context));
 
   const testGenerationPanelCommand = vscode.commands.registerCommand(
-    'testGeneration.start',
-    () => {
-      TestGenerationPanel.render(context);
-    },
-  );
-  context.subscriptions.push(testGenerationPanelCommand);
-
-  const testLoadHistoryCommand = vscode.commands.registerCommand(
-    'testLoadHistory.start',
+    SHOW_TEST_GENERATION_PANEL,
     (testID?: string) => {
       TestGenerationPanel.render(context, testID);
     },
   );
-  context.subscriptions.push(testLoadHistoryCommand);
+  context.subscriptions.push(testGenerationPanelCommand);
 
   // Side Bar View Provider
   const provider = new SidebarViewProvider(context.extensionUri, context);

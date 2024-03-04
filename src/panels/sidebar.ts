@@ -3,6 +3,7 @@ import { getNonce } from '../utilities/utilities-service';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
+import { SHOW_TEST_GENERATION_PANEL } from '../commands';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -53,8 +54,8 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       const command = message.command;
       let historyIndex = -1;
       switch (command) {
-        case 'start-test-generation-command':
-          this.startTestGenerationWebViewPanel();
+        case 'show-test-generation-panel':
+          this.showTestGenerationPanel(message.data);
           break;
 
         case 'save-credentials': {
@@ -84,12 +85,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           this.updateHistoryLinks();
           break;
 
-        case 'load-history': {
-          // FIXME shouldn't this be called "load-test-record"?
-          vscode.commands.executeCommand('testLoadHistory.start', message.data);
-          break;
-        }
-
         case 'delete-history': {
           // FIXME shouldn't this be called "delete-test-record"?
           const history = this.store.getHistory();
@@ -109,7 +104,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);
             this.updateHistoryLinks();
-            vscode.commands.executeCommand('testGeneration.start');
+            this.showTestGenerationPanel();
           }
           break;
         }
@@ -120,8 +115,8 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   /**
    * Start main panel.
    */
-  private startTestGenerationWebViewPanel(): void {
-    vscode.commands.executeCommand('testGeneration.start');
+  private showTestGenerationPanel(testID?: string): void {
+    vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL, testID);
   }
 
   public clearHistoryLinkSelection(): void {

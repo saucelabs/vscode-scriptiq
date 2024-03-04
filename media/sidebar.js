@@ -60,8 +60,7 @@ function handleStartButtonClick() {
   // Send messages to Panel.
   resetHistoryLinkColor();
   vscode.postMessage({
-    command: 'start-test-generation-command',
-    text: 'start-test-generation',
+    command: 'show-test-generation-panel',
   });
 }
 
@@ -153,8 +152,8 @@ function createHistoryLinks(history_list, selected) {
 
   for (let x = 0; x < history_list.length; x++) {
     let history = history_list[x];
-    var historyLink = document.createElement('div');
-    if (x == selected) {
+    const historyLink = document.createElement('div');
+    if (x === selected) {
       historyLink.classList.add('history-selected');
     }
     historyLink.classList.add('history-instance');
@@ -163,14 +162,14 @@ function createHistoryLinks(history_list, selected) {
       resetHistoryLinkColor();
       this.classList.add('history-selected');
       vscode.postMessage({
-        command: 'load-history',
+        command: 'show-test-generation-panel',
         data: history.testID,
       });
     };
     historyLink.innerHTML =
       '\u2192 ' + getTestRecordName(history.apk, history.goal);
 
-    var trashButton = document.createElement('i');
+    const trashButton = document.createElement('i');
     trashButton.classList.add('fa', 'fa-trash');
     trashButton.onclick = function () {
       console.log(history);

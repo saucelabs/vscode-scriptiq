@@ -85,8 +85,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           this.updateHistoryLinks();
           break;
 
-        case 'delete-history': {
-          // FIXME shouldn't this be called "delete-test-record"?
+        case 'delete-test-record': {
           const history = this.store.getHistory();
           for (let i = 0; i < history.length; i++) {
             if (message.data == history[i].testID) {

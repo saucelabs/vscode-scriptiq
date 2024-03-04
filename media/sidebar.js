@@ -174,7 +174,7 @@ function createHistoryLinks(history_list, selected) {
     trashButton.onclick = function () {
       console.log(history);
       vscode.postMessage({
-        action: 'delete-history',
+        action: 'delete-test-record',
         data: history.testID,
       });
     };

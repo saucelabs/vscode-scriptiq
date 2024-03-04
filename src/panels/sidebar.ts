@@ -104,7 +104,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);
             this.updateHistoryLinks();
-            vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL);
+            this.showTestGenerationPanel();
           }
           break;
         }

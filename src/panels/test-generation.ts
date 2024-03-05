@@ -16,6 +16,7 @@ import {
   executeClearHistoryLinkSelectionCommand,
   executeUpdateHistoryLinksCommand,
 } from '../commands';
+import { randomUUID } from 'node:crypto';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -442,9 +443,8 @@ export class TestGenerationPanel {
     });
   }
 
-  // FIXME should really generate a UUID, even if it's an 8-character one.
   private createTestRecordID() {
-    return new Date().valueOf().toString();
+    return randomUUID().replaceAll('-', '');
   }
 
   private getCredentials() {

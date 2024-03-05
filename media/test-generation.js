@@ -325,7 +325,7 @@ function generateStep(
   stepGallery.className = 'test-step-right';
 
   stepGallery.appendChild(document.createElement('br'));
-  stepGallery.appendChild(generateCodeChoicesContainer(i, stepData, edit_data));
+  stepGallery.appendChild(generateCodeChoicesContainer(i, stepData, testID));
 
   var reasonContainer = generateReasonContainer(stepData);
   if (reasonContainer !== undefined) stepGallery.appendChild(reasonContainer);
@@ -373,15 +373,15 @@ function generateStep(
  *
  * @param {number} i is the step number
  * @param {dict} stepData is all the data about the current step of this test
- * @param {array} editData is all the data needed for the previous step.
+ * @param {string} testID ID of the test record
  * @returns the block for step i which displays the code options and the user input buttons
  */
-function generateCodeChoicesContainer(i, stepData, editData) {
+function generateCodeChoicesContainer(i, stepData, testID) {
   var codeContainer = document.createElement('div');
   codeContainer.classList.add('code-block');
 
   if (stepData.potential_identifiers.length > 0) {
-    addUserInputButtons(codeContainer, i, editData);
+    addUserInputButtons(codeContainer, i, testID);
   }
 
   var codeChoiceContainer = document.createElement('div');
@@ -538,9 +538,9 @@ function reorderCodeOptions(i) {
  * add the thumbs up/down for user feedback
  * @param {Element} container the element with the code container where the user feedback buttons are added.
  * @param {number} i the step number
- * @param {dict} test_record the record of the full test generated
+ * @param {string} testID ID of the test record
  */
-function addUserInputButtons(container, i, test_record) {
+function addUserInputButtons(container, i, testID) {
   var thumbsDownButton = document.createElement('img');
   thumbsDownButton.classList.add('thumb');
   thumbsDownButton.src = `${mediaPath}/icons/icn-thumbs-down.svg`;
@@ -551,9 +551,9 @@ function addUserInputButtons(container, i, test_record) {
 
   thumbsUpButton.onclick = function () {
     if (!this.checked) {
-      sendUserRating('like', i, test_record);
+      sendUserRating('like', i, testID);
     } else {
-      sendUserRating('norating', i, test_record);
+      sendUserRating('norating', i, testID);
     }
     this.checked = !this.checked;
     if (this.checked && thumbsDownButton.checked) {
@@ -562,9 +562,9 @@ function addUserInputButtons(container, i, test_record) {
   };
   thumbsDownButton.onclick = function () {
     if (!this.checked) {
-      sendUserRating('dislike', i, test_record);
+      sendUserRating('dislike', i, testID);
     } else {
-      sendUserRating('norating', i, test_record);
+      sendUserRating('norating', i, testID);
     }
     this.checked = !this.checked;
     if (this.checked && thumbsUpButton.checked) {
@@ -787,14 +787,13 @@ function generateTestOutputInteractables(
  * Sends rating to API to log
  * @param {string} rating provided by user (liked, disliked, no-rating)
  * @param {number} step that the user rated
- * @param {dict} testRecord information on the generated test
+ * @param {string} testID ID of the test record
  */
-function sendUserRating(rating, step, testRecord) {
-  console.log(`Sending User Rating for step ${step}: ${rating}`);
-  // FIXME test record is missing step information (no step_data or all_steps)
+function sendUserRating(rating, step, testID) {
+  console.log(`Sending User Rating for step ${step} of ${testID}: ${rating}`);
   vscode.postMessage({
     action: 'send-user-rating',
-    data: { rating: rating, step: step, test_record: testRecord },
+    data: { rating: rating, step: step, testID: testID },
   });
 }
 

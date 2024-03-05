@@ -204,13 +204,11 @@ export class TestGenerationPanel {
             );
             return;
           }
-          case 'send-user-rating':
-            sendUserRating(
-              message.data.rating,
-              message.data.step,
-              message.data.test_record,
-            );
+          case 'send-user-rating': {
+            const testRecord = this.storage.getTestRecord(message.data.testID);
+            sendUserRating(message.data.rating, message.data.step, testRecord);
             return;
+          }
 
           case 'generate-edited-test':
             this.askEditTestLLM(

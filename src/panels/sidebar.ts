@@ -3,7 +3,7 @@ import { getNonce } from '../utilities/utilities-service';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
-import { SHOW_TEST_GENERATION_PANEL } from '../commands';
+import { executeShowTestGenerationPanelCommand } from '../commands';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -55,7 +55,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       let historyIndex = -1;
       switch (action) {
         case 'show-test-generation-panel':
-          this.showTestGenerationPanel(message.data);
+          executeShowTestGenerationPanelCommand(message.data);
           break;
 
         case 'save-credentials': {
@@ -103,19 +103,12 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             history.splice(historyIndex, 1);
             this.store.saveHistory(history);
             this.updateHistoryLinks();
-            this.showTestGenerationPanel();
+            executeShowTestGenerationPanelCommand();
           }
           break;
         }
       }
     }, undefined);
-  }
-
-  /**
-   * Start main panel.
-   */
-  private showTestGenerationPanel(testID?: string): void {
-    vscode.commands.executeCommand(SHOW_TEST_GENERATION_PANEL, testID);
   }
 
   public clearHistoryLinkSelection(): void {
@@ -129,10 +122,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       data: history,
       selected: selected,
     });
-  }
-
-  public updateHistoryLinksNewTest(): void {
-    this.updateHistoryLinks(0);
   }
 
   private getHTMLForWebview(webview: vscode.Webview) {

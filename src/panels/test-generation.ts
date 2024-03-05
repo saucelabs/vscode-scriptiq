@@ -12,6 +12,10 @@ import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
 import { GlobalStorage } from '../storage';
+import {
+  executeClearHistoryLinkSelectionCommand,
+  executeUpdateHistoryLinksCommand,
+} from '../commands';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -171,7 +175,8 @@ export class TestGenerationPanel {
             };
             history.unshift(newRecord);
             this.store.saveHistory(history);
-            vscode.commands.executeCommand('updateHistoryLinksNewTest.start');
+
+            executeUpdateHistoryLinksCommand(0);
 
             // Save the results in the to remove from machine
             const encoder = new TextEncoder();
@@ -353,7 +358,7 @@ export class TestGenerationPanel {
     assertions: Array<string>,
   ) {
     const creds = this.getCredentials();
-    vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+    executeClearHistoryLinkSelectionCommand();
 
     if (!creds) {
       return;
@@ -404,7 +409,7 @@ export class TestGenerationPanel {
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
-    vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+    executeClearHistoryLinkSelectionCommand();
 
     if (!creds) {
       return;
@@ -449,7 +454,7 @@ export class TestGenerationPanel {
       return creds;
     }
 
-    vscode.commands.executeCommand('clearHistoryLinkSelection.start');
+    executeClearHistoryLinkSelectionCommand();
 
     if (!creds.username) {
       toast.showError('Please add your Username!');

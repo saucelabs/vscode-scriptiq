@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
-import { getScreenshotUri } from './utilities/utilities-service';
 import { GlobalStorage } from './storage';
 import {
   registerClearHistoryLinkSelectionCommand,
@@ -23,7 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
   const storage = new GlobalStorage(context.globalStorageUri);
   storage.init();
 
-  vscode.workspace.fs.createDirectory(getScreenshotUri(context));
+  vscode.workspace.fs.createDirectory(
+    vscode.Uri.joinPath(context.extensionUri, 'media', 'screenshots'),
+  );
 
   registerShowTestGenerationPanelCommand(context, (testID?: string) => {
     TestGenerationPanel.render(context, testID);

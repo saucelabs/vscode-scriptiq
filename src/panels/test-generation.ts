@@ -1,13 +1,5 @@
 import * as vscode from 'vscode';
-import {
-  getNonce,
-  getAsWebviewUri,
-  getVSCodeUri,
-} from '../utilities/utilities-service';
-import {
-  sendUserRating,
-  askToTestGenerationAPIAsStream,
-} from '../utilities/full-test-gen-api-service';
+import { sendUserRating, generateTest } from '../http/scriptiq-llm';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
@@ -16,7 +8,8 @@ import {
   executeClearHistoryLinkSelectionCommand,
   executeUpdateHistoryLinksCommand,
 } from '../commands';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
+import { Uri } from 'vscode';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -48,10 +41,9 @@ export class TestGenerationPanel {
     this.storage = new GlobalStorage(context.globalStorageUri);
 
     this.extensionUri = extensionUri;
-    // this.imageDirPath = getAsWebviewUri(this.panel.webview, context.globalStorageUri, ['scriptiq_history']); // Also use name in utilities
-    this.mediaPath = getAsWebviewUri(this.panel.webview, extensionUri, [
-      'media',
-    ]);
+    this.mediaPath = this.panel.webview.asWebviewUri(
+      Uri.joinPath(extensionUri, 'media'),
+    );
     this.testID = '0';
     this.panel.webview.html = this.getWebviewContent(
       this.panel.webview,
@@ -93,11 +85,13 @@ export class TestGenerationPanel {
         },
       );
 
-      const logoMainPath = getVSCodeUri(extensionUri, [
+      const logoMainPath = vscode.Uri.joinPath(
+        extensionUri,
         'media',
         'icons',
         'Lowcode_icon_white.png',
-      ]);
+      );
+
       panel.iconPath = {
         light: logoMainPath,
         dark: logoMainPath,
@@ -258,20 +252,17 @@ export class TestGenerationPanel {
    */
   private getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
     // get uris from out directory based on vscode.extensionUri
-    const webviewUri = getAsWebviewUri(webview, extensionUri, [
-      'media',
-      'test-generation.js',
-    ]);
-    const nonce = getNonce();
-    const styleVSCodeUri = getAsWebviewUri(webview, extensionUri, [
-      'media',
-      'vscode.css',
-    ]);
-    const logoMainPath = getAsWebviewUri(webview, extensionUri, [
-      'media',
-      'icons',
-      'Lowcode_icon_black.png',
-    ]);
+    const webviewUri = webview.asWebviewUri(
+      Uri.joinPath(extensionUri, 'media', 'test-generation.js'),
+    );
+    const styleVSCodeUri = webview.asWebviewUri(
+      Uri.joinPath(extensionUri, 'media', 'vscode.css'),
+    );
+    const logoMainPath = webview.asWebviewUri(
+      Uri.joinPath(extensionUri, 'media', 'icons', 'Lowcode_icon_black.png'),
+    );
+
+    const nonce = randomBytes(16).toString('base64');
 
     return /*html*/ `
         <!DOCTYPE html>
@@ -373,7 +364,7 @@ export class TestGenerationPanel {
 
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
-    askToTestGenerationAPIAsStream(
+    generateTest(
       this.storage,
       goal,
       apk,
@@ -419,7 +410,7 @@ export class TestGenerationPanel {
     }
 
     const testID = this.createTestRecordID();
-    askToTestGenerationAPIAsStream(
+    generateTest(
       this.storage,
       goal,
       apk,

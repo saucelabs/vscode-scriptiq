@@ -6,7 +6,7 @@ import {
 } from '../utilities/utilities-service';
 import {
   sendUserRating,
-  askToTestGenerationAPIAsStream,
+  generateTest,
 } from '../utilities/full-test-gen-api-service';
 import { Store } from '../store';
 import * as toast from '../toast';
@@ -373,7 +373,7 @@ export class TestGenerationPanel {
 
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
-    askToTestGenerationAPIAsStream(
+    generateTest(
       this.storage,
       goal,
       apk,
@@ -419,7 +419,7 @@ export class TestGenerationPanel {
     }
 
     const testID = this.createTestRecordID();
-    askToTestGenerationAPIAsStream(
+    generateTest(
       this.storage,
       goal,
       apk,

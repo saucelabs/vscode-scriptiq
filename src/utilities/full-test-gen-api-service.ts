@@ -73,7 +73,7 @@ function isDoneUpdate(data: unknown): data is DoneUpdate {
 const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
 
-export function askToTestGenerationAPIAsStream(
+export function generateTest(
   storage: GlobalStorage,
   goal: string,
   apk: string,

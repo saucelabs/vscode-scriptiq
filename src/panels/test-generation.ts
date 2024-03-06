@@ -4,10 +4,7 @@ import {
   getAsWebviewUri,
   getVSCodeUri,
 } from '../utilities/utilities-service';
-import {
-  sendUserRating,
-  generateTest,
-} from '../utilities/full-test-gen-api-service';
+import { sendUserRating, generateTest } from '../http/scriptiq-llm';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';

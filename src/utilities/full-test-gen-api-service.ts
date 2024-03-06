@@ -121,7 +121,7 @@ export function askToTestGenerationAPIAsStream(
       }
     }
 
-    const fullData: TestRecord = {
+    const testRecord: TestRecord = {
       all_steps: [],
       testID: testID,
       apk: apk,
@@ -159,10 +159,10 @@ export function askToTestGenerationAPIAsStream(
               if (isJobUpdate(data)) {
                 observer.next(data);
                 console.log('Job created.');
-                fullData.selected_device_name = data.selected_device_name;
-                fullData.selected_platform_version =
+                testRecord.selected_device_name = data.selected_device_name;
+                testRecord.selected_platform_version =
                   data.selected_platform_version;
-                fullData.img_ratio = data.img_ratio;
+                testRecord.img_ratio = data.img_ratio;
                 continue;
               }
 
@@ -178,15 +178,15 @@ export function askToTestGenerationAPIAsStream(
                 );
                 console.log('STEP INFO');
                 console.log(data.step_data);
-                fullData.all_steps?.push(data.step_data);
+                testRecord.all_steps?.push(data.step_data);
                 continue;
               }
 
               if (isDoneUpdate(data)) {
-                if (fullData.all_steps && fullData.all_steps.length > 0) {
+                if (testRecord.all_steps && testRecord.all_steps.length > 0) {
                   console.log('Saving Test Record.');
-                  storage.saveTestRecord(fullData);
-                  observer.next(fullData);
+                  storage.saveTestRecord(testRecord);
+                  observer.next(testRecord);
                 }
                 observer.next({
                   finished: true,

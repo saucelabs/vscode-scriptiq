@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getNonce } from '../utilities/utilities-service';
+import { randomBytes } from 'node:crypto';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
@@ -136,7 +136,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     );
 
     // Use a nonce to only allow a specific script to be run.
-    const nonce = getNonce();
+    const nonce = randomBytes(16).toString('base64');
 
     const creds = this.store.getCredentials();
 

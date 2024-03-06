@@ -3,7 +3,71 @@ import { TextDecoderStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../storage';
-import { TestRecord } from '../types';
+import { TestRecord, TestStep } from '../types';
+
+interface StatusUpdate {
+  header: string;
+  status_message: string;
+}
+
+function isStatusUpdate(data: unknown): data is StatusUpdate {
+  return <boolean>(
+    (typeof data === 'object' &&
+      data &&
+      'header' in data &&
+      data.header == 'status_update')
+  );
+}
+
+interface JobUpdate {
+  header: string;
+  job_id: string;
+  selected_device_name: string;
+  selected_platform_version: string;
+  img_ratio: number;
+}
+
+function isJobUpdate(data: unknown): data is JobUpdate {
+  return <boolean>(
+    (typeof data === 'object' &&
+      data &&
+      'header' in data &&
+      data.header == 'results' &&
+      'job_id' in data)
+  );
+}
+
+interface StepUpdate {
+  header: string;
+  step_data: TestStep;
+  img_data: {
+    img_url: string;
+    img_out_name: string;
+  };
+}
+
+function isStepUpdate(data: unknown): data is StepUpdate {
+  return <boolean>(
+    (typeof data === 'object' &&
+      data &&
+      'header' in data &&
+      data.header == 'results' &&
+      'step_data' in data)
+  );
+}
+
+interface DoneUpdate {
+  header: string;
+}
+
+function isDoneUpdate(data: unknown): data is DoneUpdate {
+  return <boolean>(
+    (typeof data === 'object' &&
+      data &&
+      'header' in data &&
+      data.header == 'Done')
+  );
+}
 
 // Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer =
@@ -23,8 +87,12 @@ export function askToTestGenerationAPIAsStream(
   testID: string,
   startActions: string[],
   prevGoal: string = '',
-): Observable<TestRecord | { finished: boolean }> {
-  return new Observable<TestRecord | { finished: boolean }>((observer) => {
+): Observable<
+  TestRecord | StatusUpdate | JobUpdate | StepUpdate | { finished: boolean }
+> {
+  return new Observable<
+    TestRecord | StatusUpdate | JobUpdate | StepUpdate | { finished: boolean }
+  >((observer) => {
     // 👇️ const response: Response
     const response = fetch(`${scriptiqServer}/v1/genTest`, {
       method: 'POST',
@@ -80,42 +148,49 @@ export function askToTestGenerationAPIAsStream(
               if (component.length == 0) {
                 continue;
               }
-              const data: any = JSON.parse('{"header":' + component);
-              if ('header' in data) {
-                if (data.header == 'results') {
-                  if ('job_id' in data) {
-                    observer.next(data);
-                    console.log('job generated, general info');
-                    fullData.selected_device_name = data.selected_device_name;
-                    fullData.selected_platform_version =
-                      data.selected_platform_version;
-                    fullData.img_ratio = data.img_ratio;
-                  } else {
-                    observer.next(data);
-                    await downloadImage(
-                      testID,
-                      data.img_data.img_url,
-                      data.img_data.img_out_name,
-                      username,
-                      accessKey,
-                      storage,
-                    );
-                    console.log('STEP INFO');
-                    console.log(data.step_data);
-                    fullData.all_steps?.push(data.step_data);
-                  }
-                } else if (data.header === 'Done') {
-                  if (fullData.all_steps && fullData.all_steps.length > 0) {
-                    console.log('Saving Test Record.');
-                    storage.saveTestRecord(fullData);
-                    observer.next(fullData);
-                  }
-                  observer.next({
-                    finished: true,
-                  });
-                } else {
-                  observer.next(data);
+
+              const data = JSON.parse('{"header":' + component);
+
+              if (isStatusUpdate(data)) {
+                observer.next(data);
+                continue;
+              }
+
+              if (isJobUpdate(data)) {
+                observer.next(data);
+                console.log('Job created.');
+                fullData.selected_device_name = data.selected_device_name;
+                fullData.selected_platform_version =
+                  data.selected_platform_version;
+                fullData.img_ratio = data.img_ratio;
+                continue;
+              }
+
+              if (isStepUpdate(data)) {
+                observer.next(data);
+                await downloadImage(
+                  testID,
+                  data.img_data.img_url,
+                  data.img_data.img_out_name,
+                  username,
+                  accessKey,
+                  storage,
+                );
+                console.log('STEP INFO');
+                console.log(data.step_data);
+                fullData.all_steps?.push(data.step_data);
+                continue;
+              }
+
+              if (isDoneUpdate(data)) {
+                if (fullData.all_steps && fullData.all_steps.length > 0) {
+                  console.log('Saving Test Record.');
+                  storage.saveTestRecord(fullData);
+                  observer.next(fullData);
                 }
+                observer.next({
+                  finished: true,
+                });
               }
             }
           }

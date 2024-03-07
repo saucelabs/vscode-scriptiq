@@ -165,7 +165,7 @@ function handleAskClick() {
       goal: goalText.value,
       apk: apkText.value,
       assertions: assertInputDescs,
-      max_test_steps: maxTestSteps.value,
+      max_test_steps: parseInt(maxTestSteps.value),
       devices: selectedDevices,
       platform_version: platformVersion.value,
     },
@@ -228,10 +228,6 @@ function generateFullTestDisplay() {
 
   var timeoutTime = 0;
   // if (!languageChange) {
-  vscode.postMessage({
-    action: 'copy-image',
-    test_id: data.test_id,
-  });
   timeoutTime = 400;
   // }
   for (let i = 0; i < all_step_data.length; i++) {
@@ -289,7 +285,7 @@ function generateStep(
 
     const ctx = node.getContext('2d');
     var img = new Image();
-    img.src = `${mediaPath}/screenshots/${testID}/${stepData.img_out_name}`;
+    img.src = `${mediaPath}/data/screenshots/${testID}/${stepData.img_out_name}`;
     img.onload = () => {
       ctx.drawImage(img, 0, 0, width, height);
       ctx.strokeRect(0, 0, width, height);
@@ -642,7 +638,7 @@ function addEditTestInteractions(i, edit_data) {
       data: {
         goal: newGoalInput.value,
         apk: edit_data.apk,
-        max_test_steps: newMaxStepsInput.value,
+        max_test_steps: parseInt(newMaxStepsInput.value),
         start_actions: edit_data.start_actions.slice(0, i),
         devices: [edit_data.device_name],
         platform_version: edit_data.platform_version,

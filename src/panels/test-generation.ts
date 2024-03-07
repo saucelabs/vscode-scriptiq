@@ -152,7 +152,7 @@ export class TestGenerationPanel {
           case 'save-steps': {
             const history = this.store.getHistory();
             for (let i = 0; i < history.length; i++) {
-              if (history[i].testID == message.data.testID) {
+              if (history[i].test_id == message.data.test_id) {
                 console.log("Reloading history, don't save");
                 return;
               }
@@ -160,13 +160,13 @@ export class TestGenerationPanel {
             if (history.length == MAX_HISTORY_LEN) {
               const removedRecord = history.pop();
               if (removedRecord) {
-                this.storage.deleteTestRecord(removedRecord.testID);
+                this.storage.deleteTestRecord(removedRecord.test_id);
               }
             }
             const newRecord: TestRecord = {
               goal: message.data.goal,
               apk: message.data.apk,
-              testID: message.data.testID,
+              test_id: message.data.test_id,
             };
             history.unshift(newRecord);
             this.store.saveHistory(history);
@@ -181,25 +181,25 @@ export class TestGenerationPanel {
                 extensionUri,
                 'media',
                 'data',
-                message.data.testID + '.json',
+                message.data.test_id + '.json',
               ),
               uint8Array,
             );
             vscode.workspace.fs.copy(
-              this.storage.getHistoryUri(message.data.testID),
+              this.storage.getHistoryUri(message.data.test_id),
               vscode.Uri.joinPath(
                 extensionUri,
                 'media',
                 'data',
                 'screenshots',
-                message.data.testID,
+                message.data.test_id,
               ),
               { overwrite: true },
             );
             return;
           }
           case 'send-user-rating': {
-            const testRecord = this.storage.getTestRecord(message.data.testID);
+            const testRecord = this.storage.getTestRecord(message.data.test_id);
             sendUserRating(message.data.rating, message.data.step, testRecord);
             return;
           }
@@ -217,23 +217,23 @@ export class TestGenerationPanel {
             return;
 
           case 'copy-image':
-            console.log(message.testID);
-            if (this.testID !== message.testID) {
+            console.log(message.test_id);
+            if (this.testID !== message.test_id) {
               console.log('REMOVE PREVIOUS IMAGE DIR!');
               this.removeImageDir();
             }
             console.log('COPY IN IMAGE DIR');
             vscode.workspace.fs.copy(
-              this.storage.getHistoryUri(message.testID),
+              this.storage.getHistoryUri(message.test_id),
               vscode.Uri.joinPath(
                 extensionUri,
                 'media',
                 'screenshots',
-                message.testID,
+                message.test_id,
               ),
               { overwrite: true },
             );
-            this.testID = message.testID;
+            this.testID = message.test_id;
             console.log('copied');
             return;
 
@@ -464,7 +464,7 @@ export class TestGenerationPanel {
   private showTestRecord(testID: string) {
     const testRecord = this.store
       .getHistory()
-      .find((record) => record.testID === testID);
+      .find((record) => record.test_id === testID);
     if (!testRecord) {
       toast.showError('Unable to find test record.');
       return;
@@ -477,7 +477,7 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Remove dir of images for testID from media folder.
+   * Remove dir of images for test_id from media folder.
    */
   private removeImageDir() {
     if (this.testID !== '0') {

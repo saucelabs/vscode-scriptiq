@@ -157,13 +157,13 @@ function createHistoryLinks(history_list, selected) {
       historyLink.classList.add('history-selected');
     }
     historyLink.classList.add('history-instance');
-    historyLink.setAttribute('testID', history.testID);
+    historyLink.setAttribute('test_id', history.test_id);
     historyLink.onclick = function () {
       resetHistoryLinkColor();
       this.classList.add('history-selected');
       vscode.postMessage({
         action: 'show-test-generation-panel',
-        data: history.testID,
+        data: history.test_id,
       });
     };
     historyLink.innerHTML =
@@ -175,7 +175,7 @@ function createHistoryLinks(history_list, selected) {
       console.log(history);
       vscode.postMessage({
         action: 'delete-test-record',
-        data: history.testID,
+        data: history.test_id,
       });
     };
     historyLinks.appendChild(historyLink);

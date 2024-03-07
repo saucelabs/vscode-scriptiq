@@ -7,7 +7,7 @@ export interface Credentials {
 export interface TestRecord {
   apk: string;
   goal: string;
-  testID: string;
+  test_id: string;
   all_steps?: TestStep[];
   user_screen_descs?: string[];
   max_test_steps?: number;

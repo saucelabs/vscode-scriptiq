@@ -230,7 +230,7 @@ function generateFullTestDisplay() {
   // if (!languageChange) {
   vscode.postMessage({
     action: 'copy-image',
-    testID: data.testID,
+    test_id: data.test_id,
   });
   timeoutTime = 400;
   // }
@@ -245,7 +245,7 @@ function generateFullTestDisplay() {
         data.img_ratio,
         all_step_data[i],
         editData,
-        data.testID,
+        data.test_id,
         user_screen_descs,
       );
     }, timeoutTime);
@@ -793,7 +793,7 @@ function sendUserRating(rating, step, testID) {
   console.log(`Sending User Rating for step ${step} of ${testID}: ${rating}`);
   vscode.postMessage({
     action: 'send-user-rating',
-    data: { rating: rating, step: step, testID: testID },
+    data: { rating: rating, step: step, test_id: testID },
   });
 }
 

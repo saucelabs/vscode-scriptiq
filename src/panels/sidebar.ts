@@ -88,7 +88,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         case 'delete-test-record': {
           const history = this.store.getHistory();
           for (let i = 0; i < history.length; i++) {
-            if (message.data == history[i].testID) {
+            if (message.data == history[i].test_id) {
               historyIndex = i;
               break;
             }

@@ -123,7 +123,7 @@ export function generateTest(
 
     const testRecord: TestRecord = {
       all_steps: [],
-      testID: testID,
+      test_id: testID,
       apk: apk,
       goal: goal,
       user_screen_descs: assertions,

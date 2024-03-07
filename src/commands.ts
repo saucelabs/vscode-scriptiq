@@ -1,4 +1,4 @@
-// Show the Test Generation Panel. Optionally accepts a testID `string` argument
+// Show the Test Generation Panel. Optionally accepts a test_id `string` argument
 // to load a specific test record.
 import * as vscode from 'vscode';
 

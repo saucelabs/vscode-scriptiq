@@ -215,28 +215,6 @@ export class TestGenerationPanel {
               message.data.prev_goal,
             );
             return;
-
-          case 'copy-image':
-            console.log(message.test_id);
-            if (this.testID !== message.test_id) {
-              console.log('REMOVE PREVIOUS IMAGE DIR!');
-              this.removeImageDir();
-            }
-            console.log('COPY IN IMAGE DIR');
-            vscode.workspace.fs.copy(
-              this.storage.getHistoryUri(message.test_id),
-              vscode.Uri.joinPath(
-                extensionUri,
-                'media',
-                'screenshots',
-                message.test_id,
-              ),
-              { overwrite: true },
-            );
-            this.testID = message.test_id;
-            console.log('copied');
-            return;
-
           case 'enable-test-record-navigation':
             this.testRecordNavigation = true;
             return;

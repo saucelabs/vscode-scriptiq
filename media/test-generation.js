@@ -228,10 +228,6 @@ function generateFullTestDisplay() {
 
   var timeoutTime = 0;
   // if (!languageChange) {
-  vscode.postMessage({
-    action: 'copy-image',
-    test_id: data.test_id,
-  });
   timeoutTime = 400;
   // }
   for (let i = 0; i < all_step_data.length; i++) {
@@ -289,7 +285,7 @@ function generateStep(
 
     const ctx = node.getContext('2d');
     var img = new Image();
-    img.src = `${mediaPath}/screenshots/${testID}/${stepData.img_out_name}`;
+    img.src = `${mediaPath}/data/screenshots/${testID}/${stepData.img_out_name}`;
     img.onload = () => {
       ctx.drawImage(img, 0, 0, width, height);
       ctx.strokeRect(0, 0, width, height);

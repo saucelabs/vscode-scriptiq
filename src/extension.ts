@@ -22,10 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
   const storage = new GlobalStorage(context.globalStorageUri);
   storage.init();
 
-  vscode.workspace.fs.createDirectory(
-    vscode.Uri.joinPath(context.extensionUri, 'media', 'screenshots'),
-  );
-
   registerShowTestGenerationPanelCommand(context, (testID?: string) => {
     TestGenerationPanel.render(context, testID);
   });

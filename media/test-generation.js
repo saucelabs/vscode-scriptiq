@@ -230,7 +230,7 @@ function generateFullTestDisplay() {
   // if (!languageChange) {
   vscode.postMessage({
     action: 'copy-image',
-    testID: data.testID,
+    testID: data.test_id,
   });
   timeoutTime = 400;
   // }
@@ -245,7 +245,7 @@ function generateFullTestDisplay() {
         data.img_ratio,
         all_step_data[i],
         editData,
-        data.testID,
+        data.test_id,
         user_screen_descs,
       );
     }, timeoutTime);

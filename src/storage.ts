@@ -62,11 +62,11 @@ export class GlobalStorage {
   }
 
   saveTestRecord(record: TestRecord) {
-    if (!record.testID) {
+    if (!record.test_id) {
       throw new Error('failed to persist test record: missing ID');
     }
 
-    const dest = this.getHistoryUri(record.testID, 'data.json').path;
+    const dest = this.getHistoryUri(record.test_id, 'data.json').path;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
 
     fs.writeFileSync(dest, JSON.stringify(record), {

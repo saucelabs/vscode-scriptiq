@@ -20,6 +20,7 @@ export interface TestRecord {
 }
 
 export interface TestStep {
+  rating: string;
   step_num: number;
   action: string;
   location: {

@@ -253,16 +253,10 @@ export async function downloadImage(
   }
 }
 
-export async function sendUserRating(
-  rating: string,
-  step: number,
-  testRecord: TestRecord,
-) {
+export async function sendUserRating(testRecord: TestRecord) {
   await fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({
-      rating: rating,
-      step_num: step,
       test_record: testRecord,
     }),
     headers: {

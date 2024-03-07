@@ -200,7 +200,18 @@ export class TestGenerationPanel {
           }
           case 'send-user-rating': {
             const testRecord = this.storage.getTestRecord(message.data.test_id);
-            sendUserRating(message.data.rating, message.data.step, testRecord);
+            if (!testRecord.all_steps || !Array.isArray(testRecord.all_steps)) {
+              return;
+            }
+            const index = testRecord.all_steps?.findIndex(
+              (step) => step.step_num === message.data.step,
+            );
+            if (index !== -1) {
+              testRecord.all_steps[index].rating = message.data.rating;
+            }
+            this.storage.saveTestRecord(testRecord);
+
+            sendUserRating(testRecord);
             return;
           }
 

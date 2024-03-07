@@ -81,7 +81,10 @@ export class TestGenerationPanel {
           // Enable javascript in the webview.
           enableScripts: true,
           // Restrict the webview to only load resources from the `out` directory.
-          localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'media')],
+          localResourceRoots: [
+            vscode.Uri.joinPath(extensionUri, 'media'),
+            vscode.Uri.joinPath(context.globalStorageUri, 'scriptiq_history'),
+          ],
         },
       );
 
@@ -240,6 +243,8 @@ export class TestGenerationPanel {
       Uri.joinPath(extensionUri, 'media', 'icons', 'Lowcode_icon_black.png'),
     );
 
+    const historyUri = webview.asWebviewUri(this.storage.getHistoryUri());
+
     const nonce = randomBytes(16).toString('base64');
 
     return /*html*/ `
@@ -255,6 +260,7 @@ export class TestGenerationPanel {
             <link rel="icon" type="image/jpeg" href="${logoMainPath}">
             <script>
                 var mediaPath = "${this.mediaPath}";
+                var historyPath = "${historyUri}";
             </script>
           </head>
           <body>          

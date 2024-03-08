@@ -420,8 +420,4 @@ export class TestGenerationPanel {
       data: this.storage.getTestRecord(testID),
     });
   }
-
-  /**
-   * Remove dir of images for test_id from media folder.
-   */
 }

@@ -285,7 +285,7 @@ function generateStep(
 
     const ctx = node.getContext('2d');
     var img = new Image();
-    img.src = `${mediaPath}/data/screenshots/${testID}/${stepData.img_out_name}`;
+    img.src = `${historyPath}/${testID}/${stepData.img_out_name}`;
     img.onload = () => {
       ctx.drawImage(img, 0, 0, width, height);
       ctx.strokeRect(0, 0, width, height);

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
-import { TestRecord } from './types';
+import { Rating, TestRecord } from './types';
 import { Readable } from 'node:stream';
 import { ReadableStream } from 'node:stream/web';
 import { finished } from 'node:stream/promises';
@@ -72,6 +72,41 @@ export class GlobalStorage {
     fs.writeFileSync(dest, JSON.stringify(record), {
       encoding: 'utf-8',
     });
+  }
+
+  getRatings(test_id: string): Rating[] {
+    if (!test_id) {
+      throw new Error(
+        'failed to retrieve test record related ratings: missing test_record ID',
+      );
+    }
+    const dest = this.getHistoryUri(test_id, 'ratings.json').path;
+    if (!fs.existsSync(dest)) {
+      return [];
+    }
+    const data = fs.readFileSync(dest, {
+      encoding: 'utf-8',
+    });
+
+    return JSON.parse(data);
+  }
+
+  saveRatings(test_id: string, ratings: Rating[]) {
+    console.log('saving data: ', ratings);
+    if (!test_id) {
+      throw new Error(
+        'failed to persist test_record related ratings: missing test_record ID',
+      );
+    }
+    if (!ratings) {
+      throw new Error(
+        'failed to persist test_record related ratings: missing test_record ID',
+      );
+    }
+    const dest = this.getHistoryUri(test_id, 'ratings.json').path;
+    console.log('dest: ', dest);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.writeFileSync(dest, JSON.stringify(ratings), { encoding: 'utf-8' });
   }
 
   async saveTestRecordAsset(

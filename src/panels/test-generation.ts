@@ -167,20 +167,39 @@ export class TestGenerationPanel {
           }
           case 'send-user-rating': {
             const testRecord = this.storage.getTestRecord(message.data.test_id);
-            // Locate the rated test step, update its rating, and then save the updated information back to local storage.
+
+            // Abort if the rated step is missing, indicating possible data corruption or incorrect operation.
             if (!Array.isArray(testRecord.all_steps)) {
-              return;
+              throw new Error('the stored test_record lacks any test steps');
             }
-            const stepToUpdate = testRecord.all_steps.find(
+            const step = testRecord.all_steps.find(
               (step) => step.step_num === message.data.step,
             );
-            if (!stepToUpdate) {
-              return;
+            if (!step) {
+              throw new Error('failed to find the specified rated test step.');
             }
-            stepToUpdate.rating = message.data.rating;
-            this.storage.saveTestRecord(testRecord);
 
-            sendUserRating(testRecord);
+            let ratings = this.storage.getRatings(message.data.test_id);
+            if (!Array.isArray(ratings)) {
+              ratings = [];
+            }
+            const rating = ratings.find(
+              (rating) => rating.step_num === message.data.step,
+            );
+            // Append the record if the rating is missing, then sort by step_num.
+            // If the rating exists, locate and update it.
+            if (!rating) {
+              ratings.push({
+                rating: message.data.rating,
+                step_num: message.data.step,
+              });
+              ratings.sort((a, b) => a.step_num - b.step_num);
+            } else {
+              rating.rating = message.data.rating;
+            }
+            this.storage.saveRatings(message.data.test_id, ratings);
+
+            sendUserRating(ratings, testRecord);
 
             return;
           }

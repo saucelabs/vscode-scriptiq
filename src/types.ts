@@ -20,7 +20,6 @@ export interface TestRecord {
 }
 
 export interface TestStep {
-  rating: string;
   step_num: number;
   action: string;
   location: {
@@ -44,4 +43,9 @@ export interface TestStep {
   event_llm_output: string;
   screen_descs: string[];
   sd_asserts: string[];
+}
+
+export interface Rating {
+  rating: string;
+  step_num: number;
 }

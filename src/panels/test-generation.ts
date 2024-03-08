@@ -31,25 +31,51 @@ export class TestGenerationPanel {
 
   private constructor(
     context: vscode.ExtensionContext,
-    panel: vscode.WebviewPanel,
-    extensionUri: vscode.Uri,
+    // panel: vscode.WebviewPanel,
+    // extensionUri: vscode.Uri,
   ) {
     this.ctx = context;
-    this.panel = panel;
-    this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
     this.store = new Store(context.globalState);
     this.storage = new GlobalStorage(context.globalStorageUri);
+    // this.panel = panel;
+    this.panel = vscode.window.createWebviewPanel(
+      'test-generation',
+      'Ask ScriptIQ',
+      vscode.ViewColumn.One,
+      {
+        // Enable javascript in the webview.
+        enableScripts: true,
+        // Restrict the webview to only load resources from the `out` directory.
+        localResourceRoots: [
+          vscode.Uri.joinPath(context.extensionUri, 'media'),
+          this.storage.getHistoryUri(),
+        ],
+      },
+    );
 
-    this.extensionUri = extensionUri;
+    const logoMainPath = vscode.Uri.joinPath(
+      context.extensionUri,
+      'media',
+      'icons',
+      'Lowcode_icon_white.png',
+    );
+
+    this.panel.iconPath = {
+      light: logoMainPath,
+      dark: logoMainPath,
+    };
+    this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+
+    this.extensionUri = context.extensionUri;
     this.mediaPath = this.panel.webview.asWebviewUri(
-      Uri.joinPath(extensionUri, 'media'),
+      Uri.joinPath(context.extensionUri, 'media'),
     );
     this.testID = '0';
     this.panel.webview.html = this.getWebviewContent(
       this.panel.webview,
-      extensionUri,
+      context.extensionUri,
     );
-    this.subscribeToWebviewEvents(this.panel.webview, extensionUri);
+    this.subscribeToWebviewEvents(this.panel.webview);
   }
 
   /**
@@ -72,38 +98,8 @@ export class TestGenerationPanel {
       }
     } else {
       // if not exist create a new one.
-      const extensionUri: vscode.Uri = context.extensionUri;
-      const panel = vscode.window.createWebviewPanel(
-        'test-generation',
-        'Ask ScriptIQ',
-        vscode.ViewColumn.One,
-        {
-          // Enable javascript in the webview.
-          enableScripts: true,
-          // Restrict the webview to only load resources from the `out` directory.
-          localResourceRoots: [
-            vscode.Uri.joinPath(extensionUri, 'media'),
-            vscode.Uri.joinPath(context.globalStorageUri, 'scriptiq_history'),
-          ],
-        },
-      );
-
-      const logoMainPath = vscode.Uri.joinPath(
-        extensionUri,
-        'media',
-        'icons',
-        'Lowcode_icon_white.png',
-      );
-
-      panel.iconPath = {
-        light: logoMainPath,
-        dark: logoMainPath,
-      };
-
       TestGenerationPanel.currentPanel = new TestGenerationPanel(
         context,
-        panel,
-        extensionUri,
       );
       TestGenerationPanel.currentPanel.testRecordNavigation = true;
 
@@ -117,7 +113,6 @@ export class TestGenerationPanel {
    * Dispose panel.
    */
   public dispose() {
-    TestGenerationPanel.currentPanel?.removeImageDir();
     TestGenerationPanel.currentPanel = undefined;
 
     this.panel.dispose();
@@ -135,7 +130,6 @@ export class TestGenerationPanel {
    */
   private subscribeToWebviewEvents(
     webview: vscode.Webview,
-    extensionUri: vscode.Uri,
   ) {
     webview.onDidReceiveMessage(
       (message: any) => {
@@ -175,30 +169,6 @@ export class TestGenerationPanel {
             this.store.saveHistory(history);
 
             executeUpdateHistoryLinksCommand(0);
-
-            // Save the results in the to remove from machine
-            const encoder = new TextEncoder();
-            const uint8Array = encoder.encode(JSON.stringify(message.data));
-            vscode.workspace.fs.writeFile(
-              vscode.Uri.joinPath(
-                extensionUri,
-                'media',
-                'data',
-                message.data.test_id + '.json',
-              ),
-              uint8Array,
-            );
-            vscode.workspace.fs.copy(
-              this.storage.getHistoryUri(message.data.test_id),
-              vscode.Uri.joinPath(
-                extensionUri,
-                'media',
-                'data',
-                'screenshots',
-                message.data.test_id,
-              ),
-              { overwrite: true },
-            );
             return;
           }
           case 'send-user-rating': {
@@ -463,17 +433,4 @@ export class TestGenerationPanel {
   /**
    * Remove dir of images for test_id from media folder.
    */
-  private removeImageDir() {
-    if (this.testID !== '0') {
-      vscode.workspace.fs.delete(
-        vscode.Uri.joinPath(
-          this.extensionUri,
-          'media',
-          'screenshots',
-          this.testID,
-        ),
-        { recursive: true },
-      );
-    }
-  }
 }

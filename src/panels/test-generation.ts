@@ -200,18 +200,21 @@ export class TestGenerationPanel {
           }
           case 'send-user-rating': {
             const testRecord = this.storage.getTestRecord(message.data.test_id);
+            // Locate the rated test step, update its rating, and then save the updated information back to local storage.
             if (!testRecord.all_steps || !Array.isArray(testRecord.all_steps)) {
               return;
             }
             const index = testRecord.all_steps?.findIndex(
               (step) => step.step_num === message.data.step,
             );
-            if (index !== -1) {
-              testRecord.all_steps[index].rating = message.data.rating;
+            if (index === -1) {
+              return;
             }
+            testRecord.all_steps[index].rating = message.data.rating;
             this.storage.saveTestRecord(testRecord);
 
             sendUserRating(testRecord);
+
             return;
           }
 

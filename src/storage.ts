@@ -81,6 +81,7 @@ export class GlobalStorage {
       );
     }
     const dest = this.getHistoryUri(test_id, 'ratings.json').path;
+    // Return a default empty array if ratings.json is not found.
     if (!fs.existsSync(dest)) {
       return [];
     }
@@ -92,7 +93,6 @@ export class GlobalStorage {
   }
 
   saveRatings(test_id: string, ratings: Rating[]) {
-    console.log('saving data: ', ratings);
     if (!test_id) {
       throw new Error(
         'failed to persist test_record related ratings: missing test_record ID',
@@ -104,7 +104,6 @@ export class GlobalStorage {
       );
     }
     const dest = this.getHistoryUri(test_id, 'ratings.json').path;
-    console.log('dest: ', dest);
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.writeFileSync(dest, JSON.stringify(ratings), { encoding: 'utf-8' });
   }

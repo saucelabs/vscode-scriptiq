@@ -20,7 +20,6 @@ export class TestGenerationPanel {
   public static currentPanel: TestGenerationPanel | undefined;
   public extensionUri: vscode.Uri;
   // public imageDirPath: vscode.Uri;
-  public mediaPath: vscode.Uri;
   private readonly panel: vscode.WebviewPanel;
   private testID: string;
   private disposables: vscode.Disposable[] = [];
@@ -29,11 +28,7 @@ export class TestGenerationPanel {
   private store: Store;
   private storage: GlobalStorage;
 
-  private constructor(
-    context: vscode.ExtensionContext,
-    // panel: vscode.WebviewPanel,
-    // extensionUri: vscode.Uri,
-  ) {
+  private constructor(context: vscode.ExtensionContext) {
     this.ctx = context;
     this.store = new Store(context.globalState);
     this.storage = new GlobalStorage(context.globalStorageUri);

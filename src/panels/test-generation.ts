@@ -37,7 +37,11 @@ export class TestGenerationPanel {
     this.ctx = context;
     this.store = new Store(context.globalState);
     this.storage = new GlobalStorage(context.globalStorageUri);
-    // this.panel = panel;
+
+    const extensionMediaUri = vscode.Uri.joinPath(
+      context.extensionUri,
+      'media',
+    );
     this.panel = vscode.window.createWebviewPanel(
       'test-generation',
       'Ask ScriptIQ',
@@ -45,31 +49,25 @@ export class TestGenerationPanel {
       {
         // Enable javascript in the webview.
         enableScripts: true,
-        // Restrict the webview to only load resources from the `out` directory.
-        localResourceRoots: [
-          vscode.Uri.joinPath(context.extensionUri, 'media'),
-          this.storage.getHistoryUri(),
-        ],
+        // Restrict the webview to only load static resources (e.g. UI icons)
+        // and history assets (e.g. screenshots)
+        localResourceRoots: [extensionMediaUri, this.storage.getHistoryUri()],
       },
     );
 
-    const logoMainPath = vscode.Uri.joinPath(
-      context.extensionUri,
-      'media',
+    const iconUri = vscode.Uri.joinPath(
+      extensionMediaUri,
       'icons',
       'Lowcode_icon_white.png',
     );
 
     this.panel.iconPath = {
-      light: logoMainPath,
-      dark: logoMainPath,
+      light: iconUri,
+      dark: iconUri,
     };
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
 
     this.extensionUri = context.extensionUri;
-    this.mediaPath = this.panel.webview.asWebviewUri(
-      Uri.joinPath(context.extensionUri, 'media'),
-    );
     this.testID = '0';
     this.panel.webview.html = this.getWebviewContent(
       this.panel.webview,
@@ -98,9 +96,7 @@ export class TestGenerationPanel {
       }
     } else {
       // if not exist create a new one.
-      TestGenerationPanel.currentPanel = new TestGenerationPanel(
-        context,
-      );
+      TestGenerationPanel.currentPanel = new TestGenerationPanel(context);
       TestGenerationPanel.currentPanel.testRecordNavigation = true;
 
       if (testID) {
@@ -128,9 +124,7 @@ export class TestGenerationPanel {
   /**
    * Add listeners to catch messages from mainview js.
    */
-  private subscribeToWebviewEvents(
-    webview: vscode.Webview,
-  ) {
+  private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(
       (message: any) => {
         const action = message.action;
@@ -203,16 +197,18 @@ export class TestGenerationPanel {
    */
   private getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
     // get uris from out directory based on vscode.extensionUri
+    const extensionMediaUri = vscode.Uri.joinPath(extensionUri, 'media');
     const webviewUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, 'media', 'test-generation.js'),
+      Uri.joinPath(extensionMediaUri, 'test-generation.js'),
     );
     const styleVSCodeUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, 'media', 'vscode.css'),
+      Uri.joinPath(extensionMediaUri, 'vscode.css'),
     );
     const logoMainPath = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, 'media', 'icons', 'Lowcode_icon_black.png'),
+      Uri.joinPath(extensionMediaUri, 'icons', 'Lowcode_icon_black.png'),
     );
 
+    const mediaPath = webview.asWebviewUri(extensionMediaUri);
     const historyUri = webview.asWebviewUri(this.storage.getHistoryUri());
 
     const nonce = randomBytes(16).toString('base64');
@@ -229,7 +225,7 @@ export class TestGenerationPanel {
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
             <link rel="icon" type="image/jpeg" href="${logoMainPath}">
             <script>
-                var mediaPath = "${this.mediaPath}";
+                var mediaPath = "${mediaPath}";
                 var historyPath = "${historyUri}";
             </script>
           </head>

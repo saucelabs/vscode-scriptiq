@@ -174,9 +174,10 @@ export class TestGenerationPanel {
             const stepToUpdate = testRecord.all_steps.find(
               (step) => step.step_num === message.data.step,
             );
-            if (stepToUpdate) {
-              stepToUpdate.rating = message.data.rating;
+            if (!stepToUpdate) {
+              return;
             }
+            stepToUpdate.rating = message.data.rating;
             this.storage.saveTestRecord(testRecord);
 
             sendUserRating(testRecord);

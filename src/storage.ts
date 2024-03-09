@@ -100,7 +100,7 @@ export class GlobalStorage {
     }
     if (!ratings) {
       throw new Error(
-        'failed to persist test_record related ratings: missing test_record ID',
+        'failed to persist test_record related ratings: missing ratings',
       );
     }
     const dest = this.getHistoryUri(test_id, 'ratings.json').path;

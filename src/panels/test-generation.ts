@@ -181,7 +181,7 @@ export class TestGenerationPanel {
 
             const feedback = this.storage.getFeedback(message.data.test_id);
             const f = feedback.find((f) => f.step_num === message.data.step);
-            // Append the record if the rating is missing, then sort by step_num.
+            // Append the record if it is missing, then sort by step_num.
             // If the rating exists, locate and update it.
             if (!f) {
               feedback.push({
@@ -190,7 +190,7 @@ export class TestGenerationPanel {
               });
               feedback.sort((a, b) => a.step_num - b.step_num);
             } else {
-              f.rating = message.data.feedback;
+              f.rating = message.data.rating;
             }
             this.storage.saveFeedback(message.data.test_id, feedback);
 

@@ -176,7 +176,7 @@ export class TestGenerationPanel {
               (step) => step.step_num === message.data.step,
             );
             if (!step) {
-              throw new Error('failed to find the specified rated test step.');
+              throw new Error('failed to find the specified rated test step');
             }
 
             let ratings = this.storage.getRatings(message.data.test_id);

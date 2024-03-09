@@ -98,11 +98,6 @@ export class GlobalStorage {
         'failed to persist test_record related ratings: missing test_record ID',
       );
     }
-    if (!ratings) {
-      throw new Error(
-        'failed to persist test_record related ratings: missing ratings',
-      );
-    }
     const dest = this.getHistoryUri(test_id, 'ratings.json').path;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.writeFileSync(dest, JSON.stringify(ratings), { encoding: 'utf-8' });

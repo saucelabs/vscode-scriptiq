@@ -179,10 +179,7 @@ export class TestGenerationPanel {
               throw new Error('failed to find the specified rated test step');
             }
 
-            let ratings = this.storage.getRatings(message.data.test_id);
-            if (!Array.isArray(ratings)) {
-              ratings = [];
-            }
+            const ratings = this.storage.getRatings(message.data.test_id);
             const rating = ratings.find(
               (rating) => rating.step_num === message.data.step,
             );
@@ -190,12 +187,12 @@ export class TestGenerationPanel {
             // If the rating exists, locate and update it.
             if (!rating) {
               ratings.push({
-                rating: message.data.rating,
+                feedback: message.data.feedback,
                 step_num: message.data.step,
               });
               ratings.sort((a, b) => a.step_num - b.step_num);
             } else {
-              rating.rating = message.data.rating;
+              rating.feedback = message.data.feedback;
             }
             this.storage.saveRatings(message.data.test_id, ratings);
 

@@ -46,6 +46,6 @@ export interface TestStep {
 }
 
 export interface Rating {
-  rating: string;
+  feedback: string;
   step_num: number;
 }

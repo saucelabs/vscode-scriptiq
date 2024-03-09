@@ -81,7 +81,7 @@ export class GlobalStorage {
       );
     }
     const dest = this.getHistoryUri(test_id, 'feedback.json').path;
-    // Return a default empty array if ratings.json is not found.
+    // Return a default empty array if feedback.json is not found.
     if (!fs.existsSync(dest)) {
       return [];
     }
@@ -92,7 +92,7 @@ export class GlobalStorage {
     return JSON.parse(data);
   }
 
-  saveFeedback(test_id: string, ratings: Feedback[]) {
+  saveFeedback(test_id: string, feedback: Feedback[]) {
     if (!test_id) {
       throw new Error(
         'failed to persist test_record related feedback: missing test_record ID',
@@ -100,7 +100,7 @@ export class GlobalStorage {
     }
     const dest = this.getHistoryUri(test_id, 'feedback.json').path;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.writeFileSync(dest, JSON.stringify(ratings), { encoding: 'utf-8' });
+    fs.writeFileSync(dest, JSON.stringify(feedback), { encoding: 'utf-8' });
   }
 
   async saveTestRecordAsset(

@@ -781,15 +781,15 @@ function generateTestOutputInteractables(
 
 /**
  * Sends rating to API to log
- * @param {string} feedback provided by user (liked, disliked, no-rating)
+ * @param {string} rating provided by user (liked, disliked, no-rating)
  * @param {number} step that the user rated
  * @param {string} testID ID of the test record
  */
-function sendUserRating(feedback, step, testID) {
-  console.log(`Sending User Rating for step ${step} of ${testID}: ${feedback}`);
+function sendUserRating(rating, step, testID) {
+  console.log(`Sending User Rating for step ${step} of ${testID}: ${rating}`);
   vscode.postMessage({
     action: 'send-user-rating',
-    data: { feedback, step, test_id: testID },
+    data: { rating, step, test_id: testID },
   });
 }
 

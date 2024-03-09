@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { sendUserRating, generateTest } from '../http/scriptiq-llm';
+import { sendUserFeedback, generateTest } from '../http/scriptiq-llm';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
@@ -179,24 +179,22 @@ export class TestGenerationPanel {
               throw new Error('failed to find the specified rated test step');
             }
 
-            const ratings = this.storage.getRatings(message.data.test_id);
-            const rating = ratings.find(
-              (rating) => rating.step_num === message.data.step,
-            );
+            const feedback = this.storage.getFeedback(message.data.test_id);
+            const f = feedback.find((f) => f.step_num === message.data.step);
             // Append the record if the rating is missing, then sort by step_num.
             // If the rating exists, locate and update it.
-            if (!rating) {
-              ratings.push({
-                feedback: message.data.feedback,
+            if (!f) {
+              feedback.push({
+                rating: message.data.rating,
                 step_num: message.data.step,
               });
-              ratings.sort((a, b) => a.step_num - b.step_num);
+              feedback.sort((a, b) => a.step_num - b.step_num);
             } else {
-              rating.feedback = message.data.feedback;
+              f.rating = message.data.feedback;
             }
-            this.storage.saveRatings(message.data.test_id, ratings);
+            this.storage.saveFeedback(message.data.test_id, feedback);
 
-            sendUserRating(ratings, testRecord);
+            sendUserFeedback(feedback, testRecord);
 
             return;
           }

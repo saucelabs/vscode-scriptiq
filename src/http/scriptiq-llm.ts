@@ -3,7 +3,7 @@ import { TextDecoderStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../storage';
-import { TestRecord, TestStep, Rating } from '../types';
+import { TestRecord, TestStep, Feedback } from '../types';
 
 interface StatusUpdate {
   header: string;
@@ -253,14 +253,14 @@ export async function downloadImage(
   }
 }
 
-export async function sendUserRating(
-  ratings: Rating[],
+export async function sendUserFeedback(
+  feedback: Feedback[],
   testRecord: TestRecord,
 ) {
   await fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({
-      ratings,
+      feedback,
       test_record: testRecord,
     }),
     headers: {

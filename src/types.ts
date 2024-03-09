@@ -45,7 +45,7 @@ export interface TestStep {
   sd_asserts: string[];
 }
 
-export interface Rating {
-  feedback: string;
+export interface Feedback {
+  rating: string;
   step_num: number;
 }

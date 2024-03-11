@@ -179,22 +179,22 @@ export class TestGenerationPanel {
               throw new Error('failed to find the specified rated test step');
             }
 
-            const feedback = this.storage.getFeedback(message.data.test_id);
-            const f = feedback.find((f) => f.step_num === message.data.step);
+            const votes = this.storage.getVotes(message.data.test_id);
+            const vote = votes.find((f) => f.step_num === message.data.step);
             // Append the record if it is missing, then sort by step_num.
-            // If the rating exists, locate and update it.
-            if (!f) {
-              feedback.push({
+            // If the vote exists, locate and update it.
+            if (!vote) {
+              votes.push({
                 rating: message.data.rating,
                 step_num: message.data.step,
               });
-              feedback.sort((a, b) => a.step_num - b.step_num);
+              votes.sort((a, b) => a.step_num - b.step_num);
             } else {
-              f.rating = message.data.rating;
+              vote.rating = message.data.rating;
             }
-            this.storage.saveFeedback(message.data.test_id, feedback);
+            this.storage.saveVotes(message.data.test_id, votes);
 
-            sendUserFeedback(feedback, testRecord);
+            sendUserFeedback(votes, testRecord);
 
             return;
           }

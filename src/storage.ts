@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
-import { Feedback, TestRecord } from './types';
+import { Vote, TestRecord } from './types';
 import { Readable } from 'node:stream';
 import { ReadableStream } from 'node:stream/web';
 import { finished } from 'node:stream/promises';
@@ -74,14 +74,14 @@ export class GlobalStorage {
     });
   }
 
-  getFeedback(test_id: string): Feedback[] {
+  getVotes(test_id: string): Vote[] {
     if (!test_id) {
       throw new Error(
-        'failed to retrieve test record related feedback: missing test_record ID',
+        'failed to retrieve test record related votes: missing test_record ID',
       );
     }
-    const dest = this.getHistoryUri(test_id, 'feedback.json').path;
-    // Return a default empty array if feedback.json is not found.
+    const dest = this.getHistoryUri(test_id, 'votes.json').path;
+    // Return a default empty array if votes.json is not found.
     if (!fs.existsSync(dest)) {
       return [];
     }
@@ -92,15 +92,15 @@ export class GlobalStorage {
     return JSON.parse(data);
   }
 
-  saveFeedback(test_id: string, feedback: Feedback[]) {
+  saveVotes(test_id: string, votes: Vote[]) {
     if (!test_id) {
       throw new Error(
-        'failed to persist test_record related feedback: missing test_record ID',
+        'failed to persist test_record related votes: missing test_record ID',
       );
     }
-    const dest = this.getHistoryUri(test_id, 'feedback.json').path;
+    const dest = this.getHistoryUri(test_id, 'votes.json').path;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.writeFileSync(dest, JSON.stringify(feedback), { encoding: 'utf-8' });
+    fs.writeFileSync(dest, JSON.stringify(votes), { encoding: 'utf-8' });
   }
 
   async saveTestRecordAsset(

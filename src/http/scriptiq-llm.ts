@@ -253,7 +253,7 @@ export async function downloadImage(
   }
 }
 
-export async function sendUserFeedback(votes: Vote[], testRecord: TestRecord) {
+export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
   await fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({

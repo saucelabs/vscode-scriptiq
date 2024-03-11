@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { sendUserFeedback, generateTest } from '../http/scriptiq-llm';
+import { sendUserRating, generateTest } from '../http/scriptiq-llm';
 import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
@@ -194,7 +194,7 @@ export class TestGenerationPanel {
             }
             this.storage.saveVotes(message.data.test_id, votes);
 
-            sendUserFeedback(votes, testRecord);
+            sendUserRating(votes, testRecord);
 
             return;
           }

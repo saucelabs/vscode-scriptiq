@@ -44,3 +44,8 @@ export interface TestStep {
   screen_descs: string[];
   sd_asserts: string[];
 }
+
+export interface Vote {
+  rating: string;
+  step_num: number;
+}

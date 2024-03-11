@@ -789,7 +789,7 @@ function sendUserRating(rating, step, testID) {
   console.log(`Sending User Rating for step ${step} of ${testID}: ${rating}`);
   vscode.postMessage({
     action: 'send-user-rating',
-    data: { rating: rating, step: step, test_id: testID },
+    data: { rating, step, test_id: testID },
   });
 }
 

@@ -167,7 +167,35 @@ export class TestGenerationPanel {
           }
           case 'send-user-rating': {
             const testRecord = this.storage.getTestRecord(message.data.test_id);
-            sendUserRating(message.data.rating, message.data.step, testRecord);
+
+            // Abort if the rated step is missing, indicating possible data corruption or incorrect operation.
+            if (!Array.isArray(testRecord.all_steps)) {
+              throw new Error('the stored test_record lacks any test steps');
+            }
+            const step = testRecord.all_steps.find(
+              (step) => step.step_num === message.data.step,
+            );
+            if (!step) {
+              throw new Error('failed to find the specified rated test step');
+            }
+
+            const votes = this.storage.getVotes(message.data.test_id);
+            const vote = votes.find((f) => f.step_num === message.data.step);
+            // Append the record if it is missing, then sort by step_num.
+            // If the vote exists, locate and update it.
+            if (!vote) {
+              votes.push({
+                rating: message.data.rating,
+                step_num: message.data.step,
+              });
+              votes.sort((a, b) => a.step_num - b.step_num);
+            } else {
+              vote.rating = message.data.rating;
+            }
+            this.storage.saveVotes(message.data.test_id, votes);
+
+            sendUserRating(votes, testRecord);
+
             return;
           }
 

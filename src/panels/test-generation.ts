@@ -126,7 +126,7 @@ export class TestGenerationPanel {
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(
-      (message: any) => {
+      async (message: any) => {
         const action = message.action;
 
         switch (action) {
@@ -194,7 +194,13 @@ export class TestGenerationPanel {
             }
             this.storage.saveVotes(message.data.test_id, votes);
 
-            sendUserRating(votes, testRecord);
+            try {
+              await sendUserRating(votes, testRecord);
+            } catch (e) {
+              toast.showError(
+                `Failed to send user feedback: ${(e as Error).message}.`,
+              );
+            }
 
             return;
           }

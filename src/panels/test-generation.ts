@@ -4,6 +4,7 @@ import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
 import { GlobalStorage } from '../storage';
+import { errMsg } from '../error';
 import {
   executeClearHistoryLinkSelectionCommand,
   executeUpdateHistoryLinksCommand,
@@ -197,9 +198,7 @@ export class TestGenerationPanel {
               await sendUserRating(votes, testRecord);
               this.storage.saveVotes(message.data.test_id, votes);
             } catch (e) {
-              toast.showError(
-                `Failed to send user feedback: ${errMsg(e)}.`,
-              );
+              toast.showError(`Failed to send user feedback: ${errMsg(e)}.`);
             }
 
             return;

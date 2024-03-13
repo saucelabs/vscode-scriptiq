@@ -578,7 +578,7 @@ function addUserRatingButtons(container, i, testID) {
   });
 
   // Despite the order of the DOM elements being thumbs down followed by thumbs up,
-  // the CSS handles the presentation in a magic manner.
+  // the CSS handles the presentation in a magic manner: thumbs up, thumb down.
   container.append(thumbsDownButton, thumbsUpButton);
 }
 

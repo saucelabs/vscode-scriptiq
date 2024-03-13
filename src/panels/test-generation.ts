@@ -192,10 +192,10 @@ export class TestGenerationPanel {
             } else {
               vote.rating = message.data.rating;
             }
-            this.storage.saveVotes(message.data.test_id, votes);
 
             try {
               await sendUserRating(votes, testRecord);
+              this.storage.saveVotes(message.data.test_id, votes);
             } catch (e) {
               toast.showError(
                 `Failed to send user feedback: ${errMsg(e)}.`,

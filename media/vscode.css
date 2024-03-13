@@ -439,6 +439,11 @@ textarea::placeholder {
     brightness(104%) contrast(101%);
 }
 
+.rating:hover {
+  filter: invert(85%) sepia(41%) saturate(7496%) hue-rotate(325deg)
+    brightness(104%) contrast(87%);
+}
+
 .rating-selected {
   filter: invert(85%) sepia(41%) saturate(7496%) hue-rotate(325deg)
     brightness(104%) contrast(87%);

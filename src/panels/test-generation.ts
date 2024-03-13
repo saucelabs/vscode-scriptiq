@@ -198,7 +198,7 @@ export class TestGenerationPanel {
               await sendUserRating(votes, testRecord);
             } catch (e) {
               toast.showError(
-                `Failed to send user feedback: ${(e as Error).message}.`,
+                `Failed to send user feedback: ${errMsg(e)}.`,
               );
             }
 

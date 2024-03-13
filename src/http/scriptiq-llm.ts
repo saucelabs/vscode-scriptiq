@@ -254,7 +254,7 @@ export async function downloadImage(
 }
 
 export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
-  await fetch(`${scriptiqServer}/v1/submitFeedback`, {
+  const resp = await fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({
       votes,
@@ -264,4 +264,7 @@ export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
       'Content-Type': 'application/json',
     },
   });
+  if (!resp.ok) {
+    throw new Error('Unexpected status code: ' + resp.status);
+  }
 }

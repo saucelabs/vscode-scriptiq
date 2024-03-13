@@ -11,11 +11,11 @@ interface StatusUpdate {
 }
 
 function isStatusUpdate(data: unknown): data is StatusUpdate {
-  return <boolean>(
-    (typeof data === 'object' &&
-      data &&
-      'header' in data &&
-      data.header == 'status_update')
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'header' in data &&
+    data.header == 'status_update'
   );
 }
 
@@ -28,12 +28,12 @@ interface JobUpdate {
 }
 
 function isJobUpdate(data: unknown): data is JobUpdate {
-  return <boolean>(
-    (typeof data === 'object' &&
-      data &&
-      'header' in data &&
-      data.header == 'results' &&
-      'job_id' in data)
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'header' in data &&
+    data.header == 'results' &&
+    'job_id' in data
   );
 }
 
@@ -47,12 +47,12 @@ interface StepUpdate {
 }
 
 function isStepUpdate(data: unknown): data is StepUpdate {
-  return <boolean>(
-    (typeof data === 'object' &&
-      data &&
-      'header' in data &&
-      data.header == 'results' &&
-      'step_data' in data)
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'header' in data &&
+    data.header == 'results' &&
+    'step_data' in data
   );
 }
 
@@ -61,11 +61,11 @@ interface DoneUpdate {
 }
 
 function isDoneUpdate(data: unknown): data is DoneUpdate {
-  return <boolean>(
-    (typeof data === 'object' &&
-      data &&
-      'header' in data &&
-      data.header == 'Done')
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'header' in data &&
+    data.header == 'Done'
   );
 }
 

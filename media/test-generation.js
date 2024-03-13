@@ -377,7 +377,7 @@ function generateCodeChoicesContainer(i, stepData, testID) {
   codeContainer.classList.add('code-block');
 
   if (stepData.potential_identifiers.length > 0) {
-    addUserInputButtons(codeContainer, i, testID);
+    addUserRatingButtons(codeContainer, i, testID);
   }
 
   var codeChoiceContainer = document.createElement('div');
@@ -531,42 +531,50 @@ function reorderCodeOptions(i) {
 }
 
 /**
- * add the thumbs up/down for user feedback
+ * Add the thumbs up/down for user feedback.
  * @param {Element} container the element with the code container where the user feedback buttons are added.
- * @param {number} i the step number
- * @param {string} testID ID of the test record
+ * @param {number} i the step number.
+ * @param {string} testID ID of the test record.
  */
-function addUserInputButtons(container, i, testID) {
-  var thumbsDownButton = document.createElement('img');
-  thumbsDownButton.classList.add('thumb');
-  thumbsDownButton.src = `${mediaPath}/icons/icn-thumbs-down.svg`;
-
-  var thumbsUpButton = document.createElement('img');
-  thumbsUpButton.classList.add('thumb');
+function addUserRatingButtons(container, i, testID) {
+  const thumbsUpButton = document.createElement('img');
+  thumbsUpButton.classList.add('rating');
   thumbsUpButton.src = `${mediaPath}/icons/icn-thumbs-up.svg`;
 
-  thumbsUpButton.onclick = function () {
-    if (!this.checked) {
+  const thumbsDownButton = document.createElement('img');
+  thumbsDownButton.classList.add('rating');
+  thumbsDownButton.src = `${mediaPath}/icons/icn-thumbs-down.svg`;
+
+  const selectedClass = 'rating-selected';
+  thumbsUpButton.addEventListener('click', function () {
+    const isSelected = !thumbsUpButton.classList.contains(selectedClass);
+    if (isSelected) {
       sendUserRating('like', i, testID);
     } else {
       sendUserRating('norating', i, testID);
     }
-    this.checked = !this.checked;
-    if (this.checked && thumbsDownButton.checked) {
-      thumbsDownButton.checked = false;
+    thumbsUpButton.classList.toggle(selectedClass);
+
+    // If thumbs down was clicked, set its rating to "norating" since only one rating (thumbs up or thumbs down) is allowed.
+    if (isSelected && thumbsDownButton.classList.contains(selectedClass)) {
+      thumbsDownButton.classList.remove(selectedClass);
     }
-  };
-  thumbsDownButton.onclick = function () {
-    if (!this.checked) {
+  });
+  thumbsDownButton.addEventListener('click', function () {
+    const isSelected = !thumbsDownButton.classList.contains(selectedClass);
+    if (isSelected) {
       sendUserRating('dislike', i, testID);
     } else {
       sendUserRating('norating', i, testID);
     }
-    this.checked = !this.checked;
-    if (this.checked && thumbsUpButton.checked) {
-      thumbsUpButton.checked = false;
+    thumbsDownButton.classList.toggle(selectedClass);
+
+    // If thumbs up was clicked, set its rating to "norating" since only one rating (thumbs up or thumbs down) is allowed.
+    if (isSelected && thumbsUpButton.classList.contains(selectedClass)) {
+      thumbsUpButton.classList.remove(selectedClass);
     }
-  };
+  });
+
   container.append(thumbsDownButton);
   container.append(thumbsUpButton);
 }

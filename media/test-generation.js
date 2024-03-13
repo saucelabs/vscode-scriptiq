@@ -540,10 +540,12 @@ function addUserRatingButtons(container, i, testID) {
   const thumbsUpButton = document.createElement('img');
   thumbsUpButton.classList.add('rating');
   thumbsUpButton.src = `${mediaPath}/icons/icn-thumbs-up.svg`;
+  thumbsUpButton.title = 'like';
 
   const thumbsDownButton = document.createElement('img');
   thumbsDownButton.classList.add('rating');
   thumbsDownButton.src = `${mediaPath}/icons/icn-thumbs-down.svg`;
+  thumbsDownButton.title = 'dislike';
 
   const selectedClass = 'rating-selected';
   thumbsUpButton.addEventListener('click', function () {
@@ -575,8 +577,9 @@ function addUserRatingButtons(container, i, testID) {
     }
   });
 
-  container.append(thumbsDownButton);
-  container.append(thumbsUpButton);
+  // Despite the order of the DOM elements being thumbs down followed by thumbs up,
+  // the CSS handles the presentation in a magic manner: thumbs up, thumbs down.
+  container.append(thumbsDownButton, thumbsUpButton);
 }
 
 /**

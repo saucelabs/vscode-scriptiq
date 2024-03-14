@@ -38,7 +38,7 @@ var codeTemplateGenerator = new AppiumPython();
 const defaultMaxSteps = maxTestSteps.value;
 
 function main() {
-  // Add the eventListeners.
+  // Add event listeners.
   generateButton?.addEventListener('click', handleAskClick);
   clearButton?.addEventListener('click', handleClearClick);
 

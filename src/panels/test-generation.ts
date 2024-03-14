@@ -455,7 +455,10 @@ export class TestGenerationPanel {
 
     TestGenerationPanel.currentPanel?.panel.webview.postMessage({
       action: 'show-test-record',
-      data: this.storage.getTestRecord(testID),
+      data: {
+        testRecord: this.storage.getTestRecord(testID),
+        votes: this.storage.getVotes(testID),
+      },
     });
   }
 }

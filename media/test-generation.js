@@ -38,7 +38,7 @@ var codeTemplateGenerator = new AppiumPython();
 const defaultMaxSteps = maxTestSteps.value;
 
 function main() {
-  // Add the eventLsteners.
+  // Add event listeners.
   generateButton?.addEventListener('click', handleAskClick);
   clearButton?.addEventListener('click', handleClearClick);
 
@@ -127,7 +127,10 @@ function main() {
           console.log('Reading in history');
           console.log(message.data);
 
-          updateStepDataState(message.data);
+          const testRecord = message.data?.testRecord ?? {};
+          const votes = message.data?.votes ?? [];
+          updateStepDataState(testRecord);
+          updateState('votes', votes);
           generateFullTestDisplay();
           break;
         case 'clear':
@@ -137,7 +140,6 @@ function main() {
       }
     });
   } catch (err) {
-    console.log('errrr js');
     console.log(err);
   }
 }
@@ -183,7 +185,7 @@ function handleClearClick() {
  * Generate the full test output, including llm-generated steps and create script button.
  */
 function generateFullTestDisplay() {
-  var data = vscode.getState();
+  const data = vscode.getState();
   apkText.value = data.apk;
   goalText.value = data.goal;
 
@@ -243,6 +245,7 @@ function generateFullTestDisplay() {
         editData,
         data.test_id,
         user_screen_descs,
+        data.votes,
       );
     }, timeoutTime);
   }
@@ -267,6 +270,7 @@ function generateStep(
   edit_data,
   testID,
   user_screen_descs = [],
+  votes = [],
 ) {
   const stepHeaderTag = document.createTextNode('Step ' + (i + 1));
 
@@ -321,7 +325,12 @@ function generateStep(
   stepGallery.className = 'test-step-right';
 
   stepGallery.appendChild(document.createElement('br'));
-  stepGallery.appendChild(generateCodeChoicesContainer(i, stepData, testID));
+  // Get rating from votes according to step_num.
+  const rating =
+    votes.find((vote) => vote.step_num === i)?.rating ?? 'norating';
+  stepGallery.appendChild(
+    generateCodeChoicesContainer(i, stepData, testID, rating),
+  );
 
   var reasonContainer = generateReasonContainer(stepData);
   if (reasonContainer !== undefined) stepGallery.appendChild(reasonContainer);
@@ -367,17 +376,18 @@ function generateStep(
 
 /**
  *
- * @param {number} i is the step number
- * @param {dict} stepData is all the data about the current step of this test
- * @param {string} testID ID of the test record
- * @returns the block for step i which displays the code options and the user input buttons
+ * @param {number} i The step number.
+ * @param {dict} stepData All the data about the current step of this test.
+ * @param {string} testID ID of the test record.
+ * @param {string} rating The rating assigned to the current step.
+ * @returns The block for step i which displays the code options and the user rating buttons.
  */
-function generateCodeChoicesContainer(i, stepData, testID) {
+function generateCodeChoicesContainer(i, stepData, testID, rating) {
   var codeContainer = document.createElement('div');
   codeContainer.classList.add('code-block');
 
   if (stepData.potential_identifiers.length > 0) {
-    addUserRatingButtons(codeContainer, i, testID);
+    addUserRatingButtons(codeContainer, i, testID, rating);
   }
 
   var codeChoiceContainer = document.createElement('div');
@@ -532,22 +542,30 @@ function reorderCodeOptions(i) {
 
 /**
  * Add the thumbs up/down for user feedback.
- * @param {Element} container the element with the code container where the user feedback buttons are added.
- * @param {number} i the step number.
+ * @param {Element} container The element with the code container where the user feedback buttons are added.
+ * @param {number} i The step number.
  * @param {string} testID ID of the test record.
+ * @param {string} rating Rating of the current step.
  */
-function addUserRatingButtons(container, i, testID) {
+function addUserRatingButtons(container, i, testID, rating) {
+  const selectedClass = 'rating-selected';
+
   const thumbsUpButton = document.createElement('img');
   thumbsUpButton.classList.add('rating');
+  if (rating === 'like') {
+    thumbsUpButton.classList.add(selectedClass);
+  }
   thumbsUpButton.src = `${mediaPath}/icons/icn-thumbs-up.svg`;
   thumbsUpButton.title = 'like';
 
   const thumbsDownButton = document.createElement('img');
   thumbsDownButton.classList.add('rating');
+  if (rating === 'dislike') {
+    thumbsDownButton.classList.add(selectedClass);
+  }
   thumbsDownButton.src = `${mediaPath}/icons/icn-thumbs-down.svg`;
   thumbsDownButton.title = 'dislike';
 
-  const selectedClass = 'rating-selected';
   thumbsUpButton.addEventListener('click', function () {
     const isSelected = !thumbsUpButton.classList.contains(selectedClass);
     if (isSelected) {

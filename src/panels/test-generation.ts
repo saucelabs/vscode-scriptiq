@@ -4,6 +4,7 @@ import { Store } from '../store';
 import * as toast from '../toast';
 import { TestRecord } from '../types';
 import { GlobalStorage } from '../storage';
+import { errMsg } from '../error';
 import {
   executeClearHistoryLinkSelectionCommand,
   executeUpdateHistoryLinksCommand,
@@ -126,7 +127,7 @@ export class TestGenerationPanel {
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(
-      (message: any) => {
+      async (message: any) => {
         const action = message.action;
 
         switch (action) {
@@ -192,9 +193,13 @@ export class TestGenerationPanel {
             } else {
               vote.rating = message.data.rating;
             }
-            this.storage.saveVotes(message.data.test_id, votes);
 
-            sendUserRating(votes, testRecord);
+            try {
+              await sendUserRating(votes, testRecord);
+              this.storage.saveVotes(message.data.test_id, votes);
+            } catch (e) {
+              toast.showError(`Failed to send user feedback: ${errMsg(e)}.`);
+            }
 
             return;
           }

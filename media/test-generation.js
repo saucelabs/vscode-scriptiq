@@ -325,6 +325,7 @@ function generateStep(
   stepGallery.className = 'test-step-right';
 
   stepGallery.appendChild(document.createElement('br'));
+  // Get rating from votes according to step_num.
   const rating =
     votes.find((vote) => vote.step_num === i)?.rating ?? 'norating';
   stepGallery.appendChild(
@@ -375,11 +376,11 @@ function generateStep(
 
 /**
  *
- * @param {number} i is the step number
- * @param {dict} stepData is all the data about the current step of this test
- * @param {string} testID ID of the test record
- * @param {string} rating rating of the current step
- * @returns the block for step i which displays the code options and the user input buttons
+ * @param {number} i The step number.
+ * @param {dict} stepData All the data about the current step of this test.
+ * @param {string} testID ID of the test record.
+ * @param {string} rating The rating assigned to the current step.
+ * @returns The block for step i which displays the code options and the user rating buttons.
  */
 function generateCodeChoicesContainer(i, stepData, testID, rating) {
   var codeContainer = document.createElement('div');
@@ -541,10 +542,10 @@ function reorderCodeOptions(i) {
 
 /**
  * Add the thumbs up/down for user feedback.
- * @param {Element} container the element with the code container where the user feedback buttons are added.
- * @param {number} i the step number.
+ * @param {Element} container The element with the code container where the user feedback buttons are added.
+ * @param {number} i The step number.
  * @param {string} testID ID of the test record.
- * @param {string} rating rating of the current step.
+ * @param {string} rating Rating of the current step.
  */
 function addUserRatingButtons(container, i, testID, rating) {
   const selectedClass = 'rating-selected';

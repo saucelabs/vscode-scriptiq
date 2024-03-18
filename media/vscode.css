@@ -427,6 +427,25 @@ textarea::placeholder {
   border-radius: 0 0 var(--offset-base) var(--offset-base);
 }
 
+tr.table-header {
+  font-weight: bold !important;
+}
+
+td.true-assert {
+  /* background-color: var(--color-sauce-green);
+	font: black !important; */
+  font-weight: bold !important;
+}
+
+.matched-result {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 14px;
+  width: 14px;
+  z-index: 2;
+}
+
 /* Rating Buttons: Thumbs Up & Thumbs Down */
 .rating {
   position: relative;

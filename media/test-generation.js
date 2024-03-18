@@ -978,25 +978,58 @@ function generateScreenMatchContainer(stepData, userScreenDescs) {
     var descsContainer = document.createElement('div');
     descsContainer.classList.add('step-block');
 
-    descsContainer.appendChild(
-      document.createTextNode('Screen Description Matches:'),
-    );
-    var descsListContainer = document.createElement('ul');
+    // descsContainer.appendChild(document.createTextNode("Screen Description Matches:"));
+    var descsListContainer = document.createElement('table');
+    descsListContainer.setAttribute('border', '1');
+    var tbdy = document.createElement('tbody');
+    var tr = generateHeaderRow(['Screen Descriptions', 'is Match?']);
+    tr.classList.add('table-header');
+    tbdy.appendChild(tr);
     for (let i = 0; i < stepData.sd_asserts.length; i++) {
-      var li = document.createElement('li');
-      li.innerHTML =
-        userScreenDescs[i] +
-        ' - ' +
-        capitalizeFirstLetter(stepData.sd_asserts[i].toString());
-      descsListContainer.append(li);
+      tr = generateMatchesRow(userScreenDescs[i], stepData.sd_asserts[i]);
+      if (stepData.sd_asserts[i]) {
+        tr.classList.add('true-assert');
+      }
+      tbdy.appendChild(tr);
     }
+    descsListContainer.appendChild(tbdy);
     descsContainer.appendChild(descsListContainer);
     return descsContainer;
   }
 }
 
-function capitalizeFirstLetter(s) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+function generateHeaderRow(labels) {
+  var tr = document.createElement('tr');
+  for (const l of labels) {
+    var t = document.createElement('th');
+    t.appendChild(document.createTextNode(l));
+    tr.appendChild(t);
+  }
+  return tr;
+}
+
+function generateMatchesRow(assert, label) {
+  var tr = document.createElement('tr');
+  var t;
+
+  t = document.createElement('td');
+  t.appendChild(document.createTextNode(assert));
+  tr.appendChild(t);
+  t = document.createElement('td');
+  t.appendChild(generateMatchIcon(label));
+  tr.appendChild(t);
+  return tr;
+}
+
+function generateMatchIcon(label) {
+  var e = document.createElement('img');
+  e.classList.add('matched-result');
+  if (label) {
+    e.src = `${mediaPath}/icons/icn-status-passed.svg`;
+  } else {
+    e.src = `${mediaPath}/icons/icn-minus-circle.svg`;
+  }
+  return e;
 }
 
 function assertionInputRow(value = '') {

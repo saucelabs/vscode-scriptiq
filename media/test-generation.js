@@ -975,14 +975,13 @@ function generateScreenDescIdeasContainer(stepData) {
  */
 function generateScreenMatchContainer(stepData, userScreenDescs) {
   if ('sd_asserts' in stepData && stepData.sd_asserts.length > 0) {
-    var descsContainer = document.createElement('div');
+    let descsContainer = document.createElement('div');
     descsContainer.classList.add('step-block');
 
-    // descsContainer.appendChild(document.createTextNode("Screen Description Matches:"));
-    var descsListContainer = document.createElement('table');
+    let descsListContainer = document.createElement('table');
     descsListContainer.setAttribute('border', '1');
-    var tbdy = document.createElement('tbody');
-    var tr = generateHeaderRow(['Screen Descriptions', 'is Match?']);
+    let tbdy = document.createElement('tbody');
+    let tr = generateHeaderRow(['Screen Descriptions', 'is Match?']);
     tr.classList.add('table-header');
     tbdy.appendChild(tr);
     for (let i = 0; i < stepData.sd_asserts.length; i++) {
@@ -999,9 +998,9 @@ function generateScreenMatchContainer(stepData, userScreenDescs) {
 }
 
 function generateHeaderRow(labels) {
-  var tr = document.createElement('tr');
+  let tr = document.createElement('tr');
   for (const l of labels) {
-    var t = document.createElement('th');
+    let t = document.createElement('th');
     t.appendChild(document.createTextNode(l));
     tr.appendChild(t);
   }
@@ -1009,8 +1008,8 @@ function generateHeaderRow(labels) {
 }
 
 function generateMatchesRow(assert, label) {
-  var tr = document.createElement('tr');
-  var t;
+  let tr = document.createElement('tr');
+  let t;
 
   t = document.createElement('td');
   t.appendChild(document.createTextNode(assert));
@@ -1022,7 +1021,7 @@ function generateMatchesRow(assert, label) {
 }
 
 function generateMatchIcon(label) {
-  var e = document.createElement('img');
+  let e = document.createElement('img');
   e.classList.add('matched-result');
   if (label) {
     e.src = `${mediaPath}/icons/icn-status-passed.svg`;

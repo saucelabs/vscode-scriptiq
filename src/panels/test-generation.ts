@@ -139,6 +139,8 @@ export class TestGenerationPanel {
               message.data.devices,
               message.data.platform_version,
               message.data.assertions,
+              [],
+              '',
             );
             return;
           case 'save-steps': {
@@ -205,13 +207,14 @@ export class TestGenerationPanel {
           }
 
           case 'generate-edited-test':
-            this.askEditTestLLM(
+            this.askTestGenerationLLM(
               message.data.goal,
               message.data.apk,
               message.data.max_test_steps,
-              message.data.start_actions,
               message.data.devices,
               message.data.platform_version,
+              [],
+              message.data.start_actions,
               message.data.prev_goal,
             );
             return;
@@ -326,9 +329,11 @@ export class TestGenerationPanel {
     goal: string,
     apk: string,
     maxTestSteps: number,
-    devices: Array<string>,
+    devices: string[],
     platformVersion: string,
-    assertions: Array<string>,
+    assertions: string[],
+    startActions: string[],
+    prevGoal: string,
   ) {
     const creds = this.getCredentials();
     executeClearHistoryLinkSelectionCommand();
@@ -365,63 +370,6 @@ export class TestGenerationPanel {
       platformVersion,
       assertions,
       testID,
-      [],
-      '',
-    ).subscribe({
-      next: (data) => {
-        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          action: 'update-test-progress',
-          data: data,
-        });
-      },
-      error: (err) => {
-        console.log(`received error callback: ${err}`);
-        toast.showError(err);
-      },
-    });
-  }
-
-  /**
-   * Send APK and Goal to generate test using an LLM.
-   */
-  private askEditTestLLM(
-    goal: string,
-    apk: string,
-    maxTestSteps: number,
-    startActions: string[],
-    devices: string[],
-    platformVersion: string,
-    prevGoal: string,
-  ) {
-    const creds = this.getCredentials();
-    executeClearHistoryLinkSelectionCommand();
-
-    if (!creds) {
-      return;
-    }
-    if (!goal) {
-      toast.showError('Please add a Goal!');
-      return;
-    }
-
-    if (maxTestSteps < 1 || maxTestSteps > 20) {
-      toast.showError('The number of test steps must be between 1 and 20.');
-      return;
-    }
-
-    const testID = this.createTestRecordID();
-    generateTest(
-      this.storage,
-      goal,
-      apk,
-      maxTestSteps,
-      creds.username,
-      creds.accessKey,
-      creds.region,
-      devices,
-      platformVersion,
-      [],
-      testID,
       startActions,
       prevGoal,
     ).subscribe({
@@ -432,7 +380,7 @@ export class TestGenerationPanel {
         });
       },
       error: (err) => {
-        console.log('received error callback');
+        console.log(`received error callback: ${err}`);
         toast.showError(err);
       },
     });

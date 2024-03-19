@@ -233,15 +233,20 @@ function generateFullTestDisplay() {
       if ('user_screen_descs' in data) {
         user_screen_descs = data.user_screen_descs;
       }
-      generateStep(
-        i,
-        data.img_ratio,
-        all_step_data[i],
-        editData,
-        data.test_id,
-        user_screen_descs,
-        data.votes,
-      );
+      console.log(all_step_data[i]);
+      if (all_step_data[i].action === 'done') {
+        renderDoneStep(data.test_id, data.img_ratio, all_step_data[i]);
+      } else {
+        generateStep(
+          i,
+          data.img_ratio,
+          all_step_data[i],
+          editData,
+          data.test_id,
+          user_screen_descs,
+          data.votes,
+        );
+      }
     }, timeoutTime);
   }
   generateTestOutputInteractables(
@@ -367,6 +372,32 @@ function generateStep(
   galleryFloatContainerTag.appendChild(resizer);
   galleryFloatContainerTag.appendChild(stepGallery);
   testGallery.appendChild(galleryFloatContainerTag);
+}
+
+function renderDoneStep(testId, imgRatio, stepData) {
+  const container = document.createElement('div');
+  container.className = 'test-step-done';
+
+  const header = document.createElement('h4');
+  header.className = 'header';
+  header.append('Finish');
+  container.appendChild(header);
+
+  const screenshotWrapper = document.createElement('div');
+  const screenshot = document.createElement('img');
+  screenshot.className = 'screenshot';
+  screenshot.src = `${historyPath}/${testId}/${stepData.img_out_name}`;
+  const imgHeight = 350;
+  const imgWidth = imgHeight * imgRatio;
+  // const heightRatio = imgHeight / imgWidth;
+  // const imgDivMinWidth = imgWidth + 20;
+  screenshot.width = imgWidth;
+  screenshot.height = imgHeight;
+  screenshotWrapper.appendChild(screenshot);
+  container.appendChild(screenshotWrapper);
+
+  console.log(container);
+  testGallery.appendChild(container);
 }
 
 /**

@@ -139,6 +139,8 @@ export class TestGenerationPanel {
               message.data.devices,
               message.data.platform_version,
               message.data.assertions,
+              [],
+              '',
             );
             return;
           case 'save-steps': {
@@ -205,13 +207,14 @@ export class TestGenerationPanel {
           }
 
           case 'generate-edited-test':
-            this.askEditTestLLM(
+            this.askTestGenerationLLM(
               message.data.goal,
               message.data.apk,
               message.data.max_test_steps,
-              message.data.start_actions,
               message.data.devices,
               message.data.platform_version,
+              [],
+              message.data.start_actions,
               message.data.prev_goal,
             );
             return;
@@ -284,7 +287,7 @@ export class TestGenerationPanel {
                 <p>ScriptIQ likes to generate as many steps as it can. Help it to stay focused by telling it when it should stop.</p>
                 <div class="form-container">
                     <label for="max_test_steps">Cut off test steps at</label>
-                    <input type="number" class="short" id="max_test_steps" value="10" />
+                    <input type="number" class="short" id="max_test_steps" value="10" min="1" max="20" />
                 </div>
                 <h6 class="mt-30">Device Settings</h6>
                 <div class="form-container">
@@ -326,9 +329,11 @@ export class TestGenerationPanel {
     goal: string,
     apk: string,
     maxTestSteps: number,
-    devices: Array<string>,
+    devices: string[],
     platformVersion: string,
-    assertions: Array<string>,
+    assertions: string[],
+    startActions: string[],
+    prevGoal: string,
   ) {
     const creds = this.getCredentials();
     executeClearHistoryLinkSelectionCommand();
@@ -345,8 +350,14 @@ export class TestGenerationPanel {
       return;
     }
 
+    if (maxTestSteps < 1 || maxTestSteps > 20) {
+      toast.showError('The number of test steps must be between 1 and 20.');
+      return;
+    }
+
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
+
     generateTest(
       this.storage,
       goal,
@@ -359,59 +370,19 @@ export class TestGenerationPanel {
       platformVersion,
       assertions,
       testID,
-      [],
-      '',
-    ).subscribe((test) => {
-      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'update-test-progress',
-        data: test,
-      });
-    });
-  }
-
-  /**
-   * Send APK and Goal to generate test using an LLM.
-   */
-  private askEditTestLLM(
-    goal: string,
-    apk: string,
-    maxTestSteps: number,
-    startActions: string[],
-    devices: string[],
-    platformVersion: string,
-    prevGoal: string,
-  ) {
-    const creds = this.getCredentials();
-    executeClearHistoryLinkSelectionCommand();
-
-    if (!creds) {
-      return;
-    }
-    if (!goal) {
-      toast.showError('Please add a Goal!');
-      return;
-    }
-
-    const testID = this.createTestRecordID();
-    generateTest(
-      this.storage,
-      goal,
-      apk,
-      maxTestSteps,
-      creds.username,
-      creds.accessKey,
-      creds.region,
-      devices,
-      platformVersion,
-      [],
-      testID,
       startActions,
       prevGoal,
-    ).subscribe((test) => {
-      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'update-test-progress',
-        data: test,
-      });
+    ).subscribe({
+      next: (data) => {
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+          action: 'update-test-progress',
+          data: data,
+        });
+      },
+      error: (err) => {
+        console.log(`received error callback: ${err}`);
+        toast.showError(err);
+      },
     });
   }
 

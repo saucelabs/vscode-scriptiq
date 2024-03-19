@@ -284,7 +284,7 @@ export class TestGenerationPanel {
                 <p>ScriptIQ likes to generate as many steps as it can. Help it to stay focused by telling it when it should stop.</p>
                 <div class="form-container">
                     <label for="max_test_steps">Cut off test steps at</label>
-                    <input type="number" class="short" id="max_test_steps" value="10" />
+                    <input type="number" class="short" id="max_test_steps" value="10" min="1" max="20" />
                 </div>
                 <h6 class="mt-30">Device Settings</h6>
                 <div class="form-container">
@@ -345,8 +345,14 @@ export class TestGenerationPanel {
       return;
     }
 
+    if (maxTestSteps < 1 || maxTestSteps > 20) {
+      toast.showError('The number of test steps must be between 1 and 20.');
+      return;
+    }
+
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
+
     generateTest(
       this.storage,
       goal,
@@ -361,11 +367,17 @@ export class TestGenerationPanel {
       testID,
       [],
       '',
-    ).subscribe((test) => {
-      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'update-test-progress',
-        data: test,
-      });
+    ).subscribe({
+      next: (data) => {
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+          action: 'update-test-progress',
+          data: data,
+        });
+      },
+      error: (err) => {
+        console.log(`received error callback: ${err}`);
+        toast.showError(err);
+      },
     });
   }
 
@@ -392,6 +404,11 @@ export class TestGenerationPanel {
       return;
     }
 
+    if (maxTestSteps < 1 || maxTestSteps > 20) {
+      toast.showError('The number of test steps must be between 1 and 20.');
+      return;
+    }
+
     const testID = this.createTestRecordID();
     generateTest(
       this.storage,
@@ -407,11 +424,17 @@ export class TestGenerationPanel {
       testID,
       startActions,
       prevGoal,
-    ).subscribe((test) => {
-      TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-        action: 'update-test-progress',
-        data: test,
-      });
+    ).subscribe({
+      next: (data) => {
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+          action: 'update-test-progress',
+          data: data,
+        });
+      },
+      error: (err) => {
+        console.log('received error callback');
+        toast.showError(err);
+      },
     });
   }
 

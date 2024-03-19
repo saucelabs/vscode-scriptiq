@@ -1,11 +1,11 @@
 import { fetch } from 'undici';
-import { TextDecoderStream } from 'node:stream/web';
+import { TextDecoderStream, ReadableStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../storage';
 import { TestRecord, TestStep, Vote } from '../types';
 
-interface StatusUpdate {
+export interface StatusUpdate {
   header: string;
   status_message: string;
 }
@@ -19,7 +19,7 @@ function isStatusUpdate(data: unknown): data is StatusUpdate {
   );
 }
 
-interface JobUpdate {
+export interface JobUpdate {
   header: string;
   job_id: string;
   selected_device_name: string;
@@ -37,7 +37,7 @@ function isJobUpdate(data: unknown): data is JobUpdate {
   );
 }
 
-interface StepUpdate {
+export interface StepUpdate {
   header: string;
   step_data: TestStep;
   img_data: {
@@ -56,7 +56,7 @@ function isStepUpdate(data: unknown): data is StepUpdate {
   );
 }
 
-interface DoneUpdate {
+export interface DoneUpdate {
   header: string;
 }
 
@@ -135,6 +135,12 @@ export function generateTest(
     response
       .then(async (res) => {
         const textStream = res.body?.pipeThrough(new TextDecoderStream());
+        if (!res.ok) {
+          observer.error(
+            `Failed to generate test (${res.status}): ${await streamToString(textStream)}`,
+          );
+        }
+
         if (textStream) {
           for await (const chunk of textStream) {
             console.log('chunk');
@@ -267,4 +273,17 @@ export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
   if (!resp.ok) {
     throw new Error('Unexpected status code: ' + resp.status);
   }
+}
+
+async function streamToString(stream?: ReadableStream<string>) {
+  if (!stream) {
+    return '';
+  }
+
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+
+  return chunks.join('');
 }

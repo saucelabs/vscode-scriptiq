@@ -32,7 +32,7 @@ const platformVersion = document.getElementById('platform_number');
 const sauceOrange = '#EE805A';
 
 // Code Generator Default
-var codeTemplateGenerator = new AppiumPython();
+let codeTemplateGenerator = new AppiumPython();
 
 // Declare Default Values
 const defaultMaxSteps = maxTestSteps.value;
@@ -59,8 +59,8 @@ function main() {
     updateState('goal', goalText.value);
   });
   assertContainer?.addEventListener('keyup', function (event) {
-    var screenAsserts = [];
-    for (var child of assertContainer.children) {
+    const screenAsserts = [];
+    for (let child of assertContainer.children) {
       if (child.type == 'text') screenAsserts.push(child.value);
     }
     updateState('assert_screen_desc_container', screenAsserts);
@@ -71,11 +71,11 @@ function main() {
   generateAllRDCCheckboxes(document.getElementById('rdc-checkbox-container'));
   generateLanguageSelectionOptions();
 
-  var coll = document.getElementsByClassName('collapsible');
+  const coll = document.getElementsByClassName('collapsible');
   for (let i = 0; i < coll.length; i++) {
     coll[i].addEventListener('click', function () {
       this.classList.toggle('active');
-      var content = this.nextElementSibling;
+      const content = this.nextElementSibling;
       if (content.style.display === 'block') {
         content.style.display = 'none';
       } else {
@@ -102,7 +102,7 @@ function main() {
             testGallery.innerHTML = '';
             outputScript.innerHTML = '';
             testGallery.appendChild(document.createElement('br'));
-            var container = document.createElement('span');
+            const container = document.createElement('span');
             container.classList.add('test-status-header');
             container.innerHTML = message.data.status_message;
             testGallery.appendChild(container);
@@ -150,13 +150,11 @@ function handleAskClick() {
   outputScript.innerHTML = '';
   testHeader.style.display = 'none';
 
-  var selectedDevices = getSelectedDevices();
-
-  var assertInputsContainers = document.getElementsByClassName(
+  const assertInputsContainers = document.getElementsByClassName(
     'screen-desc-assert-input',
   );
-  var assertInputDescs = [];
-  for (var cont of assertInputsContainers) {
+  const assertInputDescs = [];
+  for (let cont of assertInputsContainers) {
     assertInputDescs.push(cont.value);
   }
 
@@ -168,7 +166,7 @@ function handleAskClick() {
       apk: apkText.value,
       assertions: assertInputDescs,
       max_test_steps: parseInt(maxTestSteps.value),
-      devices: selectedDevices,
+      devices: getSelectedDevices(),
       platform_version: platformVersion.value,
     },
   });
@@ -206,9 +204,9 @@ function generateFullTestDisplay() {
   const all_step_data = data.all_steps;
   testHeader.style.display = 'block';
 
-  var start_actions = [];
-  for (var ident of all_step_data) {
-    var action = {
+  const start_actions = [];
+  for (let ident of all_step_data) {
+    const action = {
       potential_identifiers: ident.potential_identifiers,
       action: ident.action,
       text: ident.text,
@@ -228,13 +226,10 @@ function generateFullTestDisplay() {
     prev_goal: data.goal,
   };
 
-  var timeoutTime = 0;
-  // if (!languageChange) {
-  timeoutTime = 400;
-  // }
+  const timeoutTime = 400;
   for (let i = 0; i < all_step_data.length; i++) {
     setTimeout(function () {
-      var user_screen_descs = [];
+      let user_screen_descs = [];
       if ('user_screen_descs' in data) {
         user_screen_descs = data.user_screen_descs;
       }
@@ -283,12 +278,12 @@ function generateStep(
   canvasNode.style.border = '1px black';
 
   const drawScreenshot = function (node, width) {
-    var height = width * heightRatio;
+    const height = width * heightRatio;
     node.width = width;
     node.height = height;
 
     const ctx = node.getContext('2d');
-    var img = new Image();
+    const img = new Image();
     img.src = `${historyPath}/${testID}/${stepData.img_out_name}`;
     img.onload = () => {
       ctx.drawImage(img, 0, 0, width, height);
@@ -332,14 +327,14 @@ function generateStep(
     generateCodeChoicesContainer(i, stepData, testID, rating),
   );
 
-  var reasonContainer = generateReasonContainer(stepData);
+  const reasonContainer = generateReasonContainer(stepData);
   if (reasonContainer !== undefined) stepGallery.appendChild(reasonContainer);
 
-  var screenDescIdeasContainer = generateScreenDescIdeasContainer(stepData);
+  const screenDescIdeasContainer = generateScreenDescIdeasContainer(stepData);
   if (screenDescIdeasContainer !== undefined)
     stepGallery.appendChild(screenDescIdeasContainer);
 
-  var screenMatchContainer = generateScreenMatchContainer(
+  const screenMatchContainer = generateScreenMatchContainer(
     stepData,
     user_screen_descs,
   );
@@ -383,25 +378,25 @@ function generateStep(
  * @returns The block for step i which displays the code options and the user rating buttons.
  */
 function generateCodeChoicesContainer(i, stepData, testID, rating) {
-  var codeContainer = document.createElement('div');
+  const codeContainer = document.createElement('div');
   codeContainer.classList.add('code-block');
 
   if (stepData.potential_identifiers.length > 0) {
     addUserRatingButtons(codeContainer, i, testID, rating);
   }
 
-  var codeChoiceContainer = document.createElement('div');
+  const codeChoiceContainer = document.createElement('div');
   codeChoiceContainer.id = `code-choice-container-${i}`;
 
   if (stepData.potential_identifiers.length > 0) {
-    var radioScriptIQChoice = document.createElement('input');
+    const radioScriptIQChoice = document.createElement('input');
     radioScriptIQChoice.type = 'radio';
     radioScriptIQChoice.name = `script_choice_${i}`;
-    var radio_id = `script_choice_step_${i}_value_0`;
+    let radio_id = `script_choice_step_${i}_value_0`;
     radioScriptIQChoice.id = radio_id;
     radioScriptIQChoice.value = 0;
     radioScriptIQChoice.checked = true;
-    var labelScriptIQChoice = document.createElement('label');
+    const labelScriptIQChoice = document.createElement('label');
     labelScriptIQChoice.for = radio_id;
     labelScriptIQChoice.innerHTML =
       ' ' +
@@ -416,7 +411,7 @@ function generateCodeChoicesContainer(i, stepData, testID, rating) {
     codeContainer.append(codeChoiceContainer);
 
     // Adding other identifier options including skipping the step
-    var extraCodeContainer = document.createElement('div');
+    const extraCodeContainer = document.createElement('div');
     extraCodeContainer.id = `extra-code-container-${i}`;
     extraCodeContainer.appendChild(document.createElement('br'));
 
@@ -424,13 +419,13 @@ function generateCodeChoicesContainer(i, stepData, testID, rating) {
     // extraCodeContainer = addNoOption(extraCodeContainer, i);
     addNoOption(extraCodeContainer, i);
     for (let x = 1; x < stepData.potential_identifiers.length; x++) {
-      var radioOtherChoice = document.createElement('input');
+      const radioOtherChoice = document.createElement('input');
       radioOtherChoice.type = 'radio';
       radioOtherChoice.name = `script_choice_${i}`;
-      var radio_id = `script_choice_step_${i}_value_${x}`;
+      radio_id = `script_choice_step_${i}_value_${x}`;
       radioOtherChoice.id = radio_id;
       radioOtherChoice.value = x;
-      var labelOtherChoice = document.createElement('label');
+      const labelOtherChoice = document.createElement('label');
       labelOtherChoice.for = radio_id;
       labelOtherChoice.innerHTML =
         ' ' +
@@ -446,7 +441,7 @@ function generateCodeChoicesContainer(i, stepData, testID, rating) {
     extraCodeContainer.style.display = 'none';
     codeContainer.appendChild(extraCodeContainer);
 
-    var moreOptionsButton = document.createElement('button');
+    const moreOptionsButton = document.createElement('button');
     moreOptionsButton.classList.add('button', 'button-text', 'collapsible');
 
     const moreOptionsText = `View step alternatives <span class="collapsible-icon"></span>`;
@@ -469,14 +464,14 @@ function generateCodeChoicesContainer(i, stepData, testID, rating) {
   }
 
   if ('direction' in stepData && stepData.direction !== '') {
-    var swipeCode = document.createElement('pre');
+    const swipeCode = document.createElement('pre');
     swipeCode.innerHTML = codeTemplateGenerator.swipeCodeComment(
       stepData.direction,
     );
     codeContainer.appendChild(swipeCode);
   }
   if ('text' in stepData && stepData.text !== '') {
-    var setTextCode = document.createElement('pre');
+    const setTextCode = document.createElement('pre');
     setTextCode.innerHTML = codeTemplateGenerator.sendTextCodeComment(
       stepData.text,
     );
@@ -492,14 +487,14 @@ function generateCodeChoicesContainer(i, stepData, testID, rating) {
  * @returns the original element, now with the skip step option added
  */
 function addNoOption(container, stepNum) {
-  var radioOtherChoice = document.createElement('input');
+  const radioOtherChoice = document.createElement('input');
   radioOtherChoice.type = 'radio';
   radioOtherChoice.name = `script_choice_${stepNum}`;
-  var radio_id = `script_choice_step_${stepNum}_value_-1`;
+  const radio_id = `script_choice_step_${stepNum}_value_-1`;
   radioOtherChoice.id = radio_id;
   radioOtherChoice.value = -1;
 
-  var labelOtherChoice = document.createElement('label');
+  const labelOtherChoice = document.createElement('label');
   labelOtherChoice.for = radio_id;
   labelOtherChoice.innerHTML = codeTemplateGenerator.noOptionComment();
 
@@ -511,15 +506,15 @@ function addNoOption(container, stepNum) {
 }
 
 function reorderCodeOptions(i) {
-  var codeChoiceContainer = document.getElementById(
+  const codeChoiceContainer = document.getElementById(
     `code-choice-container-${i}`,
   );
 
   if (!codeChoiceContainer.children[0].checked) {
-    var extraCodeContainer = document.getElementById(
+    const extraCodeContainer = document.getElementById(
       `extra-code-container-${i}`,
     );
-    for (var x = 0; x < extraCodeContainer.children.length; x++) {
+    for (let x = 0; x < extraCodeContainer.children.length; x++) {
       if (extraCodeContainer.children[x].checked) {
         break;
       }
@@ -528,8 +523,8 @@ function reorderCodeOptions(i) {
     const chosenLabel = extraCodeContainer.children[x + 1];
     const chosenBreak = extraCodeContainer.children[x + 2];
 
-    var unSelectedInput = codeChoiceContainer.children[0];
-    var unSelectedLabel = codeChoiceContainer.children[1];
+    const unSelectedInput = codeChoiceContainer.children[0];
+    const unSelectedLabel = codeChoiceContainer.children[1];
 
     extraCodeContainer.appendChild(unSelectedInput);
     extraCodeContainer.appendChild(unSelectedLabel);
@@ -716,22 +711,22 @@ function generateTestOutputInteractables(
   createScriptButton.innerHTML = 'Create Code Script';
   createScriptButton.checked = false;
 
-  var codeContainer = document.createElement('pre');
+  const codeContainer = document.createElement('pre');
   codeContainer.id = 'output-script-code-block';
   codeContainer.classList.add('code-block');
   codeContainer.style.display = 'none';
 
   createScriptButton.onclick = function () {
-    var firstGen = false;
+    let firstGen = false;
     if (codeContainer.innerHTML.length == 0) {
       firstGen = true;
     }
     codeContainer.innerHTML = '';
     codeContainer.style.display = 'block';
 
-    var scriptContainer = document.createElement('div');
+    const scriptContainer = document.createElement('div');
 
-    var copyButton = document.createElement('img');
+    const copyButton = document.createElement('img');
     copyButton.classList.add('script-save-buttons');
     copyButton.src = `${mediaPath}/icons/icn-copy.svg`;
 
@@ -741,7 +736,7 @@ function generateTestOutputInteractables(
 
     codeContainer.appendChild(copyButton);
 
-    var headerText = codeTemplateGenerator.scriptHeaderCode(
+    const headerText = codeTemplateGenerator.scriptHeaderCode(
       goal,
       apk,
       device_name,
@@ -749,12 +744,12 @@ function generateTestOutputInteractables(
       region,
     );
 
-    var codeStepText = '';
+    let codeStepText = '';
     for (let x = 0; x < identifiers.length; x++) {
-      var index_element = document.querySelector(
+      const index_element = document.querySelector(
         `input[name="script_choice_${x}"]:checked`,
       );
-      var index = -1;
+      let index = -1;
       if (index_element !== null) {
         index = document.querySelector(
           `input[name="script_choice_${x}"]:checked`,
@@ -793,7 +788,7 @@ function generateTestOutputInteractables(
         codeStepText += `${codeTemplateGenerator.preNewLine}`;
       }
     }
-    var closeStepText = codeTemplateGenerator.endScriptCode();
+    const closeStepText = codeTemplateGenerator.endScriptCode();
 
     scriptContainer.innerHTML = headerText + codeStepText + closeStepText;
     codeContainer.appendChild(scriptContainer);
@@ -825,15 +820,15 @@ function sendUserRating(rating, step, testID) {
 function generateLanguageSelectionOptions() {
   outputLanguageDiv.classList.add('flex-container');
   // Appium Python
-  var div = document.createElement('div');
+  let div = document.createElement('div');
 
-  var languageScriptChoice = document.createElement('input');
+  let languageScriptChoice = document.createElement('input');
   languageScriptChoice.type = 'radio';
   languageScriptChoice.name = `language_choice`;
-  var radio_id = `language_appium_python`;
+  let radio_id = `language_appium_python`;
   languageScriptChoice.id = radio_id;
   languageScriptChoice.checked = true;
-  var labelLanguageScriptChoice = document.createElement('label');
+  let labelLanguageScriptChoice = document.createElement('label');
   labelLanguageScriptChoice.for = radio_id;
   labelLanguageScriptChoice.innerHTML = 'Appium Python';
 
@@ -933,7 +928,7 @@ function createResizerBar(
  */
 function generateReasonContainer(stepData) {
   if ('event_reason' in stepData && stepData.event_reason !== '') {
-    var reasonContainer = document.createElement('div');
+    const reasonContainer = document.createElement('div');
     reasonContainer.classList.add('step-block');
     reasonContainer.appendChild(
       document.createTextNode('Why ScriptIQ chose this step:'),
@@ -951,15 +946,15 @@ function generateReasonContainer(stepData) {
  */
 function generateScreenDescIdeasContainer(stepData) {
   if ('screen_descs' in stepData && stepData.screen_descs.length > 0) {
-    var descsContainer = document.createElement('div');
+    const descsContainer = document.createElement('div');
     descsContainer.classList.add('step-block');
 
     descsContainer.appendChild(
       document.createTextNode('ScriptIQ’s Screen Descriptions:'),
     );
-    var descsListContainer = document.createElement('ul');
+    const descsListContainer = document.createElement('ul');
     for (let i = 0; i < stepData.screen_descs.length; i++) {
-      var li = document.createElement('li');
+      const li = document.createElement('li');
       li.innerHTML = stepData.screen_descs[i];
       descsListContainer.append(li);
     }
@@ -975,39 +970,71 @@ function generateScreenDescIdeasContainer(stepData) {
  */
 function generateScreenMatchContainer(stepData, userScreenDescs) {
   if ('sd_asserts' in stepData && stepData.sd_asserts.length > 0) {
-    var descsContainer = document.createElement('div');
+    const descsContainer = document.createElement('div');
     descsContainer.classList.add('step-block');
 
-    descsContainer.appendChild(
-      document.createTextNode('Screen Description Matches:'),
-    );
-    var descsListContainer = document.createElement('ul');
+    const descsListContainer = document.createElement('table');
+    descsListContainer.setAttribute('border', '1');
+    const tbdy = document.createElement('tbody');
+    let tr = generateHeaderRow(['Screen Descriptions', 'is Match?']);
+    tr.classList.add('table-header');
+    tbdy.appendChild(tr);
     for (let i = 0; i < stepData.sd_asserts.length; i++) {
-      var li = document.createElement('li');
-      li.innerHTML =
-        userScreenDescs[i] +
-        ' - ' +
-        capitalizeFirstLetter(stepData.sd_asserts[i].toString());
-      descsListContainer.append(li);
+      tr = generateMatchesRow(userScreenDescs[i], stepData.sd_asserts[i]);
+      if (stepData.sd_asserts[i]) {
+        tr.classList.add('true-assert');
+      }
+      tbdy.appendChild(tr);
     }
+    descsListContainer.appendChild(tbdy);
     descsContainer.appendChild(descsListContainer);
     return descsContainer;
   }
 }
 
-function capitalizeFirstLetter(s) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+function generateHeaderRow(labels) {
+  const tr = document.createElement('tr');
+  for (const l of labels) {
+    const t = document.createElement('th');
+    t.appendChild(document.createTextNode(l));
+    tr.appendChild(t);
+  }
+  return tr;
+}
+
+function generateMatchesRow(assert, label) {
+  const tr = document.createElement('tr');
+  let t;
+
+  t = document.createElement('td');
+  t.appendChild(document.createTextNode(assert));
+  tr.appendChild(t);
+  t = document.createElement('td');
+  t.appendChild(generateMatchIcon(label));
+  tr.appendChild(t);
+  return tr;
+}
+
+function generateMatchIcon(label) {
+  const e = document.createElement('img');
+  e.classList.add('matched-result');
+  if (label) {
+    e.src = `${mediaPath}/icons/icn-status-passed.svg`;
+  } else {
+    e.src = `${mediaPath}/icons/icn-minus-circle.svg`;
+  }
+  return e;
 }
 
 function assertionInputRow(value = '') {
-  var assertInput = document.createElement('input');
+  const assertInput = document.createElement('input');
   assertInput.classList.add('screen-desc-assert-input');
   if (value !== '') {
     assertInput.value = value;
   }
-  var lineBreak = document.createElement('br');
+  const lineBreak = document.createElement('br');
 
-  var minusButton = document.createElement('button');
+  const minusButton = document.createElement('button');
   minusButton.type = 'button';
   minusButton.classList.add('button');
   minusButton.classList.add('button-minus-row');
@@ -1026,7 +1053,7 @@ function assertionInputRow(value = '') {
  * Generate the fields to add assert inputs
  */
 function generateAssertInputs() {
-  var addButton = document.getElementById('add-screen-assert-button');
+  const addButton = document.getElementById('add-screen-assert-button');
   addButton.onclick = function () {
     assertionInputRow();
   };
@@ -1037,7 +1064,7 @@ function addHistoryAddAssert(assert) {
 }
 
 function updateStepDataState(stepData) {
-  for (const [key, value] of Object.entries(stepData)) {
+  for (let [key, value] of Object.entries(stepData)) {
     console.log(key, value);
     updateState(key, value);
   }
@@ -1047,7 +1074,7 @@ function updateStepDataState(stepData) {
 }
 
 function updateState(key, value) {
-  var state = vscode.getState();
+  let state = vscode.getState();
   if (state == undefined) {
     state = {};
   }

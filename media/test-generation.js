@@ -358,12 +358,28 @@ function generateStep(
   //     stepGallery.appendChild(editTestDiv);
   // }
 
-  const resizer = createResizerBar(
-    imageGallery,
-    imgDivMinWidth,
-    drawScreenshot,
-    canvasNode,
-  );
+  const resizer = createHorizontalResizeBar({
+    onResize: ({ x }) => {
+      if (x === 0) {
+        return;
+      }
+
+      const origin = imageGallery.getBoundingClientRect().width;
+      const maxWidth =
+        galleryFloatContainerTag.getBoundingClientRect().width * 0.5;
+
+      const newLeftWidth = Math.min(
+        Math.max(imgDivMinWidth, origin + x),
+        maxWidth,
+      );
+
+      if (newLeftWidth === imgDivMinWidth || newLeftWidth === maxWidth) {
+        return;
+      }
+      imageGallery.style.width = `${newLeftWidth}px`;
+      drawScreenshot(canvasNode, newLeftWidth);
+    },
+  });
 
   const galleryFloatContainerTag = document.createElement('div');
   galleryFloatContainerTag.className = 'test-container';
@@ -895,59 +911,39 @@ function generateLanguageSelectionOptions() {
 }
 
 /**
- * Creates the bar that allows the image to be resized
+ * @callback OnResizeCallback
+ * @param {number} x
  */
-function createResizerBar(
-  imageGallery,
-  imgDivMinWidth,
-  drawScreenshot,
-  canvasNode,
-) {
+/**
+ * @typedef {Object} HorizontalResizeBarProps
+ * @property {OnResizeCallback} onResize
+ */
+/**
+ * Creates a
+ * @param {HorizontalResizeBarProps} props
+ */
+function createHorizontalResizeBar({ onResize }) {
   const resizer = document.createElement('div');
   resizer.className = 'resizer';
-  resizer.id = 'dragMe';
 
-  let x = 0;
-  let y = 0;
-  let leftWidth = 0;
-
-  // Resizer methods
-  const mouseDownHandler = function (e) {
-    // Get the current mouse position
-    x = e.clientX;
-    y = e.clientY;
-    leftWidth = imageGallery.getBoundingClientRect().width;
-
-    // Attach the listeners to document
+  const mouseDownHandler = () => {
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
   };
 
-  const mouseMoveHandler = function (e) {
-    // How far the mouse has been moved
-    const dx = e.clientX - x;
-
-    const newLeftWidth = Math.min(
-      Math.max(imgDivMinWidth, leftWidth + dx),
-      resizer.parentNode.getBoundingClientRect().width * 0.5,
-    );
-    imageGallery.style.width = newLeftWidth + 'px';
-    drawScreenshot(canvasNode, newLeftWidth);
-
-    resizer.style.cursor = 'col-resize';
+  const mouseMoveHandler = (e) => {
     document.body.style.cursor = 'col-resize';
+
+    onResize({ x: e.movementX });
   };
 
-  const mouseUpHandler = function () {
-    resizer.style.removeProperty('cursor');
+  const mouseUpHandler = () => {
     document.body.style.removeProperty('cursor');
 
-    // Remove the handlers of mousemove and mouseup
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
   };
 
-  // Attach the handler
   resizer.addEventListener('mousedown', mouseDownHandler);
   return resizer;
 }

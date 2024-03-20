@@ -379,7 +379,7 @@ textarea::placeholder {
 
 .resizer {
   background-color: var(--color-link);
-  cursor: ew-resize;
+  cursor: col-resize;
   width: 2px;
   margin-top: 20px;
 }

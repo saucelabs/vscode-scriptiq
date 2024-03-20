@@ -417,6 +417,54 @@ function renderDoneStep(testId, imgRatio, stepData) {
 }
 
 /**
+ * @typedef {Object} Annotation
+ * @property {number} width
+ * @property {number} height
+ * @property {number} x
+ * @property {number} height
+ */
+/**
+ * @typedef {Object} AnnotatedImageProps
+ * @property {Annotation} [annotation]
+ * @property {number} width
+ * @property {number} height
+ * @property {string} src
+ */
+/**
+ * @param {AnnotatedImageProps} props
+ */
+function createAnnotatedImage({ annotation, height, src, width }) {
+  const canvasNode = document.createElement('canvas');
+  canvasNode.style.border = '1px black';
+
+  canvasNode.width = width;
+  canvasNode.height = height;
+
+  const ctx = canvasNode.getContext('2d');
+  const img = new Image();
+  img.src = src;
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, width, height);
+    ctx.strokeRect(0, 0, width, height);
+
+    if (annotation) {
+      ctx.lineWidth = 3;
+      ctx.rect(
+        annotation.x * width,
+        annotation.y * height,
+        annotation.width * width,
+        annotation.height * height,
+      );
+      ctx.strokeStyle = sauceOrange;
+      ctx.shadowColor = sauceOrange;
+      ctx.stroke();
+    }
+  };
+
+  return canvasNode;
+}
+
+/**
  *
  * @param {number} i The step number.
  * @param {dict} stepData All the data about the current step of this test.

@@ -320,7 +320,6 @@ function generateStep(
   });
 
   const imgContainer = document.createElement('div');
-  imgContainer.style.width = `${width + 20}px`;
   imgContainer.appendChild(img);
 
   const resizer = createHorizontalResizeBar({
@@ -329,9 +328,10 @@ function generateStep(
         return;
       }
 
-      const origin = imgContainer.getBoundingClientRect().width;
-      const minWidth = width + 20;
-      const maxWidth = sectionBody.getBoundingClientRect().width * 0.5;
+      const origin = resizer.previousSibling.getBoundingClientRect().width;
+      const minWidth = width;
+      const maxWidth =
+        resizer.parentElement.getBoundingClientRect().width * 0.5;
 
       const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
       const newHeight = newWidth * (1 / imgRatio);
@@ -346,8 +346,8 @@ function generateStep(
         width: newWidth,
         src: `${historyPath}/${testID}/${stepData.img_out_name}`,
       });
-      imgContainer.style.width = `${newWidth}px`;
-      imgContainer.replaceChildren(newImg);
+      resizer.previousSibling.style.width = `${newWidth}px`;
+      resizer.previousSibling.replaceChildren(newImg);
     },
   });
 
@@ -368,20 +368,16 @@ function generateStep(
 }
 
 function renderDoneStep(testId, imgRatio, stepData) {
-  const header = document.createElement('h4');
-  header.className = 'header';
-  header.append('Finish');
-
   const height = DEFAULT_IMG_HEIGHT;
   const width = height * imgRatio;
+  const src = `${historyPath}/${testId}/${stepData.img_out_name}`;
   const img = createAnnotatedImage({
     height,
     width,
-    src: `${historyPath}/${testId}/${stepData.img_out_name}`,
+    src,
   });
 
   const imgContainer = document.createElement('div');
-  imgContainer.style.width = `${width + 20}px`;
   imgContainer.appendChild(img);
 
   const resizer = createHorizontalResizeBar({
@@ -390,31 +386,41 @@ function renderDoneStep(testId, imgRatio, stepData) {
         return;
       }
 
-      const origin = imgContainer.getBoundingClientRect().width;
-      const newWidth = origin + x;
+      const origin = resizer.previousSibling.getBoundingClientRect().width;
+      const minWidth = width;
+      const maxWidth =
+        resizer.parentElement.getBoundingClientRect().width * 0.5;
+
+      const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
       const newHeight = newWidth * (1 / imgRatio);
+
+      if (newWidth === minWidth || newWidth === maxWidth) {
+        return;
+      }
 
       const newImg = createAnnotatedImage({
         height: newHeight,
         width: newWidth,
-        src: `${historyPath}/${testId}/${stepData.img_out_name}`,
+        src,
       });
 
-      if (newWidth === origin) {
-        return;
-      }
-      imgContainer.style.width = `${newWidth}px`;
-      imgContainer.replaceChildren(newImg);
+      resizer.previousSibling.style.width = `${newWidth}px`;
+      resizer.previousSibling.replaceChildren(newImg);
     },
   });
-  const content = document.createElement('div');
-  content.className = 'test-container';
-  content.appendChild(imgContainer);
-  content.appendChild(resizer);
+
+  const sectionHeader = document.createElement('h4');
+  sectionHeader.className = 'header';
+  sectionHeader.append('Finish');
+
+  const sectionContent = document.createElement('div');
+  sectionContent.className = 'test-container';
+  sectionContent.appendChild(imgContainer);
+  sectionContent.appendChild(resizer);
 
   const section = document.createElement('section');
-  section.appendChild(header);
-  section.appendChild(content);
+  section.appendChild(sectionHeader);
+  section.appendChild(sectionContent);
 
   testGallery.appendChild(section);
 }

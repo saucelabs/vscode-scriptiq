@@ -429,6 +429,8 @@ function renderDoneStep(testId, imgRatio, stepData) {
  * @property {string} src
  */
 /**
+ * Renders an image to a canvas and renders an optional
+ * Annotation overlay to highlight a particular part of the image.
  * @param {AnnotatedImageProps} props
  */
 function createAnnotatedImage({ annotation, height, src, width }) {
@@ -965,7 +967,7 @@ function generateLanguageSelectionOptions() {
  * @property {OnResizeCallback} onResize
  */
 /**
- * Creates a
+ * Creates a control to use for resizing components.
  * @param {HorizontalResizeBarProps} props
  */
 function createHorizontalResizeBar({ onResize }) {

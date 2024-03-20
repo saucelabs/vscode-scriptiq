@@ -272,55 +272,6 @@ function generateStep(
   user_screen_descs = [],
   votes = [],
 ) {
-  const stepHeaderTag = document.createTextNode('Step ' + (i + 1));
-
-  const imgHeight = 350;
-  const imgWidth = imgHeight * imgRatio;
-  const heightRatio = imgHeight / imgWidth;
-  const imgDivMinWidth = imgWidth + 20;
-
-  const canvasNode = document.createElement('canvas');
-  canvasNode.style.border = '1px black';
-
-  const drawScreenshot = function (node, width) {
-    const height = width * heightRatio;
-    node.width = width;
-    node.height = height;
-
-    const ctx = node.getContext('2d');
-    const img = new Image();
-    img.src = `${historyPath}/${testID}/${stepData.img_out_name}`;
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, width, height);
-      ctx.strokeRect(0, 0, width, height);
-      if ('location' in stepData) {
-        ctx.lineWidth = 3;
-        ctx.rect(
-          stepData.location.x * width,
-          stepData.location.y * height,
-          stepData.location.width * width,
-          stepData.location.height * height,
-        );
-        ctx.strokeStyle = sauceOrange;
-        ctx.shadowColor = sauceOrange;
-        ctx.stroke();
-      }
-      for (let x = 0; x < 10000; x++) {
-        x = x;
-      }
-    };
-  };
-
-  drawScreenshot(canvasNode, imgWidth);
-
-  const imageGallery = document.createElement('div');
-  imageGallery.className = 'test-step-left';
-  imageGallery.style.width = String(imgDivMinWidth) + 'px';
-
-  imageGallery.appendChild(stepHeaderTag);
-  imageGallery.appendChild(document.createElement('br'));
-  imageGallery.appendChild(canvasNode);
-
   const stepGallery = document.createElement('div');
   stepGallery.className = 'test-step-right';
 
@@ -358,49 +309,72 @@ function generateStep(
   //     stepGallery.appendChild(editTestDiv);
   // }
 
+  const img = createAnnotatedImage({
+    annotation: stepData.location,
+    height: 350,
+    width: 350 * imgRatio,
+    src: `${historyPath}/${testID}/${stepData.img_out_name}`,
+  });
+
+  const imgContainer = document.createElement('div');
+  imgContainer.style.width = `${350 * imgRatio + 20}px`;
+  imgContainer.appendChild(img);
+
   const resizer = createHorizontalResizeBar({
     onResize: ({ x }) => {
       if (x === 0) {
         return;
       }
 
-      const origin = imageGallery.getBoundingClientRect().width;
-      const maxWidth =
-        galleryFloatContainerTag.getBoundingClientRect().width * 0.5;
+      const origin = imgContainer.getBoundingClientRect().width;
+      const minWidth = 350 * imgRatio + 20;
+      const maxWidth = sectionBody.getBoundingClientRect().width * 0.5;
 
-      const newLeftWidth = Math.min(
-        Math.max(imgDivMinWidth, origin + x),
-        maxWidth,
-      );
+      const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
+      const newHeight = newWidth * (1 / imgRatio);
 
-      if (newLeftWidth === imgDivMinWidth || newLeftWidth === maxWidth) {
+      if (newWidth === minWidth || newWidth === maxWidth) {
         return;
       }
-      imageGallery.style.width = `${newLeftWidth}px`;
-      drawScreenshot(canvasNode, newLeftWidth);
+
+      const newImg = createAnnotatedImage({
+        annotation: stepData.location,
+        height: newHeight,
+        width: newWidth,
+        src: `${historyPath}/${testID}/${stepData.img_out_name}`,
+      });
+      imgContainer.style.width = `${newWidth}px`;
+      imgContainer.replaceChildren(newImg);
     },
   });
 
-  const galleryFloatContainerTag = document.createElement('div');
-  galleryFloatContainerTag.className = 'test-container';
+  const sectionHeader = document.createElement('h4');
+  sectionHeader.append(`Step ${i + 1}`);
 
-  galleryFloatContainerTag.appendChild(imageGallery);
-  galleryFloatContainerTag.appendChild(resizer);
-  galleryFloatContainerTag.appendChild(stepGallery);
-  testGallery.appendChild(galleryFloatContainerTag);
+  const sectionBody = document.createElement('div');
+  sectionBody.className = 'test-container';
+  sectionBody.appendChild(imgContainer);
+  sectionBody.appendChild(resizer);
+  sectionBody.appendChild(stepGallery);
+
+  const section = document.createElement('section');
+  section.appendChild(sectionHeader);
+  section.appendChild(sectionBody);
+
+  testGallery.appendChild(section);
 }
 
 function renderDoneStep(testId, imgRatio, stepData) {
-  const container = document.createElement('section');
+  const section = document.createElement('section');
 
   const header = document.createElement('h4');
   header.className = 'header';
   header.append('Finish');
-  container.appendChild(header);
+  section.appendChild(header);
 
   const content = document.createElement('div');
   content.className = 'test-container';
-  container.appendChild(content);
+  section.appendChild(content);
 
   const img = createAnnotatedImage({
     height: 350,
@@ -438,7 +412,7 @@ function renderDoneStep(testId, imgRatio, stepData) {
   });
   content.appendChild(resizer);
 
-  testGallery.appendChild(container);
+  testGallery.appendChild(section);
 }
 
 /**

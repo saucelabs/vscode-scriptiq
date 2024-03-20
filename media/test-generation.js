@@ -30,6 +30,7 @@ const platformVersion = document.getElementById('platform_number');
 
 // Declare Styles
 const sauceOrange = '#EE805A';
+const DEFAULT_IMG_HEIGHT = 350;
 
 // Code Generator Default
 let codeTemplateGenerator = new AppiumPython();
@@ -309,15 +310,17 @@ function generateStep(
   //     stepGallery.appendChild(editTestDiv);
   // }
 
+  const height = DEFAULT_IMG_HEIGHT;
+  const width = height * imgRatio;
   const img = createAnnotatedImage({
     annotation: stepData.location,
-    height: 350,
-    width: 350 * imgRatio,
+    height,
+    width,
     src: `${historyPath}/${testID}/${stepData.img_out_name}`,
   });
 
   const imgContainer = document.createElement('div');
-  imgContainer.style.width = `${350 * imgRatio + 20}px`;
+  imgContainer.style.width = `${width + 20}px`;
   imgContainer.appendChild(img);
 
   const resizer = createHorizontalResizeBar({
@@ -327,7 +330,7 @@ function generateStep(
       }
 
       const origin = imgContainer.getBoundingClientRect().width;
-      const minWidth = 350 * imgRatio + 20;
+      const minWidth = width + 20;
       const maxWidth = sectionBody.getBoundingClientRect().width * 0.5;
 
       const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
@@ -369,14 +372,16 @@ function renderDoneStep(testId, imgRatio, stepData) {
   header.className = 'header';
   header.append('Finish');
 
+  const height = DEFAULT_IMG_HEIGHT;
+  const width = height * imgRatio;
   const img = createAnnotatedImage({
-    height: 350,
-    width: 350 * imgRatio,
+    height,
+    width,
     src: `${historyPath}/${testId}/${stepData.img_out_name}`,
   });
 
   const imgContainer = document.createElement('div');
-  imgContainer.style.width = `${350 * imgRatio + 20}px`;
+  imgContainer.style.width = `${width + 20}px`;
   imgContainer.appendChild(img);
 
   const resizer = createHorizontalResizeBar({
@@ -411,7 +416,7 @@ function renderDoneStep(testId, imgRatio, stepData) {
   section.appendChild(header);
   section.appendChild(content);
 
-  return section;
+  testGallery.appendChild(section);
 }
 
 /**

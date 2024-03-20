@@ -419,7 +419,7 @@ function renderDoneStep(testId, imgRatio, stepData) {
  * @property {number} width
  * @property {number} height
  * @property {number} x
- * @property {number} height
+ * @property {number} y
  */
 /**
  * @typedef {Object} AnnotatedImageProps

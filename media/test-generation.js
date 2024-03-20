@@ -234,15 +234,20 @@ function generateFullTestDisplay() {
       if ('user_screen_descs' in data) {
         user_screen_descs = data.user_screen_descs;
       }
-      generateStep(
-        i,
-        data.img_ratio,
-        all_step_data[i],
-        editData,
-        data.test_id,
-        user_screen_descs,
-        data.votes,
-      );
+      console.log(all_step_data[i]);
+      if (all_step_data[i].action === 'done') {
+        renderDoneStep(data.test_id, data.img_ratio, all_step_data[i]);
+      } else {
+        generateStep(
+          i,
+          data.img_ratio,
+          all_step_data[i],
+          editData,
+          data.test_id,
+          user_screen_descs,
+          data.votes,
+        );
+      }
     }, timeoutTime);
   }
   generateTestOutputInteractables(
@@ -358,6 +363,64 @@ function generateStep(
   const section = document.createElement('section');
   section.appendChild(sectionHeader);
   section.appendChild(sectionBody);
+
+  testGallery.appendChild(section);
+}
+
+function renderDoneStep(testId, imgRatio, stepData) {
+  const height = DEFAULT_IMG_HEIGHT;
+  const width = height * imgRatio;
+  const src = `${historyPath}/${testId}/${stepData.img_out_name}`;
+  const img = createAnnotatedImage({
+    height,
+    width,
+    src,
+  });
+
+  const imgContainer = document.createElement('div');
+  imgContainer.appendChild(img);
+
+  const resizer = createHorizontalResizeBar({
+    onResize: ({ x }) => {
+      if (x === 0) {
+        return;
+      }
+
+      const origin = resizer.previousSibling.getBoundingClientRect().width;
+      const minWidth = width;
+      const maxWidth =
+        resizer.parentElement.getBoundingClientRect().width * 0.5;
+
+      const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
+      const newHeight = newWidth * (1 / imgRatio);
+
+      if (newWidth === minWidth || newWidth === maxWidth) {
+        return;
+      }
+
+      const newImg = createAnnotatedImage({
+        height: newHeight,
+        width: newWidth,
+        src,
+      });
+
+      resizer.previousSibling.style.width = `${newWidth}px`;
+      resizer.previousSibling.replaceChildren(newImg);
+    },
+  });
+
+  const sectionHeader = document.createElement('h4');
+  sectionHeader.className = 'header';
+  sectionHeader.append('Finish');
+
+  const sectionContent = document.createElement('div');
+  sectionContent.className = 'test-container';
+  sectionContent.appendChild(imgContainer);
+  sectionContent.appendChild(resizer);
+
+  const section = document.createElement('section');
+  section.appendChild(sectionHeader);
+  section.appendChild(sectionContent);
 
   testGallery.appendChild(section);
 }

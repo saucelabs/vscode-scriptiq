@@ -391,28 +391,53 @@ function generateStep(
 }
 
 function renderDoneStep(testId, imgRatio, stepData) {
-  const container = document.createElement('div');
-  container.className = 'test-step-done';
+  const container = document.createElement('section');
 
   const header = document.createElement('h4');
   header.className = 'header';
   header.append('Finish');
   container.appendChild(header);
 
-  const screenshotWrapper = document.createElement('div');
-  const screenshot = document.createElement('img');
-  screenshot.className = 'screenshot';
-  screenshot.src = `${historyPath}/${testId}/${stepData.img_out_name}`;
-  const imgHeight = 350;
-  const imgWidth = imgHeight * imgRatio;
-  // const heightRatio = imgHeight / imgWidth;
-  // const imgDivMinWidth = imgWidth + 20;
-  screenshot.width = imgWidth;
-  screenshot.height = imgHeight;
-  screenshotWrapper.appendChild(screenshot);
-  container.appendChild(screenshotWrapper);
+  const content = document.createElement('div');
+  content.className = 'test-container';
+  container.appendChild(content);
 
-  console.log(container);
+  const img = createAnnotatedImage({
+    height: 350,
+    width: 350 * imgRatio,
+    src: `${historyPath}/${testId}/${stepData.img_out_name}`,
+  });
+
+  const imgContainer = document.createElement('div');
+  imgContainer.style.width = `${350 * imgRatio + 20}px`;
+  imgContainer.appendChild(img);
+  content.appendChild(imgContainer);
+
+  const resizer = createHorizontalResizeBar({
+    onResize: ({ x }) => {
+      if (x === 0) {
+        return;
+      }
+
+      const origin = imgContainer.getBoundingClientRect().width;
+      const newWidth = origin + x;
+      const newHeight = newWidth * (1 / imgRatio);
+
+      const newImg = createAnnotatedImage({
+        height: newHeight,
+        width: newWidth,
+        src: `${historyPath}/${testId}/${stepData.img_out_name}`,
+      });
+
+      if (newWidth === origin) {
+        return;
+      }
+      imgContainer.style.width = `${newWidth}px`;
+      imgContainer.replaceChildren(newImg);
+    },
+  });
+  content.appendChild(resizer);
+
   testGallery.appendChild(container);
 }
 

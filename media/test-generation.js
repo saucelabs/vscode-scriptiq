@@ -365,16 +365,9 @@ function generateStep(
 }
 
 function renderDoneStep(testId, imgRatio, stepData) {
-  const section = document.createElement('section');
-
   const header = document.createElement('h4');
   header.className = 'header';
   header.append('Finish');
-  section.appendChild(header);
-
-  const content = document.createElement('div');
-  content.className = 'test-container';
-  section.appendChild(content);
 
   const img = createAnnotatedImage({
     height: 350,
@@ -385,7 +378,6 @@ function renderDoneStep(testId, imgRatio, stepData) {
   const imgContainer = document.createElement('div');
   imgContainer.style.width = `${350 * imgRatio + 20}px`;
   imgContainer.appendChild(img);
-  content.appendChild(imgContainer);
 
   const resizer = createHorizontalResizeBar({
     onResize: ({ x }) => {
@@ -410,9 +402,16 @@ function renderDoneStep(testId, imgRatio, stepData) {
       imgContainer.replaceChildren(newImg);
     },
   });
+  const content = document.createElement('div');
+  content.className = 'test-container';
+  content.appendChild(imgContainer);
   content.appendChild(resizer);
 
-  testGallery.appendChild(section);
+  const section = document.createElement('section');
+  section.appendChild(header);
+  section.appendChild(content);
+
+  return section;
 }
 
 /**

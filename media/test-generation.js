@@ -30,6 +30,7 @@ const platformVersion = document.getElementById('platform_number');
 
 // Declare Styles
 const sauceOrange = '#EE805A';
+const DEFAULT_IMG_HEIGHT = 350;
 
 // Code Generator Default
 let codeTemplateGenerator = new AppiumPython();
@@ -267,55 +268,6 @@ function generateStep(
   user_screen_descs = [],
   votes = [],
 ) {
-  const stepHeaderTag = document.createTextNode('Step ' + (i + 1));
-
-  const imgHeight = 350;
-  const imgWidth = imgHeight * imgRatio;
-  const heightRatio = imgHeight / imgWidth;
-  const imgDivMinWidth = imgWidth + 20;
-
-  const canvasNode = document.createElement('canvas');
-  canvasNode.style.border = '1px black';
-
-  const drawScreenshot = function (node, width) {
-    const height = width * heightRatio;
-    node.width = width;
-    node.height = height;
-
-    const ctx = node.getContext('2d');
-    const img = new Image();
-    img.src = `${historyPath}/${testID}/${stepData.img_out_name}`;
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0, width, height);
-      ctx.strokeRect(0, 0, width, height);
-      if ('location' in stepData) {
-        ctx.lineWidth = 3;
-        ctx.rect(
-          stepData.location.x * width,
-          stepData.location.y * height,
-          stepData.location.width * width,
-          stepData.location.height * height,
-        );
-        ctx.strokeStyle = sauceOrange;
-        ctx.shadowColor = sauceOrange;
-        ctx.stroke();
-      }
-      for (let x = 0; x < 10000; x++) {
-        x = x;
-      }
-    };
-  };
-
-  drawScreenshot(canvasNode, imgWidth);
-
-  const imageGallery = document.createElement('div');
-  imageGallery.className = 'test-step-left';
-  imageGallery.style.width = String(imgDivMinWidth) + 'px';
-
-  imageGallery.appendChild(stepHeaderTag);
-  imageGallery.appendChild(document.createElement('br'));
-  imageGallery.appendChild(canvasNode);
-
   const stepGallery = document.createElement('div');
   stepGallery.className = 'test-step-right';
 
@@ -353,20 +305,111 @@ function generateStep(
   //     stepGallery.appendChild(editTestDiv);
   // }
 
-  const resizer = createResizerBar(
-    imageGallery,
-    imgDivMinWidth,
-    drawScreenshot,
-    canvasNode,
-  );
+  const height = DEFAULT_IMG_HEIGHT;
+  const width = height * imgRatio;
+  const img = createAnnotatedImage({
+    annotation: stepData.location,
+    height,
+    width,
+    src: `${historyPath}/${testID}/${stepData.img_out_name}`,
+  });
 
-  const galleryFloatContainerTag = document.createElement('div');
-  galleryFloatContainerTag.className = 'test-container';
+  const imgContainer = document.createElement('div');
+  imgContainer.appendChild(img);
 
-  galleryFloatContainerTag.appendChild(imageGallery);
-  galleryFloatContainerTag.appendChild(resizer);
-  galleryFloatContainerTag.appendChild(stepGallery);
-  testGallery.appendChild(galleryFloatContainerTag);
+  const resizer = createHorizontalResizeBar({
+    onResize: ({ x }) => {
+      if (x === 0) {
+        return;
+      }
+
+      const origin = resizer.previousSibling.getBoundingClientRect().width;
+      const minWidth = width;
+      const maxWidth =
+        resizer.parentElement.getBoundingClientRect().width * 0.5;
+
+      const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
+      const newHeight = newWidth * (1 / imgRatio);
+
+      if (newWidth === minWidth || newWidth === maxWidth) {
+        return;
+      }
+
+      const newImg = createAnnotatedImage({
+        annotation: stepData.location,
+        height: newHeight,
+        width: newWidth,
+        src: `${historyPath}/${testID}/${stepData.img_out_name}`,
+      });
+      resizer.previousSibling.style.width = `${newWidth}px`;
+      resizer.previousSibling.replaceChildren(newImg);
+    },
+  });
+
+  const sectionHeader = document.createElement('h4');
+  sectionHeader.append(`Step ${i + 1}`);
+
+  const sectionBody = document.createElement('div');
+  sectionBody.className = 'test-container';
+  sectionBody.appendChild(imgContainer);
+  sectionBody.appendChild(resizer);
+  sectionBody.appendChild(stepGallery);
+
+  const section = document.createElement('section');
+  section.appendChild(sectionHeader);
+  section.appendChild(sectionBody);
+
+  testGallery.appendChild(section);
+}
+
+/**
+ * @typedef {Object} Annotation
+ * @property {number} width
+ * @property {number} height
+ * @property {number} x
+ * @property {number} y
+ */
+/**
+ * @typedef {Object} AnnotatedImageProps
+ * @property {Annotation} [annotation]
+ * @property {number} width
+ * @property {number} height
+ * @property {string} src
+ */
+/**
+ * Renders an image to a canvas and renders an optional
+ * Annotation overlay to highlight a particular part of the image.
+ * @param {AnnotatedImageProps} props
+ */
+function createAnnotatedImage({ annotation, height, src, width }) {
+  const canvasNode = document.createElement('canvas');
+  canvasNode.style.border = '1px black';
+
+  canvasNode.width = width;
+  canvasNode.height = height;
+
+  const ctx = canvasNode.getContext('2d');
+  const img = new Image();
+  img.src = src;
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0, width, height);
+    ctx.strokeRect(0, 0, width, height);
+
+    if (annotation) {
+      ctx.lineWidth = 3;
+      ctx.rect(
+        annotation.x * width,
+        annotation.y * height,
+        annotation.width * width,
+        annotation.height * height,
+      );
+      ctx.strokeStyle = sauceOrange;
+      ctx.shadowColor = sauceOrange;
+      ctx.stroke();
+    }
+  };
+
+  return canvasNode;
 }
 
 /**
@@ -864,59 +907,39 @@ function generateLanguageSelectionOptions() {
 }
 
 /**
- * Creates the bar that allows the image to be resized
+ * @callback OnResizeCallback
+ * @param {number} x
  */
-function createResizerBar(
-  imageGallery,
-  imgDivMinWidth,
-  drawScreenshot,
-  canvasNode,
-) {
+/**
+ * @typedef {Object} HorizontalResizeBarProps
+ * @property {OnResizeCallback} onResize
+ */
+/**
+ * Creates a control to use for resizing components.
+ * @param {HorizontalResizeBarProps} props
+ */
+function createHorizontalResizeBar({ onResize }) {
   const resizer = document.createElement('div');
   resizer.className = 'resizer';
-  resizer.id = 'dragMe';
 
-  let x = 0;
-  let y = 0;
-  let leftWidth = 0;
-
-  // Resizer methods
-  const mouseDownHandler = function (e) {
-    // Get the current mouse position
-    x = e.clientX;
-    y = e.clientY;
-    leftWidth = imageGallery.getBoundingClientRect().width;
-
-    // Attach the listeners to document
+  const mouseDownHandler = () => {
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
   };
 
-  const mouseMoveHandler = function (e) {
-    // How far the mouse has been moved
-    const dx = e.clientX - x;
-
-    const newLeftWidth = Math.min(
-      Math.max(imgDivMinWidth, leftWidth + dx),
-      resizer.parentNode.getBoundingClientRect().width * 0.5,
-    );
-    imageGallery.style.width = newLeftWidth + 'px';
-    drawScreenshot(canvasNode, newLeftWidth);
-
-    resizer.style.cursor = 'col-resize';
+  const mouseMoveHandler = (e) => {
     document.body.style.cursor = 'col-resize';
+
+    onResize({ x: e.movementX });
   };
 
-  const mouseUpHandler = function () {
-    resizer.style.removeProperty('cursor');
+  const mouseUpHandler = () => {
     document.body.style.removeProperty('cursor');
 
-    // Remove the handlers of mousemove and mouseup
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
   };
 
-  // Attach the handler
   resizer.addEventListener('mousedown', mouseDownHandler);
   return resizer;
 }

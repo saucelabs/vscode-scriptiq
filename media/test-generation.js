@@ -234,7 +234,7 @@ function generateFullTestDisplay() {
       if ('user_screen_descs' in data) {
         user_screen_descs = data.user_screen_descs;
       }
-      console.log(all_step_data[i]);
+
       if (all_step_data[i].action === 'done') {
         renderDoneStep(data.test_id, data.img_ratio, all_step_data[i]);
       } else {

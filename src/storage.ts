@@ -16,8 +16,12 @@ import * as path from 'node:path';
 export class GlobalStorage {
   private readonly storageUri: vscode.Uri;
 
-  constructor(storageUri: vscode.Uri) {
-    this.storageUri = storageUri;
+  constructor(storageUri: vscode.Uri, dataModelVersion: string) {
+    this.storageUri = vscode.Uri.joinPath(
+      storageUri,
+      'scriptiq_history',
+      dataModelVersion,
+    );
   }
 
   /**
@@ -33,11 +37,7 @@ export class GlobalStorage {
    * to create a more specific Uri.
    */
   getHistoryUri(...segments: string[]): vscode.Uri {
-    return vscode.Uri.joinPath(
-      this.storageUri,
-      'scriptiq_history',
-      ...segments,
-    );
+    return vscode.Uri.joinPath(this.storageUri, ...segments);
   }
 
   deleteTestRecord(id: string) {
@@ -59,6 +59,14 @@ export class GlobalStorage {
     });
 
     return JSON.parse(data);
+  }
+
+  getTestRecords(ids: string[]): TestRecord[] {
+    const testRecords: TestRecord[] = [];
+    ids.forEach((id) => {
+      testRecords.push(this.getTestRecord(id));
+    });
+    return testRecords;
   }
 
   saveTestRecord(record: TestRecord) {

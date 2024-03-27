@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../storage';
 import { TestRecord, TestStep, Vote } from '../types';
+import { API_VERSION } from '../config';
 
 export interface StatusUpdate {
   header: string;
@@ -94,7 +95,7 @@ export function generateTest(
     TestRecord | StatusUpdate | JobUpdate | StepUpdate | { finished: boolean }
   >((observer) => {
     // 👇️ const response: Response
-    const response = fetch(`${scriptiqServer}/v1/genTest`, {
+    const response = fetch(`${scriptiqServer}/${API_VERSION}/genTest`, {
       method: 'POST',
       body: JSON.stringify({
         sauce_username: username,
@@ -260,7 +261,7 @@ export async function downloadImage(
 }
 
 export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
-  const resp = await fetch(`${scriptiqServer}/v1/submitFeedback`, {
+  const resp = await fetch(`${scriptiqServer}/${API_VERSION}/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({
       votes,

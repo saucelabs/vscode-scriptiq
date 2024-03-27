@@ -4,11 +4,14 @@ import * as vscode from 'vscode';
 import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
 import { GlobalStorage } from './storage';
+import { Memento } from './memento';
 import {
   registerClearHistoryLinkSelectionCommand,
   registerShowTestGenerationPanelCommand,
   registerUpdateHistoryLinksCommand,
 } from './commands';
+import { DATA_MODEL_VERSION } from './config';
+import { migration } from './data';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -19,15 +22,31 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "sauce-scriptiq" is now active!',
   );
 
-  const storage = new GlobalStorage(context.globalStorageUri);
+  const memento = new Memento(context.globalState);
+  const dataModelVersion = memento.getDataModelVersion();
+  if (dataModelVersion !== DATA_MODEL_VERSION) {
+    if (dataModelVersion) {
+      migration(memento);
+    }
+    memento.saveDataModelVersion(DATA_MODEL_VERSION);
+  }
+
+  const storage = new GlobalStorage(
+    context.globalStorageUri,
+    DATA_MODEL_VERSION,
+  );
   storage.init();
 
   registerShowTestGenerationPanelCommand(context, (testID?: string) => {
-    TestGenerationPanel.render(context, testID);
+    TestGenerationPanel.render(context, memento, storage, testID);
   });
 
   // Side Bar View Provider
-  const provider = new SidebarViewProvider(context.extensionUri, context);
+  const provider = new SidebarViewProvider(
+    context.extensionUri,
+    memento,
+    storage,
+  );
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(

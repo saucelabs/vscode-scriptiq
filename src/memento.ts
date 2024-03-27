@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { Credentials, TestRecord } from './types';
+import { Credentials } from './types';
 
 /**
- * Store allows you to persist and retrieve data. The storage is global and
+ * Memento allows you to persist and retrieve data. The storage is global and
  * persists across VS Code sessions. Do not store blobs or otherwise large data.
  */
-export class Store {
+export class Memento {
   private mem: vscode.Memento;
 
   constructor(mem: vscode.Memento) {
@@ -28,11 +28,19 @@ export class Store {
     this.save('credentials', credentials);
   }
 
-  getHistory(): TestRecord[] {
-    return this.get<TestRecord[]>('history') ?? [];
+  getHistory(): string[] {
+    return this.get<string[]>('history') ?? [];
   }
 
-  saveHistory(history: TestRecord[]) {
-    this.save('history', history);
+  saveHistory(testIDs: string[]) {
+    this.save('history', testIDs);
+  }
+
+  getDataModelVersion(): string {
+    return this.get('dataModelVersion') || '';
+  }
+
+  saveDataModelVersion(version: string) {
+    this.save('dataModelVersion', version);
   }
 }

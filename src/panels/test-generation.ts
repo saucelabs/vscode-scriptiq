@@ -424,9 +424,7 @@ export class TestGenerationPanel {
    * Show the test record in the webview.
    */
   private showTestRecord(testID: string) {
-    const testRecord = this.memento
-      .getTestIDs()
-      .find((record) => record === testID);
+    const testRecord = this.memento.getTestIDs().find((id) => id === testID);
     if (!testRecord) {
       toast.showError('Unable to find test record.');
       return;

@@ -156,7 +156,7 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            const history = this.memento.getHistory();
+            const history = this.memento.getTestIDs();
 
             for (let i = 0; i < history.length; i++) {
               if (history[i] == message.data.test_id) {
@@ -171,7 +171,7 @@ export class TestGenerationPanel {
               }
             }
             history.unshift(message.data.test_id);
-            this.memento.saveHistory(history);
+            this.memento.saveTestIDs(history);
 
             executeUpdateHistoryLinksCommand(0);
             return;
@@ -425,7 +425,7 @@ export class TestGenerationPanel {
    */
   private showTestRecord(testID: string) {
     const testRecord = this.memento
-      .getHistory()
+      .getTestIDs()
       .find((record) => record === testID);
     if (!testRecord) {
       toast.showError('Unable to find test record.');

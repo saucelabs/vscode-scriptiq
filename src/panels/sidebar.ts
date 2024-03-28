@@ -87,7 +87,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'delete-test-record': {
-          const history = this.memento.getHistory();
+          const history = this.memento.getTestIDs();
           for (let i = 0; i < history.length; i++) {
             if (message.data == history[i]) {
               historyIndex = i;
@@ -102,7 +102,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             console.log('Test Record deleted.');
 
             history.splice(historyIndex, 1);
-            this.memento.saveHistory(history);
+            this.memento.saveTestIDs(history);
             this.updateHistoryLinks();
             executeShowTestGenerationPanelCommand();
           }
@@ -117,7 +117,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public updateHistoryLinks(selected: number = -1): void {
-    const history = this.memento.getHistory();
+    const history = this.memento.getTestIDs();
 
     this.view?.webview.postMessage({
       action: 'update-history-links',

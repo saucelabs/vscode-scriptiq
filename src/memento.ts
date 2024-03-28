@@ -28,11 +28,11 @@ export class Memento {
     this.save('credentials', credentials);
   }
 
-  getHistory(): string[] {
+  getTestIDs(): string[] {
     return this.get<string[]>('history') ?? [];
   }
 
-  saveHistory(testIDs: string[]) {
+  saveTestIDs(testIDs: string[]) {
     this.save('history', testIDs);
   }
 

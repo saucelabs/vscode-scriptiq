@@ -12,6 +12,7 @@ import {
 } from './commands';
 import { DATA_MODEL_VERSION } from './config';
 import { migration } from './data';
+import * as toast from './toast';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -26,6 +27,9 @@ export function activate(context: vscode.ExtensionContext) {
   const dataModelVersion = memento.getDataModelVersion();
   if (dataModelVersion !== DATA_MODEL_VERSION) {
     if (dataModelVersion) {
+      toast.showError(
+        'Data model version has changed: earlier test records are outdated and cannot be loaded. Please follow the instructions to migrate your data.',
+      );
       migration(memento);
     }
     memento.saveDataModelVersion(DATA_MODEL_VERSION);

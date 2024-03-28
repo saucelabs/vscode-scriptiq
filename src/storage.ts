@@ -17,6 +17,7 @@ export class GlobalStorage {
   private readonly storageUri: vscode.Uri;
 
   constructor(storageUri: vscode.Uri, dataModelVersion: string) {
+    // Example: $USER/Library/Application Support/Code/User/globalStorage/undefined_publisher.vscode-scriptiq/scriptiq_history/v1
     this.storageUri = vscode.Uri.joinPath(
       storageUri,
       'scriptiq_history',

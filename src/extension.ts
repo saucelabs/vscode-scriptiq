@@ -32,6 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
       );
       migration(memento);
     }
+    // Update dataModelVersion on the extension's first run or whenever the dataModelVersion is updated.
     memento.saveDataModelVersion(DATA_MODEL_VERSION);
   }
 

@@ -24,7 +24,6 @@ export async function activate(context: vscode.ExtensionContext) {
   storage.init();
 
   const memento = new Memento(context.globalState);
-  console.log(memento.getTestIDs());
   const lastKnownSchemaVersion = memento.getSchemaVersion();
 
   if (!storage.isSchemaUpToDate(lastKnownSchemaVersion)) {

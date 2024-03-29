@@ -14,10 +14,16 @@ import * as path from 'node:path';
  * any data.
  */
 export class GlobalStorage {
+  // All supported schema versions.
+  readonly schemaVersions: string[] = ['v1'];
+
+  // The current schema version.
+  readonly schemaVersion: string = this.schemaVersions[0];
+
   private readonly storageUri: vscode.Uri;
 
-  constructor(storageUri: vscode.Uri, dataModelVersion: string) {
-    this.storageUri = vscode.Uri.joinPath(storageUri, dataModelVersion);
+  constructor(storageUri: vscode.Uri) {
+    this.storageUri = vscode.Uri.joinPath(storageUri, this.schemaVersion);
   }
 
   /**
@@ -26,6 +32,19 @@ export class GlobalStorage {
    */
   init() {
     fs.mkdirSync(this.getHistoryUri().path, { recursive: true });
+  }
+
+  isSchemaUpToDate(version: string): boolean {
+    return version == this.schemaVersion;
+  }
+
+  /**
+   * Perform a migration from the given version to the current schema version.
+   * @param fromVersion
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  migrate(fromVersion: string) {
+    // Future migration logic goes here
   }
 
   /**

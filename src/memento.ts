@@ -16,31 +16,40 @@ export class Memento {
     return this.mem.get<T>(key);
   }
 
-  save(key: string, value: unknown) {
-    this.mem.update(key, value);
+  async save(key: string, value: unknown) {
+    await this.mem.update(key, value);
   }
 
   getCredentials(): Credentials | undefined {
     return this.get<Credentials>('credentials');
   }
 
-  saveCredentials(credentials: Credentials) {
-    this.save('credentials', credentials);
+  async saveCredentials(credentials: Credentials) {
+    await this.save('credentials', credentials);
   }
 
   getTestIDs(): string[] {
-    return this.get<string[]>('history') ?? [];
+    return this.get<string[]>('testHistory') ?? [];
   }
 
-  saveTestIDs(testIDs: string[]) {
-    this.save('history', testIDs);
+  async saveTestIDs(testIDs: string[]) {
+    await this.save('testHistory', testIDs);
   }
 
-  getDataModelVersion(): string {
-    return this.get('dataModelVersion') || '';
+  /**
+   * Returns the last known storage schema version.
+   */
+  getSchemaVersion(): string {
+    return this.get('schemaVersion') || '';
   }
 
-  saveDataModelVersion(version: string) {
-    this.save('dataModelVersion', version);
+  /**
+   * Saves `version` as the last known storage schema version.
+   * It is the caller's responsibility to ensure that the version is valid and
+   * that data has been migrated correctly. Data corruption may occur if the
+   * aforementioned conditions are not met.
+   */
+  async saveSchemaVersion(version: string) {
+    await this.save('schemaVersion', version);
   }
 }

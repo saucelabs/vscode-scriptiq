@@ -28,8 +28,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   if (!storage.isSchemaUpToDate(lastKnownSchemaVersion)) {
     console.log('Storage schema is out of date.');
-    // A fresh install won't have a persisted model version, so there's no need
-    // to perform a migration.
+    // A fresh install won't have a persisted schema, so there's no need to
+    // perform a migration.
     if (lastKnownSchemaVersion) {
       console.log('Migrating storage schema...');
       storage.migrate(lastKnownSchemaVersion);

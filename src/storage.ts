@@ -17,12 +17,7 @@ export class GlobalStorage {
   private readonly storageUri: vscode.Uri;
 
   constructor(storageUri: vscode.Uri, dataModelVersion: string) {
-    // Example: $USER/Library/Application Support/Code/User/globalStorage/undefined_publisher.vscode-scriptiq/scriptiq_history/v1
-    this.storageUri = vscode.Uri.joinPath(
-      storageUri,
-      'scriptiq_history',
-      dataModelVersion,
-    );
+    this.storageUri = vscode.Uri.joinPath(storageUri, dataModelVersion);
   }
 
   /**
@@ -38,7 +33,12 @@ export class GlobalStorage {
    * to create a more specific Uri.
    */
   getHistoryUri(...segments: string[]): vscode.Uri {
-    return vscode.Uri.joinPath(this.storageUri, ...segments);
+    // Example: $USER/Library/Application Support/Code/User/globalStorage/undefined_publisher.vscode-scriptiq/v1/scriptiq_history
+    return vscode.Uri.joinPath(
+      this.storageUri,
+      'scriptiq_history',
+      ...segments,
+    );
   }
 
   deleteTestRecord(id: string) {

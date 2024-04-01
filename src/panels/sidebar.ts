@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { randomBytes } from 'node:crypto';
-import { Store } from '../store';
+import { Memento } from '../memento';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
 import { executeShowTestGenerationPanelCommand } from '../commands';
@@ -11,15 +11,16 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   private view?: vscode.WebviewView;
   private viewCtx?: vscode.WebviewViewResolveContext;
   private cancelToken?: vscode.CancellationToken;
-  private store: Store;
+  private memento: Memento;
   private storage: GlobalStorage;
 
   constructor(
     private readonly extensionUri: vscode.Uri,
-    private readonly ctx: vscode.ExtensionContext,
+    memento: Memento,
+    storage: GlobalStorage,
   ) {
-    this.store = new Store(ctx.globalState);
-    this.storage = new GlobalStorage(ctx.globalStorageUri);
+    this.memento = memento;
+    this.storage = storage;
   }
 
   public resolveWebviewView(
@@ -68,7 +69,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             break;
           }
 
-          this.store.saveCredentials({
+          this.memento.saveCredentials({
             username: message.data.username,
             accessKey: message.data.accessKey,
             region: message.data.region,
@@ -86,9 +87,9 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'delete-test-record': {
-          const history = this.store.getHistory();
+          const history = this.memento.getTestIDs();
           for (let i = 0; i < history.length; i++) {
-            if (message.data == history[i].test_id) {
+            if (message.data == history[i]) {
               historyIndex = i;
               break;
             }
@@ -101,7 +102,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             console.log('Test Record deleted.');
 
             history.splice(historyIndex, 1);
-            this.store.saveHistory(history);
+            this.memento.saveTestIDs(history);
             this.updateHistoryLinks();
             executeShowTestGenerationPanelCommand();
           }
@@ -116,10 +117,11 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public updateHistoryLinks(selected: number = -1): void {
-    const history = this.store.getHistory();
+    const history = this.memento.getTestIDs();
+
     this.view?.webview.postMessage({
       action: 'update-history-links',
-      data: history,
+      data: this.storage.getTestRecords(history),
       selected: selected,
     });
   }
@@ -138,7 +140,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     // Use a nonce to only allow a specific script to be run.
     const nonce = randomBytes(16).toString('base64');
 
-    const creds = this.store.getCredentials();
+    const creds = this.memento.getCredentials();
 
     let settingsTabButton, historyTabButton, settingsTabData, historyTabData;
     if (!creds?.username && !creds?.accessKey && !creds?.region) {

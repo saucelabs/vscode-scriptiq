@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { sendUserRating, generateTest } from '../http/scriptiq-llm';
-import { Store } from '../store';
+import { Memento } from '../memento';
 import * as toast from '../toast';
-import { TestRecord } from '../types';
 import { GlobalStorage } from '../storage';
 import { errMsg } from '../error';
 import {
@@ -26,13 +25,17 @@ export class TestGenerationPanel {
   private disposables: vscode.Disposable[] = [];
   private ctx: vscode.ExtensionContext;
   public testRecordNavigation: boolean = true;
-  private store: Store;
+  private memento: Memento;
   private storage: GlobalStorage;
 
-  private constructor(context: vscode.ExtensionContext) {
+  private constructor(
+    context: vscode.ExtensionContext,
+    memento: Memento,
+    storage: GlobalStorage,
+  ) {
     this.ctx = context;
-    this.store = new Store(context.globalState);
-    this.storage = new GlobalStorage(context.globalStorageUri);
+    this.memento = memento;
+    this.storage = storage;
 
     const extensionMediaUri = vscode.Uri.joinPath(
       context.extensionUri,
@@ -80,7 +83,12 @@ export class TestGenerationPanel {
   /**
    * Render method of webview that is triggered from "extension.ts" file.
    */
-  public static render(context: vscode.ExtensionContext, testID?: string) {
+  public static render(
+    context: vscode.ExtensionContext,
+    memento: Memento,
+    storage: GlobalStorage,
+    testID?: string,
+  ) {
     // if exist show
     if (TestGenerationPanel.currentPanel) {
       if (!TestGenerationPanel.currentPanel.testRecordNavigation) {
@@ -97,7 +105,11 @@ export class TestGenerationPanel {
       }
     } else {
       // if not exist create a new one.
-      TestGenerationPanel.currentPanel = new TestGenerationPanel(context);
+      TestGenerationPanel.currentPanel = new TestGenerationPanel(
+        context,
+        memento,
+        storage,
+      );
       TestGenerationPanel.currentPanel.testRecordNavigation = true;
 
       if (testID) {
@@ -144,9 +156,10 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            const history = this.store.getHistory();
+            const history = this.memento.getTestIDs();
+
             for (let i = 0; i < history.length; i++) {
-              if (history[i].test_id == message.data.test_id) {
+              if (history[i] == message.data.test_id) {
                 console.log("Reloading history, don't save");
                 return;
               }
@@ -154,16 +167,11 @@ export class TestGenerationPanel {
             if (history.length == MAX_HISTORY_LEN) {
               const removedRecord = history.pop();
               if (removedRecord) {
-                this.storage.deleteTestRecord(removedRecord.test_id);
+                this.storage.deleteTestRecord(removedRecord);
               }
             }
-            const newRecord: TestRecord = {
-              goal: message.data.goal,
-              apk: message.data.apk,
-              test_id: message.data.test_id,
-            };
-            history.unshift(newRecord);
-            this.store.saveHistory(history);
+            history.unshift(message.data.test_id);
+            this.memento.saveTestIDs(history);
 
             executeUpdateHistoryLinksCommand(0);
             return;
@@ -391,7 +399,7 @@ export class TestGenerationPanel {
   }
 
   private getCredentials() {
-    const creds = this.store.getCredentials();
+    const creds = this.memento.getCredentials();
     if (!creds) {
       toast.showError('Please add your credentials!');
       return creds;
@@ -416,9 +424,7 @@ export class TestGenerationPanel {
    * Show the test record in the webview.
    */
   private showTestRecord(testID: string) {
-    const testRecord = this.store
-      .getHistory()
-      .find((record) => record.test_id === testID);
+    const testRecord = this.memento.getTestIDs().find((id) => id === testID);
     if (!testRecord) {
       toast.showError('Unable to find test record.');
       return;

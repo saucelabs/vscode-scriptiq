@@ -14,10 +14,16 @@ import * as path from 'node:path';
  * any data.
  */
 export class GlobalStorage {
+  // All supported schema versions.
+  readonly schemaVersions: string[] = ['v1'];
+
+  // The current schema version.
+  readonly schemaVersion: string = this.schemaVersions[0];
+
   private readonly storageUri: vscode.Uri;
 
   constructor(storageUri: vscode.Uri) {
-    this.storageUri = storageUri;
+    this.storageUri = vscode.Uri.joinPath(storageUri, this.schemaVersion);
   }
 
   /**
@@ -28,11 +34,25 @@ export class GlobalStorage {
     fs.mkdirSync(this.getHistoryUri().path, { recursive: true });
   }
 
+  isSchemaUpToDate(version: string): boolean {
+    return version == this.schemaVersion;
+  }
+
+  /**
+   * Perform a migration from the given version to the current schema version.
+   * @param fromVersion
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  migrate(fromVersion: string) {
+    // Future migration logic goes here
+  }
+
   /**
    * Returns a Uri for the location of test records. Accepts additional segments
    * to create a more specific Uri.
    */
   getHistoryUri(...segments: string[]): vscode.Uri {
+    // Example: $USER/Library/Application Support/Code/User/globalStorage/undefined_publisher.vscode-scriptiq/v1/scriptiq_history
     return vscode.Uri.joinPath(
       this.storageUri,
       'scriptiq_history',
@@ -59,6 +79,14 @@ export class GlobalStorage {
     });
 
     return JSON.parse(data);
+  }
+
+  getTestRecords(ids: string[]): TestRecord[] {
+    const testRecords: TestRecord[] = [];
+    ids.forEach((id) => {
+      testRecords.push(this.getTestRecord(id));
+    });
+    return testRecords;
   }
 
   saveTestRecord(record: TestRecord) {

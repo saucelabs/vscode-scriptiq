@@ -78,7 +78,6 @@ export function generateTest(
     };
 
     const taskQueue = new AsyncQueue((error) => {
-      console.log('queue error handler');
       observer.error(error);
       // TODO: Add a status for closure
       ws.close();

@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../../storage';
 import {
-  TestRecord,
-  Vote,
   JobUpdate,
   StatusUpdate,
   StepUpdate,
+  TestRecord,
+  Vote,
   isDoneUpdate,
   isJobUpdate,
   isStatusUpdate,

@@ -74,14 +74,19 @@ export function generateTest(
     };
 
     ws.onerror = (err) => {
-      observer.error(err.message);
+      observer.error(err);
+      ws.close();
     };
 
-    const taskQueue = new AsyncQueue((reason) => {
-      observer.error(`Failed to generate test: ${reason}`);
+    const taskQueue = new AsyncQueue((error) => {
+      console.log('queue error handler');
+      observer.error(error);
+      // TODO: Add a status for closure
+      ws.close();
     });
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as unknown;
+      console.log(data);
 
       if (isStatusUpdate(data)) {
         observer.next(data);
@@ -131,13 +136,18 @@ export function generateTest(
   });
 }
 
+/**
+ * AsyncQueue executes async tasks in the order they are enqueued.
+ */
 class AsyncQueue {
-  #promise;
-  #rejectedHandler;
+  private taskChain: Promise<void | null | undefined>;
+  private onError?: (err: Error) => void;
+  hasErrored: boolean;
 
-  constructor(rejectedHandler: (reason: unknown) => void) {
-    this.#promise = Promise.resolve<void | null | undefined>(null);
-    this.#rejectedHandler = rejectedHandler;
+  constructor(onError?: (err: Error) => void) {
+    this.taskChain = Promise.resolve<void | null | undefined>(null);
+    this.onError = onError;
+    this.hasErrored = false;
   }
 
   enqueue(
@@ -145,6 +155,19 @@ class AsyncQueue {
       val: void | null | undefined,
     ) => void | PromiseLike<void> | null | undefined,
   ) {
-    this.#promise = this.#promise.then(task).catch(this.#rejectedHandler);
+    if (!this.hasErrored) {
+      this.taskChain = this.taskChain.then(() => {
+        try {
+          if (!this.hasErrored) {
+            return task();
+          }
+        } catch (e) {
+          if (!this.hasErrored && this.onError) {
+            this.onError(e as Error);
+            this.hasErrored = true;
+          }
+        }
+      });
+    }
   }
 }

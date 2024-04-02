@@ -3,71 +3,17 @@ import { TextDecoderStream, ReadableStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
 import { GlobalStorage } from '../../storage';
-import { TestRecord, TestStep, Vote } from '../../types';
-
-export interface StatusUpdate {
-  header: string;
-  status_message: string;
-}
-
-export function isStatusUpdate(data: unknown): data is StatusUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'status_update'
-  );
-}
-
-export interface JobUpdate {
-  header: string;
-  job_id: string;
-  selected_device_name: string;
-  selected_platform_version: string;
-  img_ratio: number;
-}
-
-export function isJobUpdate(data: unknown): data is JobUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'results' &&
-    'job_id' in data
-  );
-}
-
-export interface StepUpdate {
-  header: string;
-  step_data: TestStep;
-  img_data: {
-    img_url: string;
-    img_out_name: string;
-  };
-}
-
-export function isStepUpdate(data: unknown): data is StepUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'results' &&
-    'step_data' in data
-  );
-}
-
-export interface DoneUpdate {
-  header: string;
-}
-
-export function isDoneUpdate(data: unknown): data is DoneUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'Done'
-  );
-}
+import {
+  TestRecord,
+  Vote,
+  JobUpdate,
+  StatusUpdate,
+  StepUpdate,
+  isDoneUpdate,
+  isJobUpdate,
+  isStatusUpdate,
+  isStepUpdate,
+} from '../../types';
 
 const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';

@@ -1,18 +1,18 @@
 import { WebSocket } from 'undici';
 import { Observable } from 'rxjs';
 
+import { downloadImage } from './http';
+import { GlobalStorage } from '../../storage';
 import {
+  TestRecord,
   JobUpdate,
   StatusUpdate,
   StepUpdate,
-  downloadImage,
   isDoneUpdate,
   isJobUpdate,
   isStatusUpdate,
   isStepUpdate,
-} from './http';
-import { GlobalStorage } from '../../storage';
-import { TestRecord } from '../../types';
+} from '../../types';
 
 const scriptiqServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 

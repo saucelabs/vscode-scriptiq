@@ -74,6 +74,10 @@ export function generateTest(
       );
     };
 
+    ws.onerror = (err) => {
+      observer.error(err.message);
+    };
+
     let taskChain = Promise.resolve();
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as unknown;

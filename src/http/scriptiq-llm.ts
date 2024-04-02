@@ -10,7 +10,7 @@ export interface StatusUpdate {
   status_message: string;
 }
 
-function isStatusUpdate(data: unknown): data is StatusUpdate {
+export function isStatusUpdate(data: unknown): data is StatusUpdate {
   return (
     typeof data === 'object' &&
     data != null &&
@@ -27,7 +27,7 @@ export interface JobUpdate {
   img_ratio: number;
 }
 
-function isJobUpdate(data: unknown): data is JobUpdate {
+export function isJobUpdate(data: unknown): data is JobUpdate {
   return (
     typeof data === 'object' &&
     data != null &&
@@ -46,7 +46,7 @@ export interface StepUpdate {
   };
 }
 
-function isStepUpdate(data: unknown): data is StepUpdate {
+export function isStepUpdate(data: unknown): data is StepUpdate {
   return (
     typeof data === 'object' &&
     data != null &&
@@ -60,7 +60,7 @@ export interface DoneUpdate {
   header: string;
 }
 
-function isDoneUpdate(data: unknown): data is DoneUpdate {
+export function isDoneUpdate(data: unknown): data is DoneUpdate {
   return (
     typeof data === 'object' &&
     data != null &&

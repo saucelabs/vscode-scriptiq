@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
-import { sendUserRating, generateTest } from '../http/scriptiq-llm';
+import {
+  sendUserRating,
+  // generateTest,
+} from '../http/scriptiq-llm';
 import { Memento } from '../memento';
+import { generateTest } from './../ws/scriptiq-llm';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
 import { errMsg } from '../error';

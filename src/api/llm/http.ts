@@ -2,8 +2,8 @@ import { fetch } from 'undici';
 import { TextDecoderStream, ReadableStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
-import { GlobalStorage } from '../storage';
-import { TestRecord, TestStep, Vote } from '../types';
+import { GlobalStorage } from '../../storage';
+import { TestRecord, TestStep, Vote } from '../../types';
 
 export interface StatusUpdate {
   header: string;

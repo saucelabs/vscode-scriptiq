@@ -10,9 +10,9 @@ import {
   isJobUpdate,
   isStatusUpdate,
   isStepUpdate,
-} from './../http/scriptiq-llm';
-import { GlobalStorage } from '../storage';
-import { TestRecord } from '../types';
+} from './http';
+import { GlobalStorage } from '../../storage';
+import { TestRecord } from '../../types';
 
 // Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer = process.env.SCRIPTIQ_API_SERVER || 'ws://127.0.0.1:8000';

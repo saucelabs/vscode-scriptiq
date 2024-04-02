@@ -235,19 +235,17 @@ function generateFullTestDisplay() {
         user_screen_descs = data.user_screen_descs;
       }
 
-      if (all_step_data[i].action === 'done') {
-        renderDoneStep(data.test_id, data.img_ratio, all_step_data[i]);
-      } else {
-        generateStep(
-          i,
-          data.img_ratio,
-          all_step_data[i],
-          editData,
-          data.test_id,
-          user_screen_descs,
-          data.votes,
-        );
-      }
+      var final_screen = all_step_data[i].action === 'done';
+      generateStep(
+        i,
+        data.img_ratio,
+        all_step_data[i],
+        editData,
+        data.test_id,
+        user_screen_descs,
+        data.votes,
+        final_screen,
+      );
     }, timeoutTime);
   }
   generateTestOutputInteractables(
@@ -270,8 +268,9 @@ function generateStep(
   stepData,
   edit_data,
   testID,
-  user_screen_descs = [],
-  votes = [],
+  user_screen_descs,
+  votes,
+  final_screen,
 ) {
   const stepGallery = document.createElement('div');
   stepGallery.className = 'test-step-right';
@@ -280,9 +279,11 @@ function generateStep(
   // Get rating from votes according to step_num.
   const rating =
     votes.find((vote) => vote.step_num === i)?.rating ?? 'norating';
-  stepGallery.appendChild(
-    generateCodeChoicesContainer(i, stepData, testID, rating),
-  );
+  if (!final_screen) {
+    stepGallery.appendChild(
+      generateCodeChoicesContainer(i, stepData, testID, rating),
+    );
+  }
 
   const reasonContainer = generateReasonContainer(stepData);
   if (reasonContainer !== undefined) stepGallery.appendChild(reasonContainer);
@@ -352,7 +353,11 @@ function generateStep(
   });
 
   const sectionHeader = document.createElement('h4');
-  sectionHeader.append(`Step ${i + 1}`);
+  if (final_screen) {
+    sectionHeader.append(`Finished`);
+  } else {
+    sectionHeader.append(`Step ${i + 1}`);
+  }
 
   const sectionBody = document.createElement('div');
   sectionBody.className = 'test-container';
@@ -363,64 +368,6 @@ function generateStep(
   const section = document.createElement('section');
   section.appendChild(sectionHeader);
   section.appendChild(sectionBody);
-
-  testGallery.appendChild(section);
-}
-
-function renderDoneStep(testId, imgRatio, stepData) {
-  const height = DEFAULT_IMG_HEIGHT;
-  const width = height * imgRatio;
-  const src = `${historyPath}/${testId}/${stepData.img_out_name}`;
-  const img = createAnnotatedImage({
-    height,
-    width,
-    src,
-  });
-
-  const imgContainer = document.createElement('div');
-  imgContainer.appendChild(img);
-
-  const resizer = createHorizontalResizeBar({
-    onResize: ({ x }) => {
-      if (x === 0) {
-        return;
-      }
-
-      const origin = resizer.previousSibling.getBoundingClientRect().width;
-      const minWidth = width;
-      const maxWidth =
-        resizer.parentElement.getBoundingClientRect().width * 0.5;
-
-      const newWidth = Math.min(Math.max(minWidth, origin + x), maxWidth);
-      const newHeight = newWidth * (1 / imgRatio);
-
-      if (newWidth === minWidth || newWidth === maxWidth) {
-        return;
-      }
-
-      const newImg = createAnnotatedImage({
-        height: newHeight,
-        width: newWidth,
-        src,
-      });
-
-      resizer.previousSibling.style.width = `${newWidth}px`;
-      resizer.previousSibling.replaceChildren(newImg);
-    },
-  });
-
-  const sectionHeader = document.createElement('h4');
-  sectionHeader.className = 'header';
-  sectionHeader.append('Finish');
-
-  const sectionContent = document.createElement('div');
-  sectionContent.className = 'test-container';
-  sectionContent.appendChild(imgContainer);
-  sectionContent.appendChild(resizer);
-
-  const section = document.createElement('section');
-  section.appendChild(sectionHeader);
-  section.appendChild(sectionContent);
 
   testGallery.appendChild(section);
 }

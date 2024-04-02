@@ -14,7 +14,7 @@ import {
   isStepUpdate,
 } from '../../types';
 
-const scriptiqServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
+const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 
 export function generateTest(
   storage: GlobalStorage,
@@ -34,7 +34,7 @@ export function generateTest(
   return new Observable<
     TestRecord | StatusUpdate | JobUpdate | StepUpdate | { finished: boolean }
   >((observer) => {
-    const ws = new WebSocket(`${scriptiqServer}/v1/genTest`);
+    const ws = new WebSocket(`${wsServer}/v1/genTest`);
 
     if (prevGoal !== '') {
       if (prevGoal.startsWith('Edit: ')) {

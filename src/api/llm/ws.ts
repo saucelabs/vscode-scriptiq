@@ -145,6 +145,9 @@ export function generateTest(
 
 /**
  * AsyncQueue executes async tasks in the order they are enqueued.
+ * If the currently executing task throws an error, all subsequent tasks
+ * will be cancelled, the error handler will be called and the queue will no
+ * longer accept any new tasks.
  */
 class AsyncQueue {
   private taskChain: Promise<void | null | undefined>;

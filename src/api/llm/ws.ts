@@ -72,6 +72,12 @@ export function generateTest(
       );
     };
 
+    ws.onclose = () => {
+      observer.next({
+        finished: true,
+      });
+    };
+
     ws.onerror = (err) => {
       observer.error(err);
       ws.close();
@@ -89,12 +95,14 @@ export function generateTest(
       console.log(data);
 
       if (isStatusUpdate(data)) {
-        observer.next(data);
+        taskQueue.enqueue(() => {
+          observer.next(data);
+        });
       }
 
       if (isJobUpdate(data)) {
-        observer.next(data);
         taskQueue.enqueue(() => {
+          observer.next(data);
           console.log('Job created.');
           testRecord.selected_device_name = data.selected_device_name;
           testRecord.selected_platform_version = data.selected_platform_version;
@@ -103,8 +111,8 @@ export function generateTest(
       }
 
       if (isStepUpdate(data)) {
-        observer.next(data);
         taskQueue.enqueue(async () => {
+          observer.next(data);
           return downloadImage(
             testID,
             data.img_data.img_url,

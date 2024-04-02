@@ -77,7 +77,9 @@ export function generateTest(
       observer.error(err.message);
     };
 
-    let taskChain = Promise.resolve();
+    const taskQueue = new AsyncQueue((reason) => {
+      observer.error(`Failed to generate test: ${reason}`);
+    });
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as unknown;
 
@@ -87,7 +89,7 @@ export function generateTest(
 
       if (isJobUpdate(data)) {
         observer.next(data);
-        taskChain = taskChain.then(() => {
+        taskQueue.enqueue(() => {
           console.log('Job created.');
           testRecord.selected_device_name = data.selected_device_name;
           testRecord.selected_platform_version = data.selected_platform_version;
@@ -97,7 +99,7 @@ export function generateTest(
 
       if (isStepUpdate(data)) {
         observer.next(data);
-        taskChain = taskChain.then(() => {
+        taskQueue.enqueue(async () => {
           return downloadImage(
             testID,
             data.img_data.img_url,
@@ -114,7 +116,7 @@ export function generateTest(
       }
 
       if (isDoneUpdate(data)) {
-        taskChain = taskChain.then(() => {
+        taskQueue.enqueue(() => {
           if (testRecord.all_steps && testRecord.all_steps.length > 0) {
             console.log('Saving Test Record.');
             storage.saveTestRecord(testRecord);
@@ -127,4 +129,22 @@ export function generateTest(
       }
     };
   });
+}
+
+class AsyncQueue {
+  #promise;
+  #rejectedHandler;
+
+  constructor(rejectedHandler: (reason: unknown) => void) {
+    this.#promise = Promise.resolve<void | null | undefined>(null);
+    this.#rejectedHandler = rejectedHandler;
+  }
+
+  enqueue(
+    task: (
+      val: void | null | undefined,
+    ) => void | PromiseLike<void> | null | undefined,
+  ) {
+    this.#promise = this.#promise.then(task).catch(this.#rejectedHandler);
+  }
 }

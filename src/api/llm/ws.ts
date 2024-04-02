@@ -14,8 +14,7 @@ import {
 import { GlobalStorage } from '../../storage';
 import { TestRecord } from '../../types';
 
-// Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
-const scriptiqServer = process.env.SCRIPTIQ_API_SERVER || 'ws://127.0.0.1:8000';
+const scriptiqServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 
 export function generateTest(
   storage: GlobalStorage,

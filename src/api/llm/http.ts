@@ -69,7 +69,6 @@ export function isDoneUpdate(data: unknown): data is DoneUpdate {
   );
 }
 
-// Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
 

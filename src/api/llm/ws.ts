@@ -150,12 +150,12 @@ export function generateTest(
  * longer accept any new tasks.
  */
 class AsyncQueue {
-  private taskChain: Promise<void | null | undefined>;
+  private currentTask: Promise<void | null | undefined>;
   private onError?: (err: Error) => void;
   hasErrored: boolean;
 
   constructor(opts?: { onError?: (err: Error) => void }) {
-    this.taskChain = Promise.resolve<void | null | undefined>(null);
+    this.currentTask = Promise.resolve<void | null | undefined>(null);
     this.onError = opts?.onError;
     this.hasErrored = false;
   }
@@ -166,7 +166,7 @@ class AsyncQueue {
     ) => void | PromiseLike<void> | null | undefined,
   ) {
     if (!this.hasErrored) {
-      this.taskChain = this.taskChain.then(() => {
+      this.currentTask = this.currentTask.then(() => {
         try {
           if (!this.hasErrored) {
             return task();

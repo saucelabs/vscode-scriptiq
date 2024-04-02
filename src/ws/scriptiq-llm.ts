@@ -1,6 +1,5 @@
 import { WebSocket } from 'undici';
 import { Observable } from 'rxjs';
-import { inspect } from 'node:util';
 
 import {
   JobUpdate,
@@ -14,7 +13,7 @@ import {
 } from './../http/scriptiq-llm';
 import { GlobalStorage } from '../storage';
 import { TestRecord } from '../types';
-//
+
 // Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer = process.env.SCRIPTIQ_API_SERVER || 'ws://127.0.0.1:8000';
 
@@ -81,7 +80,6 @@ export function generateTest(
     let taskChain = Promise.resolve();
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as unknown;
-      console.log(inspect(data, { depth: null }));
 
       if (isStatusUpdate(data)) {
         observer.next(data);

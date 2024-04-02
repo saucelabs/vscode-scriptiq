@@ -77,10 +77,12 @@ export function generateTest(
       ws.close();
     };
 
-    const taskQueue = new AsyncQueue((error) => {
-      observer.error(error);
-      // TODO: Add a status for closure
-      ws.close();
+    const taskQueue = new AsyncQueue({
+      onError: (error) => {
+        observer.error(error);
+        // TODO: Add a status for closure
+        ws.close();
+      },
     });
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as unknown;
@@ -142,9 +144,9 @@ class AsyncQueue {
   private onError?: (err: Error) => void;
   hasErrored: boolean;
 
-  constructor(onError?: (err: Error) => void) {
+  constructor(opts?: { onError?: (err: Error) => void }) {
     this.taskChain = Promise.resolve<void | null | undefined>(null);
-    this.onError = onError;
+    this.onError = opts?.onError;
     this.hasErrored = false;
   }
 

@@ -353,11 +353,7 @@ function generateStep(
   });
 
   const sectionHeader = document.createElement('h4');
-  if (final_screen) {
-    sectionHeader.append(`Finished`);
-  } else {
-    sectionHeader.append(`Step ${i + 1}`);
-  }
+  sectionHeader.append(finalScreen ? 'Finished' : `Step ${i + 1}`);
 
   const sectionBody = document.createElement('div');
   sectionBody.className = 'test-container';

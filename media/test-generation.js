@@ -270,7 +270,7 @@ function generateStep(
   testID,
   user_screen_descs,
   votes,
-  final_screen,
+  finalScreen,
 ) {
   const stepGallery = document.createElement('div');
   stepGallery.className = 'test-step-right';

@@ -235,7 +235,7 @@ function generateFullTestDisplay() {
         user_screen_descs = data.user_screen_descs;
       }
 
-      var final_screen = all_step_data[i].action === 'done';
+      const finalScreen = all_step_data[i].action === 'done';
       generateStep(
         i,
         data.img_ratio,
@@ -244,7 +244,7 @@ function generateFullTestDisplay() {
         data.test_id,
         user_screen_descs,
         data.votes,
-        final_screen,
+        finalScreen,
       );
     }, timeoutTime);
   }

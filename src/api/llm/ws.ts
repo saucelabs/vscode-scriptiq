@@ -90,45 +90,38 @@ export function generateTest(
       },
     });
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data) as unknown;
-      console.log(data);
+      taskQueue.enqueue(async () => {
+        const data = JSON.parse(event.data) as unknown;
+        console.log(data);
 
-      if (isStatusUpdate(data)) {
-        taskQueue.enqueue(() => {
+        if (isStatusUpdate(data)) {
           observer.next(data);
-        });
-      }
+        }
 
-      if (isJobUpdate(data)) {
-        taskQueue.enqueue(() => {
+        if (isJobUpdate(data)) {
           observer.next(data);
           console.log('Job created.');
           testRecord.selected_device_name = data.selected_device_name;
           testRecord.selected_platform_version = data.selected_platform_version;
           testRecord.img_ratio = data.img_ratio;
-        });
-      }
+        }
 
-      if (isStepUpdate(data)) {
-        taskQueue.enqueue(async () => {
+        if (isStepUpdate(data)) {
           observer.next(data);
-          return downloadImage(
+          await downloadImage(
             testID,
             data.img_data.img_url,
             data.img_data.img_out_name,
             username,
             accessKey,
             storage,
-          ).then(() => {
-            console.log('STEP INFO');
-            console.log(data.step_data);
-            testRecord.all_steps?.push(data.step_data);
-          });
-        });
-      }
+          );
+          console.log('STEP INFO');
+          console.log(data.step_data);
+          testRecord.all_steps?.push(data.step_data);
+        }
 
-      if (isDoneUpdate(data)) {
-        taskQueue.enqueue(() => {
+        if (isDoneUpdate(data)) {
           if (testRecord.all_steps && testRecord.all_steps.length > 0) {
             console.log('Saving Test Record.');
             storage.saveTestRecord(testRecord);
@@ -137,8 +130,8 @@ export function generateTest(
           observer.next({
             finished: true,
           });
-        });
-      }
+        }
+      });
     };
   });
 }

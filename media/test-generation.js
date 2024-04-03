@@ -279,7 +279,7 @@ function generateStep(
   // Get rating from votes according to step_num.
   const rating =
     votes.find((vote) => vote.step_num === i)?.rating ?? 'norating';
-  if (!final_screen) {
+  if (!finalScreen) {
     stepGallery.appendChild(
       generateCodeChoicesContainer(i, stepData, testID, rating),
     );

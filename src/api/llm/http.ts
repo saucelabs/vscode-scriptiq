@@ -2,74 +2,19 @@ import { fetch } from 'undici';
 import { TextDecoderStream, ReadableStream } from 'node:stream/web';
 import { Observable } from 'rxjs';
 
-import { GlobalStorage } from '../storage';
-import { TestRecord, TestStep, Vote } from '../types';
+import { GlobalStorage } from '../../storage';
+import {
+  JobUpdate,
+  StatusUpdate,
+  StepUpdate,
+  TestRecord,
+  Vote,
+  isDoneUpdate,
+  isJobUpdate,
+  isStatusUpdate,
+  isStepUpdate,
+} from '../../types';
 
-export interface StatusUpdate {
-  header: string;
-  status_message: string;
-}
-
-function isStatusUpdate(data: unknown): data is StatusUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'status_update'
-  );
-}
-
-export interface JobUpdate {
-  header: string;
-  job_id: string;
-  selected_device_name: string;
-  selected_platform_version: string;
-  img_ratio: number;
-}
-
-function isJobUpdate(data: unknown): data is JobUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'results' &&
-    'job_id' in data
-  );
-}
-
-export interface StepUpdate {
-  header: string;
-  step_data: TestStep;
-  img_data: {
-    img_url: string;
-    img_out_name: string;
-  };
-}
-
-function isStepUpdate(data: unknown): data is StepUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'results' &&
-    'step_data' in data
-  );
-}
-
-export interface DoneUpdate {
-  header: string;
-}
-
-function isDoneUpdate(data: unknown): data is DoneUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'Done'
-  );
-}
-
-// Fallback to dev env if SCRIPTIQ_API_SERVER is not set.
 const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
 

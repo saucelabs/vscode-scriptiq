@@ -58,16 +58,19 @@ export function generateTest(
     ws.onopen = () => {
       ws.send(
         JSON.stringify({
-          sauce_username: username,
-          sauce_api_key: accessKey,
-          sauce_data_center: region,
-          apk: apk,
-          goal: goal,
-          num_steps: maxTestSteps,
-          device_names: devices,
-          platform_version: platformVersion,
-          start_actions: startActions,
-          assertions: assertions,
+          method: 'testgen.start',
+          data: {
+            sauce_username: username,
+            sauce_api_key: accessKey,
+            sauce_data_center: region,
+            apk: apk,
+            goal: goal,
+            num_steps: maxTestSteps,
+            device_names: devices,
+            platform_version: platformVersion,
+            start_actions: startActions,
+            assertions: assertions,
+          },
         }),
       );
     };

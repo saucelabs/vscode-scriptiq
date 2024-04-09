@@ -13,6 +13,7 @@ import {
   isJobUpdate,
   isStatusUpdate,
   isStepUpdate,
+  isSessionUpdate,
 } from '../../types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
@@ -103,12 +104,7 @@ export function generateTest(
         const data = JSON.parse(event.data) as unknown;
         console.log(data);
 
-        if (
-          typeof data === 'object' &&
-          data != null &&
-          'session_id' in data &&
-          typeof data.session_id === 'string'
-        ) {
+        if (isSessionUpdate(data)) {
           const deviceStreamData: DeviceStreamUpdate = {
             session_id: data.session_id,
             username: username,

@@ -106,7 +106,7 @@ function main() {
             setUpStatusUpdates();
           }
 
-          if ('session_id' in message.data) {
+          if ('session_id' in message.data && 'username' in message.data) {
             startDeviceWebsocket(
               message.data.username,
               message.data.accessKey,

@@ -64,6 +64,26 @@ export function isStatusUpdate(data: unknown): data is StatusUpdate {
   );
 }
 
+interface SessionUpdate {
+  session_id: string;
+}
+
+export function isSessionUpdate(data: unknown): data is SessionUpdate {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'session_id' in data &&
+    typeof data.session_id === 'string'
+  );
+}
+
+export interface DeviceStreamUpdate {
+  session_id: string;
+  username: string;
+  accessKey: string;
+  endpoint: string;
+}
+
 export interface JobUpdate {
   header: string;
   job_id: string;

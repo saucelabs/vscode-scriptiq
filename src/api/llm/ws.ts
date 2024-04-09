@@ -8,10 +8,12 @@ import {
   JobUpdate,
   StatusUpdate,
   StepUpdate,
+  DeviceStreamUpdate,
   isDoneUpdate,
   isJobUpdate,
   isStatusUpdate,
   isStepUpdate,
+  isSessionUpdate,
 } from '../../types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
@@ -32,7 +34,12 @@ export function generateTest(
   prevGoal: string = '',
 ) {
   return new Observable<
-    TestRecord | StatusUpdate | JobUpdate | StepUpdate | { finished: boolean }
+    | TestRecord
+    | StatusUpdate
+    | JobUpdate
+    | StepUpdate
+    | DeviceStreamUpdate
+    | { finished: boolean }
   >((observer) => {
     const ws = new WebSocket(`${wsServer}/v1/genTest`);
 
@@ -96,6 +103,16 @@ export function generateTest(
       taskQueue.enqueue(async () => {
         const data = JSON.parse(event.data) as unknown;
         console.log(data);
+
+        if (isSessionUpdate(data)) {
+          const deviceStreamData: DeviceStreamUpdate = {
+            session_id: data.session_id,
+            username: username,
+            accessKey: accessKey,
+            endpoint: region,
+          };
+          observer.next(deviceStreamData);
+        }
 
         if (isStatusUpdate(data)) {
           observer.next(data);

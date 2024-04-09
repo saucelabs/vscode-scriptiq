@@ -31,12 +31,16 @@ const platformVersion = document.getElementById('platform_number');
 // Declare Styles
 const sauceOrange = '#EE805A';
 const DEFAULT_IMG_HEIGHT = 350;
+const videoStreamImgHeight = 500;
 
 // Code Generator Default
 let codeTemplateGenerator = new AppiumPython();
 
 // Declare Default Values
 const defaultMaxSteps = maxTestSteps.value;
+
+// Declare device websocket
+let ws;
 
 function main() {
   // Add event listeners.
@@ -98,19 +102,28 @@ function main() {
       const message = event.data; // The json data that the extension sent
       switch (message.action) {
         case 'update-test-progress':
-          // Append answer.
-          if ('status_message' in message.data) {
-            testGallery.innerHTML = '';
-            outputScript.innerHTML = '';
-            testGallery.appendChild(document.createElement('br'));
-            const container = document.createElement('span');
-            container.classList.add('test-status-header');
-            container.innerHTML = message.data.status_message;
-            testGallery.appendChild(container);
+          if (document.getElementById('message-status-field') == undefined) {
+            setUpStatusUpdates();
+          }
+
+          if ('session_id' in message.data && 'username' in message.data) {
+            startDeviceWebsocket(
+              message.data.username,
+              message.data.accessKey,
+              message.data.endpoint,
+              message.data.session_id,
+            );
+          } else if ('status_message' in message.data) {
+            const statusField = document.getElementById('message-status-field');
+            statusField.innerHTML = message.data.status_message;
           } else if ('finished' in message.data) {
+            testGallery.innerHTML = '';
             vscode.postMessage({
               action: 'enable-test-record-navigation',
             });
+            if (ws != undefined) {
+              ws.close();
+            }
           } else {
             testGallery.innerHTML = '';
             outputScript.innerHTML = '';
@@ -178,6 +191,101 @@ function handleAskClick() {
  */
 function handleClearClick() {
   clearScreen();
+}
+
+/**
+ * Set up the elements which will contain the status updates and the video
+ */
+function setUpStatusUpdates() {
+  testGallery.innerHTML = '';
+  outputScript.innerHTML = '';
+  testGallery.appendChild(document.createElement('br'));
+
+  const statusContainer = document.createElement('div');
+  statusContainer.classList.add('status-container');
+
+  const statusBlockMessages = document.createElement('div');
+  statusBlockMessages.classList.add('status-block-messages');
+
+  const statusField = document.createElement('span');
+  statusField.classList.add('test-status-header');
+  statusField.id = 'message-status-field';
+  statusBlockMessages.appendChild(statusField);
+
+  const statusBlockTestData = document.createElement('div');
+  statusBlockTestData.classList.add('status-block-test-data');
+
+  const videoField = document.createElement('div');
+  videoField.classList.add('test-status-header');
+  videoField.classList.add('test-status-video');
+  videoField.id = 'video-status-field';
+
+  const canvasNode = document.createElement('canvas');
+  canvasNode.id = 'video-status-canvas';
+  videoField.appendChild(canvasNode);
+  statusBlockTestData.appendChild(videoField);
+
+  statusContainer.appendChild(statusBlockMessages);
+  statusContainer.appendChild(document.createElement('br'));
+  statusContainer.appendChild(statusBlockTestData);
+  testGallery.appendChild(statusContainer);
+}
+
+/**
+ * @property {string} username
+ * @property {string} accessKey
+ * @property {string} endpoint
+ * @property {string} session_id
+ */
+/**
+ * Connects to websocket which provides images to create live stream of device.
+ */
+function startDeviceWebsocket(username, accessKey, endpoint, session_id) {
+  if (
+    username === undefined ||
+    accessKey === undefined ||
+    endpoint === undefined ||
+    session_id === undefined
+  ) {
+    return;
+  }
+  ws = new WebSocket(
+    `wss://${username}:${accessKey}@api.${endpoint}.saucelabs.com/v1/rdc/socket/alternativeIo/${session_id}`,
+  );
+  ws.onerror = function (error) {
+    console.log('Websocket Error: ', error);
+  };
+  ws.onmessage = function (event) {
+    const NOTIFY_MESSAGE_PREFIX = 'n/';
+    generateStatusVideo(event.data);
+    ws.send(NOTIFY_MESSAGE_PREFIX);
+  };
+}
+
+/**
+ * Updates the image in the video canvas
+ * @param {Blob} data
+ */
+function generateStatusVideo(data) {
+  if (!(data instanceof Blob)) {
+    return;
+  }
+
+  const blob = new Blob([data], { type: 'image/jpeg' });
+
+  const canvasNode = document.getElementById('video-status-canvas');
+
+  const ctx = canvasNode.getContext('2d');
+  const img = new Image();
+  img.src = window.URL.createObjectURL(blob);
+  img.onload = () => {
+    const height = videoStreamImgHeight;
+    const width = (videoStreamImgHeight * img.width) / img.height;
+    canvasNode.height = height;
+    canvasNode.width = width;
+    ctx.drawImage(img, 0, 0, width, height);
+    ctx.strokeRect(0, 0, width, height);
+  };
 }
 
 /**

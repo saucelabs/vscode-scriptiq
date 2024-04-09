@@ -68,6 +68,10 @@ pre {
   white-space: pre-wrap;
 }
 
+canvas {
+  border: 1px black;
+}
+
 /* Base button class */
 .button {
   padding: var(--offset-base) var(--offset-large);
@@ -392,12 +396,33 @@ textarea::placeholder {
 
 /* Loader style */
 
+.status-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1;
+  gap: 1;
+}
+
+.status-block-1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-block-2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.test-status-video {
+  align-items: center;
+}
+
 .test-status-header {
   color: var(--color-sauce-coral);
   font-family: var(--sauce-font-mono);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-size: 1.6em;
 }
 

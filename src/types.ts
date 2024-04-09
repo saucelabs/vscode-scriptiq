@@ -64,6 +64,28 @@ export function isStatusUpdate(data: unknown): data is StatusUpdate {
   );
 }
 
+export interface DeviceStreamUpdate {
+  header: string;
+  session_id: string;
+  img_height: number;
+  img_width: number;
+  username: string;
+  accessKey: string;
+  endpoint: string;
+}
+
+export function isDeviceStreamUpdate(
+  data: unknown,
+): data is DeviceStreamUpdate {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'session_id' in data &&
+    'img_height' in data &&
+    'img_width' in data
+  );
+}
+
 export interface JobUpdate {
   header: string;
   job_id: string;

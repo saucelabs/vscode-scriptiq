@@ -403,14 +403,14 @@ textarea::placeholder {
   gap: 1;
 }
 
-.status-block-1 {
+.status-block-messages {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
-.status-block-2 {
+.status-block-test-data {
   display: flex;
   flex-direction: row;
   justify-content: center;

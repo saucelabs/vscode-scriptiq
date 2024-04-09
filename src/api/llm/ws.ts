@@ -13,7 +13,6 @@ import {
   isJobUpdate,
   isStatusUpdate,
   isStepUpdate,
-  isDeviceStreamUpdate,
 } from '../../types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
@@ -104,11 +103,19 @@ export function generateTest(
         const data = JSON.parse(event.data) as unknown;
         console.log(data);
 
-        if (isDeviceStreamUpdate(data)) {
-          data.username = username;
-          data.accessKey = accessKey;
-          data.endpoint = region;
-          observer.next(data);
+        if (
+          typeof data === 'object' &&
+          data != null &&
+          'session_id' in data &&
+          typeof data.session_id === 'string'
+        ) {
+          const deviceStreamData: DeviceStreamUpdate = {
+            session_id: data.session_id,
+            username: username,
+            accessKey: accessKey,
+            endpoint: region,
+          };
+          observer.next(deviceStreamData);
         }
 
         if (isStatusUpdate(data)) {

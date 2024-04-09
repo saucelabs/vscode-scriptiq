@@ -113,9 +113,7 @@ function main() {
               message.data.endpoint,
               message.data.session_id,
             );
-          }
-          // Append answer.
-          if ('status_message' in message.data) {
+          } else if ('status_message' in message.data) {
             const statusField = document.getElementById('message-status-field');
             statusField.innerHTML = message.data.status_message;
           } else if ('finished' in message.data) {
@@ -206,16 +204,16 @@ function setUpStatusUpdates() {
   const statusContainer = document.createElement('div');
   statusContainer.classList.add('status-container');
 
-  const statusBlock1 = document.createElement('div');
-  statusBlock1.classList.add('status-block-1');
+  const statusBlockMessages = document.createElement('div');
+  statusBlockMessages.classList.add('status-block-messages');
 
   const statusField = document.createElement('span');
   statusField.classList.add('test-status-header');
   statusField.id = 'message-status-field';
-  statusBlock1.appendChild(statusField);
+  statusBlockMessages.appendChild(statusField);
 
-  const statusBlock2 = document.createElement('div');
-  statusBlock2.classList.add('status-block-2');
+  const statusBlockTestData = document.createElement('div');
+  statusBlockTestData.classList.add('status-block-test-data');
 
   const videoField = document.createElement('div');
   videoField.classList.add('test-status-header');
@@ -225,11 +223,11 @@ function setUpStatusUpdates() {
   const canvasNode = document.createElement('canvas');
   canvasNode.id = 'video-status-canvas';
   videoField.appendChild(canvasNode);
-  statusBlock2.appendChild(videoField);
+  statusBlockTestData.appendChild(videoField);
 
-  statusContainer.appendChild(statusBlock1);
+  statusContainer.appendChild(statusBlockMessages);
   statusContainer.appendChild(document.createElement('br'));
-  statusContainer.appendChild(statusBlock2);
+  statusContainer.appendChild(statusBlockTestData);
   testGallery.appendChild(statusContainer);
 }
 
@@ -243,12 +241,19 @@ function setUpStatusUpdates() {
  * Connects to websocket which provides images to create live stream of device.
  */
 function startDeviceWebsocket(username, accessKey, endpoint, session_id) {
+  if (
+    username === undefined ||
+    accessKey === undefined ||
+    endpoint === undefined ||
+    session_id === undefined
+  ) {
+    return;
+  }
   ws = new WebSocket(
     `wss://${username}:${accessKey}@api.${endpoint}.saucelabs.com/v1/rdc/socket/alternativeIo/${session_id}`,
   );
   ws.onerror = function (error) {
     console.log('Websocket Error: ', error);
-    ws.close();
   };
   ws.onmessage = function (event) {
     const NOTIFY_MESSAGE_PREFIX = 'n/';

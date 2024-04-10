@@ -405,9 +405,6 @@ export class TestGenerationPanel {
           case 'com.saucelabs.scriptiq.done':
             action = 'finalize';
             break;
-          default:
-            console.error(`received unknown message type: ${data.type}`);
-            return;
         }
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

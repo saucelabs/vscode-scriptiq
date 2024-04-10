@@ -3,7 +3,15 @@ import { Observable } from 'rxjs';
 
 import { downloadImage } from './http';
 import { GlobalStorage } from '../../storage';
-import { TestRecord } from '../../types';
+import {
+  DoneResponse,
+  JobUpdateResponse,
+  RecordUpdateResponse,
+  SessionUpdateResponse,
+  StatusUpdateResponse,
+  StepUpdateResponse,
+  TestRecord,
+} from '../../types';
 import {
   isDoneResponse,
   isJobUpdateResponse,
@@ -29,7 +37,14 @@ export function generateTest(
   startActions: string[],
   prevGoal: string = '',
 ) {
-  return new Observable<any>((observer) => {
+  return new Observable<
+    | DoneResponse
+    | JobUpdateResponse
+    | RecordUpdateResponse
+    | SessionUpdateResponse
+    | StatusUpdateResponse
+    | StepUpdateResponse
+  >((observer) => {
     const ws = new WebSocket(`${wsServer}/v1/genTest`);
 
     if (prevGoal !== '') {
@@ -73,7 +88,7 @@ export function generateTest(
 
     ws.onclose = () => {
       observer.next({
-        finished: true,
+        type: 'com.saucelabs.scriptiq.done',
       });
     };
 
@@ -138,10 +153,11 @@ export function generateTest(
           if (testRecord.all_steps && testRecord.all_steps.length > 0) {
             console.log('Saving Test Record.');
             storage.saveTestRecord(testRecord);
-            observer.next({
+            const recordUpdate: RecordUpdateResponse = {
               type: 'com.saucelabs.scriptiq.testgen.record',
               result: testRecord,
-            });
+            };
+            observer.next(recordUpdate);
           }
           observer.next(resp);
         }

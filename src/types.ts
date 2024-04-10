@@ -76,7 +76,7 @@ export function isStatusUpdateResponse(
   );
 }
 
-interface SessionUpdateResponse {
+export interface SessionUpdateResponse {
   type: SessionUpdateType;
   result: {
     session_id: string;
@@ -134,8 +134,19 @@ export function isStepUpdateResponse(
   );
 }
 
+/**
+ * FIXME: This is a hack to get around the fact that the backend never turns the
+ * final test record. For consistencies sake of the client's interface, we
+ * pretend that we do.
+ */
+export interface RecordUpdateResponse {
+  type: RecordUpdateType;
+  result: TestRecord;
+}
+
 export interface DoneResponse {
   type: DoneType;
+  result?: never;
 }
 
 export function isDoneResponse(data: unknown): data is DoneResponse {

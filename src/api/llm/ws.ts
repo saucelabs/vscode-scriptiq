@@ -10,7 +10,7 @@ import {
   isSessionUpdateResponse,
   isStatusUpdateResponse,
   isStepUpdateResponse,
-} from './types';
+} from '../../types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 

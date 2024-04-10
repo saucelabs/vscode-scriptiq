@@ -3,18 +3,14 @@ import { Observable } from 'rxjs';
 
 import { downloadImage } from './http';
 import { GlobalStorage } from '../../storage';
+import { TestRecord } from '../../types';
 import {
-  TestRecord,
-  JobUpdate,
-  StatusUpdate,
-  StepUpdate,
-  DeviceStreamUpdate,
-  isDoneUpdate,
-  isJobUpdate,
-  isStatusUpdate,
-  isStepUpdate,
-  isSessionUpdate,
-} from '../../types';
+  isDoneResponse,
+  isJobUpdateResponse,
+  isSessionUpdateResponse,
+  isStatusUpdateResponse,
+  isStepUpdateResponse,
+} from './types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 
@@ -33,14 +29,7 @@ export function generateTest(
   startActions: string[],
   prevGoal: string = '',
 ) {
-  return new Observable<
-    | TestRecord
-    | StatusUpdate
-    | JobUpdate
-    | StepUpdate
-    | DeviceStreamUpdate
-    | { finished: boolean }
-  >((observer) => {
+  return new Observable<any>((observer) => {
     const ws = new WebSocket(`${wsServer}/v1/genTest`);
 
     if (prevGoal !== '') {
@@ -101,55 +90,60 @@ export function generateTest(
     });
     ws.onmessage = (event) => {
       taskQueue.enqueue(async () => {
-        const data = JSON.parse(event.data) as unknown;
-        console.log(data);
+        const resp = JSON.parse(event.data) as unknown;
+        console.log(resp);
 
-        if (isSessionUpdate(data)) {
-          const deviceStreamData: DeviceStreamUpdate = {
-            session_id: data.session_id,
-            username: username,
-            accessKey: accessKey,
-            endpoint: region,
-          };
-          observer.next(deviceStreamData);
+        if (isSessionUpdateResponse(resp)) {
+          console.log('Session created.');
+          // FIXME hack. The backend never turns the creds and the client should
+          // not be responsible for setting them either.
+          resp.result.username = username;
+          resp.result.accessKey = accessKey;
+          resp.result.region = region;
+          observer.next(resp);
         }
 
-        if (isStatusUpdate(data)) {
-          observer.next(data);
+        if (isStatusUpdateResponse(resp)) {
+          console.log('Status Update.');
+          observer.next(resp);
         }
 
-        if (isJobUpdate(data)) {
-          observer.next(data);
+        if (isJobUpdateResponse(resp)) {
           console.log('Job created.');
-          testRecord.selected_device_name = data.selected_device_name;
-          testRecord.selected_platform_version = data.selected_platform_version;
-          testRecord.img_ratio = data.img_ratio;
+          observer.next(resp);
+          testRecord.selected_device_name = resp.result.selected_device_name;
+          testRecord.selected_platform_version =
+            resp.result.selected_platform_version;
+          testRecord.img_ratio = resp.result.img_ratio;
         }
 
-        if (isStepUpdate(data)) {
-          observer.next(data);
+        if (isStepUpdateResponse(resp)) {
+          console.log('Step created.');
+          observer.next(resp);
           await downloadImage(
             testID,
-            data.img_data.img_url,
-            data.img_data.img_out_name,
+            resp.result.step.img_url,
+            resp.result.step.img_name,
             username,
             accessKey,
             storage,
           );
           console.log('STEP INFO');
-          console.log(data.step_data);
-          testRecord.all_steps?.push(data.step_data);
+          console.log(resp.result.step);
+          testRecord.all_steps?.push(resp.result.step);
         }
 
-        if (isDoneUpdate(data)) {
+        if (isDoneResponse(resp)) {
+          console.log('Done.');
           if (testRecord.all_steps && testRecord.all_steps.length > 0) {
             console.log('Saving Test Record.');
             storage.saveTestRecord(testRecord);
-            observer.next(testRecord);
+            observer.next({
+              type: 'com.saucelabs.scriptiq.testgen.record',
+              result: testRecord,
+            });
           }
-          observer.next({
-            finished: true,
-          });
+          observer.next(resp);
         }
       });
     };

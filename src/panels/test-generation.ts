@@ -383,13 +383,40 @@ export class TestGenerationPanel {
       prevGoal,
     ).subscribe({
       next: (data) => {
+        let action = '';
+        switch (data.type) {
+          case 'com.saucelabs.scriptiq.testgen.status':
+            action = 'update-test-progress';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.job':
+            // FIXME it's treated like a status update; so why have it in the first place?
+            action = 'update-test-progress';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.step':
+            // FIXME it's treated like a status update; so why have it in the first place?
+            action = 'update-test-progress';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.session':
+            action = 'show-video';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.record':
+            action = 'show-new-test-record';
+            break;
+          case 'com.saucelabs.scriptiq.done':
+            action = 'finalize';
+            break;
+          default:
+            console.error(`received unknown message type: ${data.type}`);
+            return;
+        }
+
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          action: 'update-test-progress',
-          data: data,
+          action: action,
+          data: data.result,
         });
       },
       error: (err) => {
-        console.log(`received error callback: ${err}`);
+        console.error(`received error callback: ${err}`);
         toast.showError(err);
       },
     });

@@ -110,7 +110,7 @@ export function generateTest(
 
         if (isSessionUpdateResponse(resp)) {
           console.log('Session created.');
-          // FIXME hack. The backend never turns the creds and the client should
+          // FIXME hack. The backend never returns the creds and the client should
           // not be responsible for setting them either.
           resp.result.username = username;
           resp.result.accessKey = accessKey;

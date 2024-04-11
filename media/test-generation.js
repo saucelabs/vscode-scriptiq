@@ -102,38 +102,19 @@ function main() {
       const message = event.data; // The json data that the extension sent
       switch (message.action) {
         case 'update-test-progress':
-          if (document.getElementById('message-status-field') == undefined) {
+          if (document.getElementById('message-status-field') === null) {
             setUpStatusUpdates();
           }
-
-          if ('session_id' in message.data && 'username' in message.data) {
-            startDeviceWebsocket(
-              message.data.username,
-              message.data.accessKey,
-              message.data.endpoint,
-              message.data.session_id,
-            );
-          } else if ('status_message' in message.data) {
-            const statusField = document.getElementById('message-status-field');
-            statusField.innerHTML = message.data.status_message;
-          } else if ('finished' in message.data) {
-            testGallery.innerHTML = '';
-            vscode.postMessage({
-              action: 'enable-test-record-navigation',
-            });
-            if (ws != undefined) {
-              ws.close();
-            }
-          } else {
-            testGallery.innerHTML = '';
-            outputScript.innerHTML = '';
-            vscode.postMessage({
-              action: 'save-steps',
-              data: message.data,
-            });
-            updateStepDataState(message.data);
-            generateFullTestDisplay();
-          }
+          const statusField = document.getElementById('message-status-field');
+          statusField.innerHTML = message.data.status_message;
+          break;
+        case 'show-video':
+          startDeviceWebsocket(
+            message.data.username,
+            message.data.accessKey,
+            message.data.region,
+            message.data.session_id,
+          );
           break;
         case 'show-test-record':
           // Append answer.
@@ -147,8 +128,33 @@ function main() {
           updateState('votes', votes);
           generateFullTestDisplay();
           break;
+        case 'show-new-test-record':
+          // FIXME The difference between this and 'show-test-record' is confusing.
+          // `show-test-record` is used to display the test record in the panel
+          // when loading the test record from the history.
+          // While `show-new-test-record` is the finished record that comes fresh
+          // from the test generation process.
+          testGallery.innerHTML = '';
+          outputScript.innerHTML = '';
+          vscode.postMessage({
+            action: 'save-steps',
+            data: message.data,
+          });
+          updateStepDataState(message.data);
+          generateFullTestDisplay();
+          break;
+        case 'finalize':
+          testGallery.innerHTML = '';
+          vscode.postMessage({
+            action: 'enable-test-record-navigation',
+          });
+          if (ws !== undefined) {
+            ws.close();
+          }
+          break;
         case 'clear':
           clearScreen();
+          break;
         case 'error':
           break;
       }
@@ -232,25 +238,19 @@ function setUpStatusUpdates() {
 }
 
 /**
- * @property {string} username
- * @property {string} accessKey
- * @property {string} endpoint
- * @property {string} session_id
- */
-/**
  * Connects to websocket which provides images to create live stream of device.
  */
-function startDeviceWebsocket(username, accessKey, endpoint, session_id) {
+function startDeviceWebsocket(username, accessKey, region, session_id) {
   if (
     username === undefined ||
     accessKey === undefined ||
-    endpoint === undefined ||
+    region === undefined ||
     session_id === undefined
   ) {
     return;
   }
   ws = new WebSocket(
-    `wss://${username}:${accessKey}@api.${endpoint}.saucelabs.com/v1/rdc/socket/alternativeIo/${session_id}`,
+    `wss://${username}:${accessKey}@api.${region}.saucelabs.com/v1/rdc/socket/alternativeIo/${session_id}`,
   );
   ws.onerror = function (error) {
     console.log('Websocket Error: ', error);
@@ -425,7 +425,7 @@ function generateStep(
     annotation: stepData.location,
     height,
     width,
-    src: `${historyPath}/${testID}/${stepData.img_out_name}`,
+    src: `${historyPath}/${testID}/${stepData.img_name}`,
   });
 
   const imgContainer = document.createElement('div');
@@ -453,7 +453,7 @@ function generateStep(
         annotation: stepData.location,
         height: newHeight,
         width: newWidth,
-        src: `${historyPath}/${testID}/${stepData.img_out_name}`,
+        src: `${historyPath}/${testID}/${stepData.img_name}`,
       });
       resizer.previousSibling.style.width = `${newWidth}px`;
       resizer.previousSibling.replaceChildren(newImg);
@@ -483,6 +483,7 @@ function generateStep(
  * @property {number} x
  * @property {number} y
  */
+
 /**
  * @typedef {Object} AnnotatedImageProps
  * @property {Annotation} [annotation]
@@ -1024,6 +1025,7 @@ function generateLanguageSelectionOptions() {
  * @callback OnResizeCallback
  * @param {number} x
  */
+
 /**
  * @typedef {Object} HorizontalResizeBarProps
  * @property {OnResizeCallback} onResize

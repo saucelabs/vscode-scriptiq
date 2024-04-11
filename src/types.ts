@@ -37,7 +37,8 @@ export interface TestStep {
   }[];
   text: string;
   direction: string;
-  img_out_name: string;
+  img_name: string;
+  img_url: string;
   multiple_choice_options: string;
   event_reason: string;
   event_llm_output: string;
@@ -50,86 +51,109 @@ export interface Vote {
   step_num: number;
 }
 
-export interface StatusUpdate {
-  header: string;
-  status_message: string;
-}
+export type StatusUpdateType = 'com.saucelabs.scriptiq.testgen.status';
+export type SessionUpdateType = 'com.saucelabs.scriptiq.testgen.session';
+export type JobUpdateType = 'com.saucelabs.scriptiq.testgen.job';
+export type StepUpdateType = 'com.saucelabs.scriptiq.testgen.step';
+export type DoneType = 'com.saucelabs.scriptiq.done';
+export type RecordUpdateType = 'com.saucelabs.scriptiq.testgen.record';
 
-export function isStatusUpdate(data: unknown): data is StatusUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'status_update'
-  );
-}
-
-interface SessionUpdate {
-  session_id: string;
-}
-
-export function isSessionUpdate(data: unknown): data is SessionUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'session_id' in data &&
-    typeof data.session_id === 'string'
-  );
-}
-
-export interface DeviceStreamUpdate {
-  session_id: string;
-  username: string;
-  accessKey: string;
-  endpoint: string;
-}
-
-export interface JobUpdate {
-  header: string;
-  job_id: string;
-  selected_device_name: string;
-  selected_platform_version: string;
-  img_ratio: number;
-}
-
-export function isJobUpdate(data: unknown): data is JobUpdate {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'header' in data &&
-    data.header == 'results' &&
-    'job_id' in data
-  );
-}
-
-export interface StepUpdate {
-  header: string;
-  step_data: TestStep;
-  img_data: {
-    img_url: string;
-    img_out_name: string;
+export interface StatusUpdateResponse {
+  type: StatusUpdateType;
+  result: {
+    status_message: string;
   };
 }
 
-export function isStepUpdate(data: unknown): data is StepUpdate {
+export function isStatusUpdateResponse(
+  data: unknown,
+): data is StatusUpdateResponse {
   return (
     typeof data === 'object' &&
     data != null &&
-    'header' in data &&
-    data.header == 'results' &&
-    'step_data' in data
+    'type' in data &&
+    data.type == 'com.saucelabs.scriptiq.testgen.status'
   );
 }
 
-export interface DoneUpdate {
-  header: string;
+export interface SessionUpdateResponse {
+  type: SessionUpdateType;
+  result: {
+    session_id: string;
+    username?: string;
+    accessKey?: string;
+    region?: string;
+  };
 }
 
-export function isDoneUpdate(data: unknown): data is DoneUpdate {
+export function isSessionUpdateResponse(
+  data: unknown,
+): data is SessionUpdateResponse {
   return (
     typeof data === 'object' &&
     data != null &&
-    'header' in data &&
-    data.header == 'Done'
+    'type' in data &&
+    data.type == 'com.saucelabs.scriptiq.testgen.session'
+  );
+}
+
+export interface JobUpdateResponse {
+  type: JobUpdateType;
+  result: {
+    job_id: string;
+    selected_device_name: string;
+    selected_platform_version: string;
+    img_ratio: number;
+  };
+}
+
+export function isJobUpdateResponse(data: unknown): data is JobUpdateResponse {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'type' in data &&
+    data.type == 'com.saucelabs.scriptiq.testgen.job'
+  );
+}
+
+export interface StepUpdateResponse {
+  type: StepUpdateType;
+  result: {
+    step: TestStep;
+  };
+}
+
+export function isStepUpdateResponse(
+  data: unknown,
+): data is StepUpdateResponse {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'type' in data &&
+    data.type == 'com.saucelabs.scriptiq.testgen.step'
+  );
+}
+
+/**
+ * FIXME: This is a hack to get around the fact that the backend never turns the
+ * final test record. For consistencies sake of the client's interface, we
+ * pretend that we do.
+ */
+export interface RecordUpdateResponse {
+  type: RecordUpdateType;
+  result: TestRecord;
+}
+
+export interface DoneResponse {
+  type: DoneType;
+  result?: never;
+}
+
+export function isDoneResponse(data: unknown): data is DoneResponse {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'type' in data &&
+    data.type == 'com.saucelabs.scriptiq.done'
   );
 }

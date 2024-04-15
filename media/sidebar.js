@@ -167,7 +167,7 @@ function createHistoryLinks(history_list, selected) {
       });
     };
     historyLink.innerHTML =
-      '\u2192 ' + getTestRecordName(history.apk, history.goal);
+      '\u2192 ' + getTestRecordName(history.app_name, history.goal);
 
     const trashButton = document.createElement('i');
     trashButton.classList.add('fa', 'fa-trash');
@@ -190,8 +190,8 @@ function resetHistoryLinkColor() {
   }
 }
 
-function getTestRecordName(apk, goal) {
-  let name = apk.substring(0, apk.lastIndexOf('.'));
+function getTestRecordName(appName, goal) {
+  let name = appName.substring(0, appName.lastIndexOf('.'));
   name += ': ';
   name += goal;
 

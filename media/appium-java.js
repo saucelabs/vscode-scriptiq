@@ -131,13 +131,9 @@ export class AppiumJava extends CodeTemplate {
 
   /**
    * Header for output script.
-   * @param {string} goal
-   * @param {string} apk
-   * @param {string} device_name
-   * @param {string} platform_version
    * @returns string with header
    */
-  scriptHeaderCode(goal, apk, device_name, platform_version, region) {
+  scriptHeaderCode(goal, appName, device_name, platform_version, region) {
     return `
 <span ${this.code_class_class}>import</span> com.google.common.collect.<span ${this.code_created_classes_class}>ImmutableMap</span>;
 <span ${this.code_class_class}>import</span> io.appium.java_client.<span ${this.code_created_classes_class}>AppiumDriver</span>;
@@ -202,7 +198,7 @@ public <span ${this.code_class_class}>class</span> <span ${this.code_created_cla
 
     <span ${this.code_parameter_class}>@Test</span>
     public <span ${this.code_class_class}>void</span> runTest(){
-        capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:app"</span>, <span ${this.code_string_class}>"storage:filename=${apk}"</span>);
+        capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:app"</span>, <span ${this.code_string_class}>"storage:filename=${appName}"</span>);
         capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:deviceName"</span>, <span ${this.code_string_class}>"${device_name}"</span>);
         capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:platformVersion"</span>, <span ${this.code_string_class}>"${platform_version}"</span>);
         <span ${this.code_class_class}>try</span> {

@@ -127,13 +127,9 @@ export class AppiumPython extends CodeTemplate {
 
   /**
    * Header for output script.
-   * @param {string} goal
-   * @param {string} apk
-   * @param {string} device_name
-   * @param {string} platform_version
    * @returns string with header
    */
-  scriptHeaderCode(goal, apk, device_name, platform_version, region) {
+  scriptHeaderCode(goal, appName, device_name, platform_version, region) {
     return `<span ${this.code_parameter_class}>import</span> os
 
 <span ${this.code_parameter_class}>from</span> appium <span ${this.code_parameter_class}>import</span> webdriver
@@ -146,7 +142,7 @@ export class AppiumPython extends CodeTemplate {
 
 ${this.splitComments(goal, false, `Goal: `)}
 
-app = <span ${this.code_string_class}>"${apk}"</span>
+app = <span ${this.code_string_class}>"${appName}"</span>
 
 dc = {<span ${this.code_string_class}>'platformName'</span>: <span ${this.code_string_class}>'Android'</span>}
 dc[<span ${this.code_string_class}>'appium:app'</span>] = <span ${this.code_string_class}>"storage:filename="</span> + app

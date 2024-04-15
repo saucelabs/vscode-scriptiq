@@ -5,13 +5,14 @@ export interface Credentials {
 }
 
 export interface TestRecord {
-  apk: string;
+  app_name: string;
   goal: string;
   test_id: string;
   all_steps?: TestStep[];
   user_screen_descs?: string[];
   max_test_steps?: number;
   devices?: string[];
+  platform: Platform;
   platform_version?: string;
   region?: string;
   selected_device_name?: string;
@@ -157,3 +158,5 @@ export function isDoneResponse(data: unknown): data is DoneResponse {
     data.type == 'com.saucelabs.scriptiq.done'
   );
 }
+
+export type Platform = 'Android' | 'iOS';

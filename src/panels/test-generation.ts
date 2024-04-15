@@ -11,6 +11,7 @@ import {
 } from '../commands';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { Uri } from 'vscode';
+import { Platform } from '../types';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -147,9 +148,10 @@ export class TestGenerationPanel {
           case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,
-              message.data.apk,
+              message.data.app_name,
               message.data.max_test_steps,
               message.data.devices,
+              message.data.platform,
               message.data.platform_version,
               message.data.assertions,
               '',
@@ -262,8 +264,8 @@ export class TestGenerationPanel {
           </head>
           <body>          
             <div class="form-container">
-                <label for="apk-text-id">Application filename (APK)</label>
-                <input id="apk-text-id" placeholder="e.g. test.apk" />				
+                <label for="app-name-text-id">Application filename</label>
+                <input id="app-name-text-id" placeholder="e.g. test.apk" />				
             </div>
             <div class="form-container">
                 <label for="goal-text-id">Your test goal</label>
@@ -318,13 +320,14 @@ export class TestGenerationPanel {
   }
 
   /**
-   * Send APK and Goal to generate test using an LLM.
+   * Generate test using an LLM.
    */
   private askTestGenerationLLM(
     goal: string,
-    apk: string,
+    appName: string,
     maxTestSteps: number,
     devices: string[],
+    platform: Platform,
     platformVersion: string,
     assertions: string[],
     prevGoal: string,
@@ -339,8 +342,8 @@ export class TestGenerationPanel {
       toast.showError('Please add a Goal!');
       return;
     }
-    if (!apk) {
-      toast.showError('Please add an APK!');
+    if (!appName) {
+      toast.showError('Please add an app filename!');
       return;
     }
 
@@ -355,12 +358,13 @@ export class TestGenerationPanel {
     generateTest(
       this.storage,
       goal,
-      apk,
+      appName,
       maxTestSteps,
       creds.username,
       creds.accessKey,
       creds.region,
       devices,
+      platform,
       platformVersion,
       assertions,
       testID,

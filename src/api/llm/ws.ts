@@ -34,7 +34,6 @@ export function generateTest(
   platformVersion: string,
   assertions: string[],
   testID: string,
-  startActions: string[],
   prevGoal: string = '',
 ) {
   return new Observable<
@@ -79,7 +78,6 @@ export function generateTest(
             num_steps: maxTestSteps,
             device_names: devices,
             platform_version: platformVersion,
-            start_actions: startActions,
             assertions: assertions,
           },
         }),

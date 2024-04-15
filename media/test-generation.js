@@ -313,25 +313,10 @@ function generateFullTestDisplay() {
   const all_step_data = data.all_steps;
   testHeader.style.display = 'block';
 
-  const start_actions = [];
-  for (let ident of all_step_data) {
-    const action = {
-      potential_identifiers: ident.potential_identifiers,
-      action: ident.action,
-      text: ident.text,
-      direction: ident.direction,
-      location: ident.location,
-      event_llm_output: ident.event_llm_output,
-      prev_event: ident.previous_events,
-    };
-    start_actions.push(action);
-  }
-
   const editData = {
     apk: data.apk,
     device_name: data.selected_device_name,
     platform_version: data.selected_platform_version,
-    start_actions: start_actions,
     prev_goal: data.goal,
   };
 
@@ -751,92 +736,6 @@ function addUserRatingButtons(container, i, testID, rating) {
   // Despite the order of the DOM elements being thumbs down followed by thumbs up,
   // the CSS handles the presentation in a magic manner: thumbs up, thumbs down.
   container.append(thumbsDownButton, thumbsUpButton);
-}
-
-/**
- * Add the skip step option to the list of potential identifiers for script generation
- * @param {Element} container the element where the option to not add the step will be added
- * @param {number} stepNum the step number
- * @returns the original element, now with the skip step option added
- */
-function addEditTestInteractions(i, edit_data) {
-  const editTestButton = document.createElement('button');
-  editTestButton.classList.add('button', 'button-text', 'pl-0');
-  editTestButton.checked = false;
-  const editTestButtonOpenText = 'Edit Step From Here';
-  const editTestButtonCloseText = 'Close Step Editor';
-  editTestButton.innerHTML = editTestButtonOpenText;
-  editTestButton.title =
-    'Keeps steps before this one, uses new goal to generate new steps.';
-
-  const editTestDiv = document.createElement('div');
-  editTestDiv.id = 'edit-test-block';
-  editTestDiv.style.display = 'none';
-
-  const newGoalLabel = document.createElement('label');
-  newGoalLabel.id = 'new-goal-label';
-  newGoalLabel.innerHTML = 'New Goal';
-  const newGoalInput = document.createElement('input');
-  newGoalInput.id = 'new-goal-id';
-  newGoalInput.placeholder =
-    'Goal used for edited test steps, previous goal will not be considered.';
-
-  const newMaxStepsLabel = document.createElement('label');
-  newMaxStepsLabel.id = 'new-max-steps-label';
-  newMaxStepsLabel.innerHTML = 'New Max Step Count';
-  const newMaxStepsInput = document.createElement('input');
-  newMaxStepsInput.id = 'new-max-steps-id';
-  newMaxStepsInput.classList.add('short');
-  newMaxStepsInput.value = 5;
-  newMaxStepsInput.type = 'number';
-
-  const newGoalSendButton = document.createElement('button');
-  newGoalSendButton.classList.add(
-    'button',
-    'button-text',
-    'pl-0',
-    'edit-test-button',
-  );
-  newGoalSendButton.innerHTML = 'Generate Edited Test';
-
-  editTestButton.onclick = function () {
-    if (!this.checked) {
-      editTestDiv.style.display = 'block';
-      editTestButton.innerHTML = editTestButtonCloseText;
-    } else {
-      editTestDiv.style.display = 'none';
-      editTestButton.innerHTML = editTestButtonOpenText;
-    }
-    this.checked = !this.checked;
-  };
-
-  newGoalSendButton.onclick = function () {
-    testGallery.innerHTML = '';
-    outputScript.innerHTML = '';
-
-    // Send messages to Panel.
-    vscode.postMessage({
-      action: 'generate-edited-test',
-      data: {
-        goal: newGoalInput.value,
-        apk: edit_data.apk,
-        max_test_steps: parseInt(newMaxStepsInput.value),
-        start_actions: edit_data.start_actions.slice(0, i),
-        devices: [edit_data.device_name],
-        platform_version: edit_data.platform_version,
-        prev_goal: edit_data.prev_goal,
-      },
-    });
-  };
-
-  editTestDiv.appendChild(newGoalLabel);
-  editTestDiv.appendChild(newGoalInput);
-  editTestDiv.appendChild(document.createElement('br'));
-  editTestDiv.appendChild(newMaxStepsLabel);
-  editTestDiv.appendChild(newMaxStepsInput);
-  editTestDiv.appendChild(newGoalSendButton);
-
-  return [editTestButton, editTestDiv];
 }
 
 /**

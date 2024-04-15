@@ -152,7 +152,6 @@ export class TestGenerationPanel {
               message.data.devices,
               message.data.platform_version,
               message.data.assertions,
-              [],
               '',
             );
             return;
@@ -214,19 +213,6 @@ export class TestGenerationPanel {
 
             return;
           }
-
-          case 'generate-edited-test':
-            this.askTestGenerationLLM(
-              message.data.goal,
-              message.data.apk,
-              message.data.max_test_steps,
-              message.data.devices,
-              message.data.platform_version,
-              [],
-              message.data.start_actions,
-              message.data.prev_goal,
-            );
-            return;
           case 'enable-test-record-navigation':
             this.testRecordNavigation = true;
             return;
@@ -341,7 +327,6 @@ export class TestGenerationPanel {
     devices: string[],
     platformVersion: string,
     assertions: string[],
-    startActions: string[],
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
@@ -379,7 +364,6 @@ export class TestGenerationPanel {
       platformVersion,
       assertions,
       testID,
-      startActions,
       prevGoal,
     ).subscribe({
       next: (data) => {

@@ -17,7 +17,8 @@ export interface TestRecord {
   region?: string;
   selected_device_name?: string;
   selected_platform_version?: string;
-  img_ratio?: number;
+  screen_width?: number;
+  screen_height?: number;
 }
 
 export interface TestStep {
@@ -104,7 +105,8 @@ export interface JobUpdateResponse {
     job_id: string;
     selected_device_name: string;
     selected_platform_version: string;
-    img_ratio: number;
+    screen_width: number;
+    screen_height: number;
   };
 }
 

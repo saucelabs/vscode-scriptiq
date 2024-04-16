@@ -334,7 +334,8 @@ function generateFullTestDisplay() {
       const finalScreen = all_step_data[i].action === 'done';
       generateStep(
         i,
-        data.img_ratio,
+        data.screen_width,
+        data.screen_height,
         all_step_data[i],
         editData,
         data.test_id,
@@ -360,7 +361,8 @@ function generateFullTestDisplay() {
  */
 function generateStep(
   i,
-  imgRatio,
+  screenWidth,
+  screenHeight,
   stepData,
   edit_data,
   testID,
@@ -407,6 +409,7 @@ function generateStep(
   //     stepGallery.appendChild(editTestDiv);
   // }
 
+  const imgRatio = screenWidth / screenHeight;
   const height = DEFAULT_IMG_HEIGHT;
   const width = height * imgRatio;
   const img = createAnnotatedImage({

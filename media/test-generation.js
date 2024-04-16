@@ -297,6 +297,7 @@ function generateFullTestDisplay() {
   const data = vscode.getState();
   appName.value = data.app_name;
   goalText.value = data.goal;
+  maxTestSteps.value = data.max_test_steps;
 
   assertContainer.innerHTML = '';
   if ('assert_screen_desc_container' in data) {

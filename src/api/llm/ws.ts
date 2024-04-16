@@ -73,9 +73,8 @@ export function generateTest(
         JSON.stringify({
           method: 'testgen.start',
           data: {
-            sauce_username: username,
-            sauce_api_key: accessKey,
-            sauce_data_center: region,
+            username: username,
+            access_key: accessKey,
             app_name: appName,
             goal: goal,
             num_steps: maxTestSteps,

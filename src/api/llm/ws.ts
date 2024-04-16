@@ -131,7 +131,8 @@ export function generateTest(
           testRecord.selected_device_name = resp.result.selected_device_name;
           testRecord.selected_platform_version =
             resp.result.selected_platform_version;
-          testRecord.img_ratio = resp.result.img_ratio;
+          testRecord.screen_width = resp.result.screen_width;
+          testRecord.screen_height = resp.result.screen_height;
         }
 
         if (isStepUpdateResponse(resp)) {

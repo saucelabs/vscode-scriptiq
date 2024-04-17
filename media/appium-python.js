@@ -129,7 +129,15 @@ export class AppiumPython extends CodeTemplate {
    * Header for output script.
    * @returns string with header
    */
-  scriptHeaderCode(goal, appName, device_name, platform_version, region) {
+  scriptHeaderCode(
+    goal,
+    appName,
+    device_name,
+    platform_version,
+    region,
+    platform,
+  ) {
+    const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `<span ${this.code_parameter_class}>import</span> os
 
 <span ${this.code_parameter_class}>from</span> appium <span ${this.code_parameter_class}>import</span> webdriver
@@ -144,9 +152,10 @@ ${this.splitComments(goal, false, `Goal: `)}
 
 app = <span ${this.code_string_class}>"${appName}"</span>
 
-dc = {<span ${this.code_string_class}>'platformName'</span>: <span ${this.code_string_class}>'Android'</span>}
+dc = {<span ${this.code_string_class}>'platformName'</span>: <span ${this.code_string_class}>'${platform}'</span>}
 dc[<span ${this.code_string_class}>'appium:app'</span>] = <span ${this.code_string_class}>"storage:filename="</span> + app
 dc[<span ${this.code_string_class}>'appium:autoGrantPermissions'</span>] = <span ${this.code_parameter_class}>True</span>
+dc[<span ${this.code_string_class}>'appium:automationName'</span>] = <span ${this.code_string_class}>"${automationName}"</span>
 
 dc[<span ${this.code_string_class}>'appium:deviceName'</span>] = <span ${this.code_string_class}>"${device_name}"</span>
 dc[<span ${this.code_string_class}>'appium:platformVersion'</span>] = <span ${this.code_string_class}>"${platform_version}"</span>

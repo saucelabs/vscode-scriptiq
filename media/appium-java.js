@@ -133,7 +133,15 @@ export class AppiumJava extends CodeTemplate {
    * Header for output script.
    * @returns string with header
    */
-  scriptHeaderCode(goal, appName, device_name, platform_version, region) {
+  scriptHeaderCode(
+    goal,
+    appName,
+    device_name,
+    platform_version,
+    region,
+    platform,
+  ) {
+    const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `
 <span ${this.code_class_class}>import</span> com.google.common.collect.<span ${this.code_created_classes_class}>ImmutableMap</span>;
 <span ${this.code_class_class}>import</span> io.appium.java_client.<span ${this.code_created_classes_class}>AppiumDriver</span>;
@@ -184,8 +192,8 @@ public <span ${this.code_class_class}>class</span> <span ${this.code_created_cla
         // http://appium.io/docs/en/writing-running-appium/caps/#general-capabilities
         // Use the platform configuration https://saucelabs.com/platform/platform-configurator#/
         // to find the emulators/real devices names, OS versions and appium versions you can use for your testings</span>
-        capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"platformName"</span>, <span ${this.code_string_class}>"android"</span>);
-        capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:automationName"</span>, <span ${this.code_string_class}>"UiAutomator2"</span>);
+        capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"platformName"</span>, <span ${this.code_string_class}>"${platform}"</span>);
+        capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:automationName"</span>, <span ${this.code_string_class}>"${automationName}"</span>);
         capabilities.<span ${this.code_parameter_class}>setCapability</span>(<span ${this.code_string_class}>"appium:autoGrantPermissions"</span>, true);
 
         // Sauce capabilities

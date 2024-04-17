@@ -71,7 +71,14 @@ export class CodeTemplate {
    * Header for output script.
    * @returns string with header
    */
-  scriptHeaderCode(goal, appName, device_name, platform_version) {
+  scriptHeaderCode(
+    goal,
+    appName,
+    device_name,
+    platform_version,
+    region,
+    platform,
+  ) {
     throw new Error('Abstract method scriptHeaderCode must be overridden');
   }
 

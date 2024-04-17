@@ -352,6 +352,7 @@ function generateFullTestDisplay() {
     data.selected_device_name,
     data.selected_platform_version,
     data.region,
+    data.platform,
   );
 }
 
@@ -759,6 +760,7 @@ function generateTestOutputInteractables(
   device_name,
   platform_version,
   region,
+  platform,
 ) {
   const outputButtonsDiv = document.createElement('div');
   outputButtonsDiv.classList.add('flex-container');
@@ -805,6 +807,7 @@ function generateTestOutputInteractables(
       device_name,
       platform_version,
       region,
+      platform,
     );
 
     let codeStepText = '';

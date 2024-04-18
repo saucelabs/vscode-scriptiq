@@ -298,6 +298,7 @@ function generateFullTestDisplay() {
   appName.value = data.app_name;
   goalText.value = data.goal;
   maxTestSteps.value = data.max_test_steps;
+  platform.value = data.platform;
 
   assertContainer.innerHTML = '';
   if ('assert_screen_desc_container' in data) {
@@ -352,6 +353,7 @@ function generateFullTestDisplay() {
     data.selected_device_name,
     data.selected_platform_version,
     data.region,
+    data.platform,
   );
 }
 
@@ -759,6 +761,7 @@ function generateTestOutputInteractables(
   device_name,
   platform_version,
   region,
+  platform,
 ) {
   const outputButtonsDiv = document.createElement('div');
   outputButtonsDiv.classList.add('flex-container');
@@ -805,6 +808,7 @@ function generateTestOutputInteractables(
       device_name,
       platform_version,
       region,
+      platform,
     );
 
     let codeStepText = '';

@@ -287,10 +287,14 @@ export class TestGenerationPanel {
                     <input type="number" class="short" id="max_test_steps" value="10" min="1" max="20" />
                 </div>
                 <h6 class="mt-30">Device Settings</h6>
-                <div class="form-container">
-                    <label for="device_platform">Device Platform (Android only)</label>
-                    <input id="device_platform" value="Android" readonly/>
+                <div class="form-container dropdown-container">
+                    <label for="device_platform">Device Platform</label>
+                    <select name="device_platform" id="device_platform">
+                    <option value="Android">Android</option>
+                    <option value="iOS">iOS</option>
+                  </select>
                 </div>
+                <br/>
                 <div class="form-container">
                     <label for="platform_number">Platform Version</label>
                     <input type="text" class="short" id="platform_number" />

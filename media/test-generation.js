@@ -298,6 +298,7 @@ function generateFullTestDisplay() {
   appName.value = data.app_name;
   goalText.value = data.goal;
   maxTestSteps.value = data.max_test_steps;
+  platform.value = data.platform;
 
   assertContainer.innerHTML = '';
   if ('assert_screen_desc_container' in data) {

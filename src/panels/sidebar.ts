@@ -51,7 +51,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
    * Add listener for events from js.
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
-    webview.onDidReceiveMessage((message: any) => {
+    webview.onDidReceiveMessage(async (message: any) => {
       const action = message.action;
       let historyIndex = -1;
       switch (action) {
@@ -108,6 +108,14 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           }
           break;
         }
+        case 'clear-cache': {
+          await this.memento.clearCache();
+          toast.showInfo('Test record history cache successfully cleared.');
+
+          this.updateHistoryLinks();
+          executeShowTestGenerationPanelCommand();
+          break;
+        }
       }
     }, undefined);
   }
@@ -156,72 +164,71 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     }
 
     return `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link href="${styleVSCodeUri}" rel="stylesheet">
-		<link rel="stylesheet"
-	  href="https://fonts.googleapis.com/css?family=DM+Mono">
-	  <link rel="stylesheet"
-	  href="https://fonts.googleapis.com/css?family=DM+Sans">
-	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-            <title>Panel</title>
-        </head>
-        <body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="${styleVSCodeUri}" rel="stylesheet">
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=DM+Mono">
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=DM+Sans">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-        <div class="intro-container">
-			<h5>Welcome to ScriptIQ!</h5>
-			<p>Create test scripts in minutes with the power of Sauce Labs AI.</p>
-            <button id="start-test-generation-button" class="button button-primary">Create New Test</button>	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Panel</title>
+  </head>
+  <body>
+    <div class="intro-container">
+      <h5>Welcome to ScriptIQ!</h5>
+      <p>Create test scripts in minutes with the power of Sauce Labs AI.</p>
+      <button id="start-test-generation-button" class="button button-primary">Create New Test</button>
+    </div>
+    <br/>
+    <ul class="nav nav-tabs">
+      <li${settingsTabButton}><a data-toggle="tab" href="#settings">Settings</a></li>
+      <li${historyTabButton}><a data-toggle="tab" href="#history">History</a></li>
+    </ul>
+    <br/>
+    <div class="tab-content">
+      <div id="history" class="tab-pane fade${historyTabData}">
+        <div class="history-empty">
+          <h5>History</h5>
+          <p id="history-intro" class="intro-container">Your goal history will appear here once you generate tests. Click the <code>Create New Test</code> button to start.</p>
         </div>
-
-		<br/>
-		<ul class="nav nav-tabs">
-			<li${settingsTabButton}><a data-toggle="tab" href="#settings">Settings</a></li>
-			<li${historyTabButton}><a data-toggle="tab" href="#history">History</a></li>
-		</ul>
-
-		<br/>
-		<div class="tab-content">
-			<div id="history" class="tab-pane fade${historyTabData}">
-				<div class="history-empty">
-					<h5>History</h5>
-					<p id="history-intro" class="intro-container">Your goal history will appear here once you generate tests. Click the <code>Create New Test</code> button to start.</p>	
-				</div>
-				<div id="history-links">
-				</div>
-			</div>
-			<div id="settings" class="tab-pane fade${settingsTabData}">
-				<div id="language-options">
-				</div>
-				<h5>Sauce Labs Credentials</h5>
-				<div class="form-container">
-					<label for="username-text-field-id">Sauce Username</label>
-					<input id="username-text-field-id" value="${creds?.username ?? ''}" placeholder="e.g. oauth-test-user-12345" />							
-				</div>		
-				<div class="form-container">
-					<label for="access-key-text-field-id">Sauce Access Key</label>
-					<input id="access-key-text-field-id" value="${creds?.accessKey ?? ''}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />				
-				</div>
-				<div class="form-container">
-					<label for="region-text-field-id">Sauce Labs Region</label>
-					<input id="region-text-field-id" value="${creds?.region ?? ''}" placeholder="e.g. us-west-1" />				
-				</div>
-				<div class="form-container">
-					<button id="save-button-id" class="button button-primary">Save</button>
-				</div>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-				<div class="sidebar-footer">
-				<p>Not sure what your credentials are? Find them inside the Sauce Labs platform: <a href="https://accounts.saucelabs.com/"> ${'Log In'}</a></p>
-				</div>
-			</div>
-		</div>
-    
-        </body>
-        </html>`;
+        <div id="history-links">
+        </div>
+        <div class="sidebar-footer history-tab-footer">
+          <button id="clear-cache" class="button button-minus-row risky">Clear Cache</button>
+        </div>
+      </div>
+      <div id="settings" class="tab-pane fade${settingsTabData}">
+        <div id="language-options">
+        </div>
+        <h5>Sauce Labs Credentials</h5>
+        <div class="form-container">
+          <label for="username-text-field-id">Sauce Username</label>
+          <input id="username-text-field-id" value="${creds?.username ?? ''}" placeholder="e.g. oauth-test-user-12345" />
+        </div>
+        <div class="form-container">
+          <label for="access-key-text-field-id">Sauce Access Key</label>
+          <input id="access-key-text-field-id" value="${creds?.accessKey ?? ''}" type="password" placeholder="e.g. 1a2b34c5-6d7e-8901-23fg-15afd48faw" />
+        </div>
+        <div class="form-container">
+          <label for="region-text-field-id">Sauce Labs Region</label>
+          <input id="region-text-field-id" value="${creds?.region ?? ''}" placeholder="e.g. us-west-1" />
+        </div>
+        <div class="form-container">
+          <button id="save-button-id" class="button button-primary">Save</button>
+        </div>
+        <script nonce="${nonce}" src="${scriptUri}"></script>
+        <div class="sidebar-footer">
+          <p>Not sure what your credentials are? Find them inside the Sauce Labs platform: <a href="https://accounts.saucelabs.com/"> ${'Log In'}</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>`;
   }
 }

@@ -563,3 +563,7 @@ td.true-assert {
   gap: 50px;
   justify-content: start;
 }
+
+.history-tab-footer {
+  margin-bottom: 10px;
+}

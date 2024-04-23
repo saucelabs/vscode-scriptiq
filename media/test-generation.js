@@ -369,7 +369,7 @@ function generateStep(
   edit_data,
   testID,
   user_screen_descs,
-  votes,
+  votes = [],
   finalScreen,
 ) {
   const stepGallery = document.createElement('div');

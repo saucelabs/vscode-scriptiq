@@ -110,6 +110,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         }
         case 'clear-cache': {
           await this.memento.clearCache();
+          await this.storage.clearHistory();
           toast.showInfo('Test record history cache successfully cleared.');
 
           this.updateHistoryLinks();
@@ -200,7 +201,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         <div id="history-links">
         </div>
         <div class="sidebar-footer history-tab-footer">
-          <button id="clear-cache" class="button button-minus-row risky">Clear Cache</button>
+          <button id="clear-cache" class="clear-cache button button-minus-row risky">Clear Cache</button>
         </div>
       </div>
       <div id="settings" class="tab-pane fade${settingsTabData}">

@@ -52,4 +52,12 @@ export class Memento {
   async saveSchemaVersion(version: string) {
     await this.save('schemaVersion', version);
   }
+
+  /**
+   * Clears the cache by emptying the list of stored test IDs.
+   */
+  async clearCache() {
+    console.log('Removing test records from Memento...');
+    await this.saveTestIDs([]);
+  }
 }

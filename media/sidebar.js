@@ -5,7 +5,7 @@ const vscode = acquireVsCodeApi();
  */
 window.addEventListener('load', main);
 
-// Declare Html elements.
+// Declare HTML elements.
 const startTestGeneration = document.getElementById(
   'start-test-generation-button',
 );
@@ -13,6 +13,7 @@ const saveButton = document.getElementById('save-button-id');
 const usernameTextField = document.getElementById('username-text-field-id');
 const accessKeyTextField = document.getElementById('access-key-text-field-id');
 const regionTextField = document.getElementById('region-text-field-id');
+const clearCacheButton = document.getElementById('clear-cache');
 
 const sauceOrange = '#F1997B';
 
@@ -20,9 +21,10 @@ const sauceOrange = '#F1997B';
  * Main function
  */
 function main() {
-  // Add eventLsteners of Html elements.
+  // Add event listeners.
   startTestGeneration?.addEventListener('click', handleStartButtonClick);
   saveButton?.addEventListener('click', handleSaveClick);
+  clearCacheButton?.addEventListener('click', handleClearCache);
   vscode.postMessage({
     action: 'load-history-links',
   });
@@ -65,7 +67,7 @@ function handleStartButtonClick() {
 }
 
 /**
- * Handle save  click event.
+ * Handle save click event.
  */
 function handleSaveClick() {
   console.log('Handling save');
@@ -78,6 +80,13 @@ function handleSaveClick() {
   vscode.postMessage({
     action: 'save-credentials',
     data: data,
+  });
+}
+
+// Handle click on clear cache button event.
+function handleClearCache() {
+  vscode.postMessage({
+    action: 'clear-cache',
   });
 }
 

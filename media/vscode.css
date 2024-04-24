@@ -563,3 +563,14 @@ td.true-assert {
   gap: 50px;
   justify-content: start;
 }
+
+.clear-cache {
+  font-size: 0.85em;
+  margin-right: 20px;
+}
+
+.history-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}

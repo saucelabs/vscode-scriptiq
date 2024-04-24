@@ -142,4 +142,9 @@ export class GlobalStorage {
     const fileStream = fs.createWriteStream(dest);
     await finished(Readable.fromWeb(data).pipe(fileStream));
   }
+
+  clearHistory() {
+    console.log('Removing test records from local storage...');
+    fs.rmSync(this.getHistoryUri().path, { recursive: true });
+  }
 }

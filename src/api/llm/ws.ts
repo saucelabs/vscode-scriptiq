@@ -152,6 +152,19 @@ export function generateTest(
 
         if (isDoneResponse(resp)) {
           console.log('Done.');
+          // Validate necessary fields in the test record.
+          if (!testRecord.app_name) {
+            observer.error(
+              'Application name missing in test record; skipping save. Please check data integrity.',
+            );
+            return;
+          }
+          if (!testRecord.goal) {
+            observer.error(
+              'Test goal missing in test record; skipping save. Please check data integrity.',
+            );
+            return;
+          }
           if (testRecord.all_steps && testRecord.all_steps.length > 0) {
             console.log('Saving Test Record.');
             storage.saveTestRecord(testRecord);

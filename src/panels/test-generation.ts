@@ -158,20 +158,6 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            // Validate necessary fields in the test record.
-            if (!message.data.app_name) {
-              toast.showError(
-                'Application name missing in test record; skipping save. Please check data integrity.',
-              );
-              return;
-            }
-            if (!message.data.goal) {
-              toast.showError(
-                'Test goal missing in test record; skipping save. Please check data integrity.',
-              );
-              return;
-            }
-
             const history = this.memento.getTestIDs();
 
             for (let i = 0; i < history.length; i++) {

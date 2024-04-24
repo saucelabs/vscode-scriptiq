@@ -152,13 +152,6 @@ export function generateTest(
 
         if (isDoneResponse(resp)) {
           console.log('Done.');
-          // Validate necessary fields in the test record.
-          if (!testRecord.app_name || !testRecord.goal) {
-            observer.error(
-              'Mandatory field missing in test record; save skipped. Please verify data integrity.',
-            );
-            return;
-          }
           if (testRecord.all_steps && testRecord.all_steps.length > 0) {
             console.log('Saving Test Record.');
             storage.saveTestRecord(testRecord);

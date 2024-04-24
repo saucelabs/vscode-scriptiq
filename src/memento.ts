@@ -57,6 +57,7 @@ export class Memento {
    * Clears the cache by emptying the list of stored test IDs.
    */
   async clearCache() {
+    console.log('Removing test records from VSCode Memento...');
     await this.saveTestIDs([]);
   }
 }

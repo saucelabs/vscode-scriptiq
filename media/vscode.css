@@ -279,8 +279,6 @@ textarea::placeholder {
 /* History items */
 
 .history-block {
-  position: relative;
-  z-index: 1;
   margin-bottom: var(--offset-base);
 }
 

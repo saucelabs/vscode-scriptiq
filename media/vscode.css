@@ -566,11 +566,13 @@ td.true-assert {
   justify-content: start;
 }
 
-.history-tab-footer {
-  margin-bottom: 10px;
+.clear-cache {
+  font-size: 0.85em;
+  margin-right: 20px;
 }
 
-.clear-cache {
-  position: relative;
-  z-index: 2;
+.history-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
 }

@@ -194,14 +194,14 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     <br/>
     <div class="tab-content">
       <div id="history" class="tab-pane fade${historyTabData}">
-        <div class="history-empty">
+        <div class="tab-title history-title">
           <h5>History</h5>
+          <button id="clear-cache" class="clear-cache button button-minus-row risky">Clear Cache</button>
+        </div>
+        <div class="history-empty">
           <p id="history-intro" class="intro-container">Your goal history will appear here once you generate tests. Click the <code>Create New Test</code> button to start.</p>
         </div>
         <div id="history-links">
-        </div>
-        <div class="sidebar-footer history-tab-footer">
-          <button id="clear-cache" class="clear-cache button button-minus-row risky">Clear Cache</button>
         </div>
       </div>
       <div id="settings" class="tab-pane fade${settingsTabData}">

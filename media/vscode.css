@@ -229,7 +229,6 @@ textarea::placeholder {
 .sidebar-footer {
   bottom: 0;
   width: calc(100% - 32px);
-  position: absolute;
   font-size: 0.85em;
   font-family: var(--sauce-font-sans);
   background: var(--vscode-sideBar-background);

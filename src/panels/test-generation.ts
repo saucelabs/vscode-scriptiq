@@ -359,11 +359,13 @@ export class TestGenerationPanel {
     // allowing selection from a dropdown menu.
     if (
       !appName.endsWith('.ipa') ||
-      !appName.endsWith('.aab') ||
+      !appName.endsWith('.app') ||
       !appName.endsWith('.apk') ||
       !appName.endsWith('.aab')
     ) {
-      toast.showError('Please use a valid app filename!');
+      toast.showError(
+        'Please use a valid app filename! Allowed file types are: ipa, app, apk, aab.',
+      );
     }
 
     if (maxTestSteps < 1 || maxTestSteps > 20) {

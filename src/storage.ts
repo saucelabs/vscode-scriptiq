@@ -93,6 +93,14 @@ export class GlobalStorage {
     if (!record.test_id) {
       throw new Error('failed to persist test record: missing ID');
     }
+    if (!record.app_name) {
+      throw new Error(
+        'failed to persist test record: missing application name',
+      );
+    }
+    if (!record.goal) {
+      throw new Error('failed to persist test record: missing test goal');
+    }
 
     const dest = this.getHistoryUri(record.test_id, 'data.json').path;
     fs.mkdirSync(path.dirname(dest), { recursive: true });

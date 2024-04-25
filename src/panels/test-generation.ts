@@ -338,6 +338,8 @@ export class TestGenerationPanel {
   ) {
     const creds = this.getCredentials();
     executeClearHistoryLinkSelectionCommand();
+    goal = goal.trim();
+    appName = appName.trim();
 
     if (!creds) {
       return;
@@ -349,6 +351,21 @@ export class TestGenerationPanel {
     if (!appName) {
       toast.showError('Please add an app filename!');
       return;
+    }
+
+    // Notes: Temporary solution for validating the application name.
+    // This check can be removed once a better method for retrieving the
+    // application name is implemented, such as fetching an app list and
+    // allowing selection from a dropdown menu.
+    if (
+      !appName.endsWith('.ipa') ||
+      !appName.endsWith('.app') ||
+      !appName.endsWith('.apk') ||
+      !appName.endsWith('.aab')
+    ) {
+      toast.showError(
+        'Please use a valid app filename! Allowed file types are: ipa, app, apk, aab.',
+      );
     }
 
     if (maxTestSteps < 1 || maxTestSteps > 20) {

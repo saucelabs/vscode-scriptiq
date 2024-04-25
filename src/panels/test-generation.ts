@@ -338,6 +338,8 @@ export class TestGenerationPanel {
   ) {
     const creds = this.getCredentials();
     executeClearHistoryLinkSelectionCommand();
+    goal = goal.trim();
+    appName = appName.trim();
 
     if (!creds) {
       return;
@@ -349,6 +351,15 @@ export class TestGenerationPanel {
     if (!appName) {
       toast.showError('Please add an app filename!');
       return;
+    }
+
+    if (
+      !appName.endsWith('.ipa') ||
+      !appName.endsWith('.aab') ||
+      !appName.endsWith('.apk') ||
+      !appName.endsWith('.aab')
+    ) {
+      toast.showError('Please use a valid app filename!');
     }
 
     if (maxTestSteps < 1 || maxTestSteps > 20) {

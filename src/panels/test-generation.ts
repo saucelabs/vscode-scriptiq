@@ -353,6 +353,10 @@ export class TestGenerationPanel {
       return;
     }
 
+    // Notes: Temporary solution for validating the application name.
+    // This check can be removed once a better method for retrieving the
+    // application name is implemented, such as fetching an app list and
+    // allowing selection from a dropdown menu.
     if (
       !appName.endsWith('.ipa') ||
       !appName.endsWith('.aab') ||

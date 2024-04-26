@@ -19,6 +19,7 @@ export interface TestRecord {
   selected_platform_version?: string;
   screen_width?: number;
   screen_height?: number;
+  scriptiq_llm_version?: string;
 }
 
 export interface TestStep {
@@ -105,6 +106,7 @@ export interface JobUpdateResponse {
     selected_platform_version: string;
     screen_width: number;
     screen_height: number;
+    scriptiq_llm_version: string;
   };
 }
 

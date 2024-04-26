@@ -31,9 +31,9 @@ export interface TestStep {
     height: number;
   };
   potential_identifiers: {
-    id_type: string;
-    id_value: string;
-    id_num: number;
+    type: string;
+    value: string;
+    index: number;
     checked: boolean;
     depth: number;
   }[];
@@ -41,9 +41,7 @@ export interface TestStep {
   direction: string;
   img_name: string;
   img_url: string;
-  multiple_choice_options: string;
   event_reason: string;
-  event_llm_output: string;
   screen_descs: string[];
   sd_asserts: string[];
 }

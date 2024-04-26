@@ -12,10 +12,10 @@ export class AppiumJava extends CodeTemplate {
    * Code to find element
    * @param {string} id_type identifier type (resource-id, text, content-desc, class)
    * @param {string} id_value value of the identifier
-   * @param {number} id_num identifier number when multiple of same type and value on screen
+   * @param {number} id_index identifier number when multiple of same type and value on screen
    * @returns string with html of code
    */
-  findElementCode(id_type, id_value, id_num = 0) {
+  findElementCode(id_type, id_value, id_index = 0) {
     var by_choice = 'xpath';
     if (id_type == 'resource-id') {
       by_choice = 'id';
@@ -29,24 +29,24 @@ export class AppiumJava extends CodeTemplate {
       var value = `${id_value}`;
     }
 
-    if (id_num == 0) {
+    if (id_index == 0) {
       return `driver.<span ${this.code_parameter_class}>findElement</span>(<span ${this.code_class_class}>By</span>.<span ${this.code_parameter_class}>${by_choice}</span>(<span ${this.code_string_class}>"${value}"</span>))`;
     } else {
-      return `((<span ${this.code_parameter_class}>WebElement</span>) driver.<span ${this.code_parameter_class}>findElements</span>(<span ${this.code_class_class}>By</span>.<span ${this.code_parameter_class}>${by_choice}</span>(<span ${this.code_string_class}>"${value}"</span>)).get(<span ${this.code_number_class}>${id_num}</span>))`;
+      return `((<span ${this.code_parameter_class}>WebElement</span>) driver.<span ${this.code_parameter_class}>findElements</span>(<span ${this.code_class_class}>By</span>.<span ${this.code_parameter_class}>${by_choice}</span>(<span ${this.code_string_class}>"${value}"</span>)).get(<span ${this.code_number_class}>${id_index}</span>))`;
     }
   }
 
   /**
    * Generates the first line of code for each type of action.
-   * @param {dict} bestIdentifier the id_type, id_value and id_num
+   * @param {dict} bestIdentifier the type, value and index
    * @param {string} action (click, scroll, set_text)
    * @returns {string} the line of code
    */
   genCodeLine(bestIdentifier, action, number = '') {
     var findElement = this.findElementCode(
-      bestIdentifier.id_type,
-      bestIdentifier.id_value,
-      bestIdentifier.id_num,
+      bestIdentifier.type,
+      bestIdentifier.value,
+      bestIdentifier.index,
     );
 
     var codeStepText = ``;

@@ -132,6 +132,7 @@ export function generateTest(
             resp.result.selected_platform_version;
           testRecord.screen_width = resp.result.screen_width;
           testRecord.screen_height = resp.result.screen_height;
+          testRecord.scriptiq_llm_version = resp.result.scriptiq_llm_version;
         }
 
         if (isStepUpdateResponse(resp)) {

@@ -330,7 +330,7 @@ export class TestGenerationPanel {
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
 
-    generateTest(
+    const [, observable] = generateTest(
       this.storage,
       goal,
       appName,
@@ -345,7 +345,8 @@ export class TestGenerationPanel {
       testID,
       prevGoal,
       creds,
-    ).subscribe({
+    );
+    observable.subscribe({
       next: (data) => {
         let action = '';
         switch (data.type) {

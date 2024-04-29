@@ -37,20 +37,29 @@ export function generateTest(
   testID: string,
   prevGoal: string = '',
   creds: Credentials,
-) {
-  return new Observable<
+): [
+  WebSocket,
+  Observable<
+    | DoneResponse
+    | JobUpdateResponse
+    | RecordUpdateResponse
+    | StatusUpdateResponse
+    | StepUpdateResponse
+  >,
+] {
+  const ws = new WebSocket(`${wsServer}/v1/genTest`, {
+    headers: {
+      Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
+    },
+  });
+
+  const observable = new Observable<
     | DoneResponse
     | JobUpdateResponse
     | RecordUpdateResponse
     | StatusUpdateResponse
     | StepUpdateResponse
   >((observer) => {
-    const ws = new WebSocket(`${wsServer}/v1/genTest`, {
-      headers: {
-        Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
-      },
-    });
-
     if (prevGoal !== '') {
       if (prevGoal.startsWith('Edit: ')) {
         goal = 'Edit: ' + goal + ', ' + prevGoal;
@@ -171,6 +180,7 @@ export function generateTest(
       });
     };
   });
+  return [ws, observable];
 }
 
 /**

@@ -87,6 +87,7 @@ export interface JobUpdateResponse {
     screen_height: number;
     scriptiq_llm_version: string;
     session_id: string;
+    status_message: string;
   };
 }
 

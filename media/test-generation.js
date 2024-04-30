@@ -103,9 +103,6 @@ function main() {
       const message = event.data; // The json data that the extension sent
       switch (message.action) {
         case 'update-test-progress':
-          if (document.getElementById('message-status-field') === null) {
-            setUpStatusUpdates();
-          }
           const statusField = document.getElementById('message-status-field');
           statusField.innerHTML = message.data.status_message;
           break;
@@ -173,6 +170,8 @@ function handleAskClick() {
   testGallery.innerHTML = '';
   outputScript.innerHTML = '';
   testHeader.style.display = 'none';
+
+  setUpStatusUpdates();
 
   const assertInputsContainers = document.getElementsByClassName(
     'screen-desc-assert-input',

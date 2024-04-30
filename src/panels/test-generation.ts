@@ -399,15 +399,11 @@ export class TestGenerationPanel {
             action = 'update-test-progress';
             break;
           case 'com.saucelabs.scriptiq.testgen.job':
-            // FIXME it's treated like a status update; so why have it in the first place?
-            action = 'update-test-progress';
+            action = 'show-video';
             break;
           case 'com.saucelabs.scriptiq.testgen.step':
             // FIXME it's treated like a status update; so why have it in the first place?
             action = 'update-test-progress';
-            break;
-          case 'com.saucelabs.scriptiq.testgen.session':
-            action = 'show-video';
             break;
           case 'com.saucelabs.scriptiq.testgen.record':
             action = 'show-new-test-record';

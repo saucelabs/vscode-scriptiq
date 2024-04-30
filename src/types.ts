@@ -77,27 +77,6 @@ export function isStatusUpdateResponse(
   );
 }
 
-export interface SessionUpdateResponse {
-  type: SessionUpdateType;
-  result: {
-    session_id: string;
-    username?: string;
-    accessKey?: string;
-    region?: string;
-  };
-}
-
-export function isSessionUpdateResponse(
-  data: unknown,
-): data is SessionUpdateResponse {
-  return (
-    typeof data === 'object' &&
-    data != null &&
-    'type' in data &&
-    data.type == 'com.saucelabs.scriptiq.testgen.session'
-  );
-}
-
 export interface JobUpdateResponse {
   type: JobUpdateType;
   result: {
@@ -107,6 +86,12 @@ export interface JobUpdateResponse {
     screen_width: number;
     screen_height: number;
     scriptiq_llm_version: string;
+    session_id: string;
+
+    // TODO(AP): Hack. The backend never returns the creds.
+    username?: string;
+    accessKey?: string;
+    region?: string;
   };
 }
 

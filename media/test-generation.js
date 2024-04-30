@@ -109,7 +109,9 @@ function main() {
           const statusField = document.getElementById('message-status-field');
           statusField.innerHTML = message.data.status_message;
           break;
-        case 'show-video':
+        case 'show-video': {
+          const statusField = document.getElementById('message-status-field');
+          statusField.innerHTML = message.data.status_message;
           startDeviceWebsocket(
             message.data.username,
             message.data.accessKey,
@@ -117,6 +119,7 @@ function main() {
             message.data.session_id,
           );
           break;
+        }
         case 'show-test-record':
           // Append answer.
           testHeader.style.display = 'block';

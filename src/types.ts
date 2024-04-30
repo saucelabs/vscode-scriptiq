@@ -87,11 +87,6 @@ export interface JobUpdateResponse {
     screen_height: number;
     scriptiq_llm_version: string;
     session_id: string;
-
-    // TODO(AP): Hack. The backend never returns the creds.
-    username?: string;
-    accessKey?: string;
-    region?: string;
   };
 }
 

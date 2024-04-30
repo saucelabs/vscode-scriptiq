@@ -111,11 +111,6 @@ export function generateTest(
 
         if (isJobUpdateResponse(resp)) {
           console.log('Job created.');
-          // TODO(AP): Hack. The backend never returns the creds and the client
-          // should not be responsible for setting them either.
-          resp.result.username = username;
-          resp.result.accessKey = accessKey;
-          resp.result.region = region;
           observer.next(resp);
           testRecord.selected_device_name = resp.result.selected_device_name;
           testRecord.selected_platform_version =

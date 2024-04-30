@@ -415,6 +415,7 @@ export class TestGenerationPanel {
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
           action: action,
+          credentials: creds,
           data: data.result,
         });
       },

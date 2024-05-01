@@ -43,6 +43,11 @@ const defaultMaxSteps = maxTestSteps.value;
 // Declare device websocket
 let ws;
 
+function setStatus(message) {
+  const statusField = document.getElementById('message-status-field');
+  statusField.innerHTML = message;
+}
+
 function main() {
   // Add event listeners.
   generateButton?.addEventListener('click', handleAskClick);
@@ -103,20 +108,19 @@ function main() {
       const message = event.data; // The json data that the extension sent
       switch (message.action) {
         case 'update-test-progress':
-          if (document.getElementById('message-status-field') === null) {
-            setUpStatusUpdates();
-          }
-          const statusField = document.getElementById('message-status-field');
-          statusField.innerHTML = message.data.status_message;
+          setStatus(message.data.status_message);
           break;
-        case 'show-video':
+        case 'show-video': {
+          setStatus(message.data.status_message);
+          const { username, accessKey, region } = message.credentials;
           startDeviceWebsocket(
-            message.data.username,
-            message.data.accessKey,
-            message.data.region,
+            username,
+            accessKey,
+            region,
             message.data.session_id,
           );
           break;
+        }
         case 'show-test-record':
           // Append answer.
           testHeader.style.display = 'block';
@@ -170,6 +174,8 @@ function handleAskClick() {
   testGallery.innerHTML = '';
   outputScript.innerHTML = '';
   testHeader.style.display = 'none';
+
+  setUpStatusUpdates();
 
   const assertInputsContainers = document.getElementsByClassName(
     'screen-desc-assert-input',

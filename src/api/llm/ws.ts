@@ -5,20 +5,16 @@ import { downloadImage } from './http';
 import { GlobalStorage } from '../../storage';
 import {
   DoneResponse,
+  isDoneResponse,
+  isJobUpdateResponse,
+  isStatusUpdateResponse,
+  isStepUpdateResponse,
   JobUpdateResponse,
   Platform,
   RecordUpdateResponse,
-  SessionUpdateResponse,
   StatusUpdateResponse,
   StepUpdateResponse,
   TestRecord,
-} from '../../types';
-import {
-  isDoneResponse,
-  isJobUpdateResponse,
-  isSessionUpdateResponse,
-  isStatusUpdateResponse,
-  isStepUpdateResponse,
 } from '../../types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
@@ -42,7 +38,6 @@ export function generateTest(
     | DoneResponse
     | JobUpdateResponse
     | RecordUpdateResponse
-    | SessionUpdateResponse
     | StatusUpdateResponse
     | StepUpdateResponse
   >((observer) => {
@@ -108,16 +103,6 @@ export function generateTest(
       taskQueue.enqueue(async () => {
         const resp = JSON.parse(event.data) as unknown;
         console.log(resp);
-
-        if (isSessionUpdateResponse(resp)) {
-          console.log('Session created.');
-          // FIXME hack. The backend never returns the creds and the client should
-          // not be responsible for setting them either.
-          resp.result.username = username;
-          resp.result.accessKey = accessKey;
-          resp.result.region = region;
-          observer.next(resp);
-        }
 
         if (isStatusUpdateResponse(resp)) {
           console.log('Status Update.');

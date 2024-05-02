@@ -5,3 +5,7 @@ export function errMsg(obj: unknown): string {
     return JSON.stringify(obj);
   }
 }
+
+export function isError(obj: unknown): obj is Error {
+  return typeof obj === 'object' && obj !== null && 'message' in obj;
+}

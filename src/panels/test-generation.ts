@@ -419,9 +419,9 @@ export class TestGenerationPanel {
           data: data.result,
         });
       },
-      error: (err) => {
-        console.error(`received error callback: ${err}`);
-        toast.showError(err);
+      error: (err: Error) => {
+        console.error(`Test generation failed: ${err}`);
+        toast.showError(err.message);
       },
     });
   }

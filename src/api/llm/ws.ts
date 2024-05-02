@@ -1,4 +1,4 @@
-import { WebSocket } from 'undici';
+import { ErrorEvent, WebSocket } from 'undici';
 import { Observable } from 'rxjs';
 
 import { downloadImage } from './http';
@@ -16,6 +16,7 @@ import {
   StepUpdateResponse,
   TestRecord,
 } from '../../types';
+import { isError } from '../../error';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 
@@ -88,9 +89,8 @@ export function generateTest(
       });
     };
 
-    ws.onerror = (err) => {
-      observer.error(err);
-      ws.close();
+    ws.onerror = (ev) => {
+      observer.error(errorEventToError(ev));
     };
 
     const taskQueue = new AsyncQueue({
@@ -152,6 +152,18 @@ export function generateTest(
       });
     };
   });
+}
+
+/**
+ * Converts a WebSocket ErrorEvent to an Error.
+ * If the ErrorEvent has an Error, it will return the Error as-is.
+ * Otherwise, it will return a new Error with the message from the ErrorEvent.
+ */
+function errorEventToError(event: ErrorEvent): Error {
+  if (isError(event.error)) {
+    return event.error;
+  }
+  return new Error(`WebSocket Error: ${event.message}`);
 }
 
 /**

@@ -53,7 +53,6 @@ export interface Vote {
 }
 
 export type StatusUpdateType = 'com.saucelabs.scriptiq.testgen.status';
-export type SessionUpdateType = 'com.saucelabs.scriptiq.testgen.session';
 export type JobUpdateType = 'com.saucelabs.scriptiq.testgen.job';
 export type StepUpdateType = 'com.saucelabs.scriptiq.testgen.step';
 export type DoneType = 'com.saucelabs.scriptiq.done';

@@ -180,6 +180,12 @@ export class TestGenerationPanel {
           }
           case 'send-user-rating': {
             const testRecord = this.storage.getTestRecord(message.data.test_id);
+            const creds = this.getCredentials();
+            if (!creds) {
+              throw new Error(
+                'Failed to retrieve credentials. Rating submission aborted.',
+              );
+            }
 
             // Abort if the rated step is missing, indicating possible data corruption or incorrect operation.
             if (!Array.isArray(testRecord.all_steps)) {
@@ -207,7 +213,7 @@ export class TestGenerationPanel {
             }
 
             try {
-              await sendUserRating(votes, testRecord);
+              await sendUserRating(votes, testRecord, creds);
               this.storage.saveVotes(message.data.test_id, votes);
             } catch (e) {
               toast.showError(`Failed to send user feedback: ${errMsg(e)}.`);

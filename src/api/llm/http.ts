@@ -1,11 +1,10 @@
 import { fetch } from 'undici';
 
 import { GlobalStorage } from '../../storage';
-import { TestRecord, Vote } from '../../types';
+import { Credentials, TestRecord, Vote } from '../../types';
 
 const scriptiqServer =
   process.env.SCRIPTIQ_API_SERVER || 'http://127.0.0.1:8000';
-
 /**
  * Download image from imgURL and save it to `imgDir/imgName`.
  * Skips download if file already exists.
@@ -54,7 +53,11 @@ export async function downloadImage(
   }
 }
 
-export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
+export async function sendUserRating(
+  votes: Vote[],
+  testRecord: TestRecord,
+  creds: Credentials,
+) {
   const resp = await fetch(`${scriptiqServer}/v1/submitFeedback`, {
     method: 'POST',
     body: JSON.stringify({
@@ -63,6 +66,7 @@ export async function sendUserRating(votes: Vote[], testRecord: TestRecord) {
     }),
     headers: {
       'Content-Type': 'application/json',
+      Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
     },
   });
   if (!resp.ok) {

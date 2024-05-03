@@ -357,14 +357,17 @@ export class TestGenerationPanel {
     // This check can be removed once a better method for retrieving the
     // application name is implemented, such as fetching an app list and
     // allowing selection from a dropdown menu.
-    if (
-      !appName.endsWith('.ipa') &&
-      !appName.endsWith('.app') &&
-      !appName.endsWith('.apk') &&
-      !appName.endsWith('.aab')
-    ) {
+    const androidFileEnding = /.+\.(apk|aab)$/;
+    if (platform === 'Android' && !androidFileEnding.test(appName)) {
       toast.showError(
-        'Please use a valid app filename! Allowed file types are: ipa, app, apk, aab.',
+        'Please use a valid app filename! Allowed file types for Android are: apk, aab.',
+      );
+      return;
+    }
+    const iosFileEnding = /.+\.(ipa|app)$/;
+    if (platform === 'iOS' && !iosFileEnding.test(appName)) {
+      toast.showError(
+        'Please use a valid app filename! Allowed file types for iOS are: ipa, app.',
       );
       return;
     }

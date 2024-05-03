@@ -4,6 +4,7 @@ import { Memento } from '../memento';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
 import { executeShowTestGenerationPanelCommand } from '../commands';
+import { errMsg } from '../error';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -69,11 +70,18 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             break;
           }
 
-          this.memento.saveCredentials({
-            username: message.data.username,
-            accessKey: message.data.accessKey,
-            region: message.data.region,
-          });
+          try {
+            await this.memento.saveCredentials({
+              username: message.data.username,
+              accessKey: message.data.accessKey,
+              region: message.data.region,
+            });
+          } catch (e) {
+            console.error('Error saving credentials:', e);
+            toast.showError(`Failed to save credentials: ${errMsg(e)}`);
+            break;
+          }
+
           toast.showInfo('Credentials saved successfully.');
           webview.html = this.getHTMLForWebview(webview);
           break;
@@ -102,7 +110,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
             console.log('Test Record deleted.');
 
             history.splice(historyIndex, 1);
-            this.memento.saveTestIDs(history);
+            await this.memento.saveTestIDs(history);
             this.updateHistoryLinks();
             executeShowTestGenerationPanelCommand();
           }
@@ -110,7 +118,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         }
         case 'clear-cache': {
           await this.memento.clearCache();
-          await this.storage.clearHistory();
+          this.storage.clearHistory();
           toast.showInfo('Test record history cache successfully cleared.');
 
           this.updateHistoryLinks();

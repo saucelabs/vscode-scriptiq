@@ -421,6 +421,10 @@ export class TestGenerationPanel {
       },
       error: (err: Error) => {
         console.error(`Test generation failed: ${err}`);
+
+        TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+          action: 'error',
+        });
         toast.showError(err.message);
       },
     });

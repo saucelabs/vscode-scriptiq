@@ -138,15 +138,18 @@ export function generateTest(
 
         if (isDoneResponse(resp)) {
           console.log('Done.');
-          if (testRecord.all_steps && testRecord.all_steps.length > 0) {
-            console.log('Saving Test Record.');
-            storage.saveTestRecord(testRecord);
-            const recordUpdate: RecordUpdateResponse = {
-              type: 'com.saucelabs.scriptiq.testgen.record',
-              result: testRecord,
-            };
-            observer.next(recordUpdate);
+          if (!testRecord.all_steps || testRecord.all_steps.length === 0) {
+            observer.error(new Error('Test generation yielded no test steps'));
+            return;
           }
+
+          console.log('Saving Test Record.');
+          storage.saveTestRecord(testRecord);
+          const recordUpdate: RecordUpdateResponse = {
+            type: 'com.saucelabs.scriptiq.testgen.record',
+            result: testRecord,
+          };
+          observer.next(recordUpdate);
           observer.next(resp);
         }
       });

@@ -148,6 +148,16 @@ function main() {
           updateStepDataState(message.data);
           generateFullTestDisplay();
           break;
+        case 'error':
+          // Retain the previous state, which may contain a useful error message
+          // or snapshot of the video.
+          vscode.postMessage({
+            action: 'enable-test-record-navigation',
+          });
+          if (ws !== undefined) {
+            ws.close();
+          }
+          break;
         case 'finalize':
           testGallery.innerHTML = '';
           vscode.postMessage({
@@ -159,8 +169,6 @@ function main() {
           break;
         case 'clear':
           clearScreen();
-          break;
-        case 'error':
           break;
       }
     });

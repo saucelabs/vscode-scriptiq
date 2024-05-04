@@ -69,9 +69,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
         }
         case 'load-language':
-          this.updateHistoryLinks();
-          break;
-
         case 'load-history-links':
           this.updateHistoryLinks();
           break;

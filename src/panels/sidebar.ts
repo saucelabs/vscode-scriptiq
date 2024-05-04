@@ -54,7 +54,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(async (message: any) => {
       const action = message.action;
-      let historyIndex = -1;
       switch (action) {
         case 'show-test-generation-panel':
           executeShowTestGenerationPanelCommand(message.data);
@@ -74,25 +73,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'delete-test-record': {
-          const history = this.memento.getTestIDs();
-          for (let i = 0; i < history.length; i++) {
-            if (message.data == history[i]) {
-              historyIndex = i;
-              break;
-            }
-          }
-          if (historyIndex >= 0) {
-            console.log('Deleting historic entry: ', historyIndex);
-            console.log(message.data);
-
-            this.storage.deleteTestRecord(message.data);
-            console.log('Test Record deleted.');
-
-            history.splice(historyIndex, 1);
-            await this.memento.saveTestIDs(history);
-            this.updateHistoryLinks();
-            executeShowTestGenerationPanelCommand();
-          }
+          await this.deleteTestRecord(message.data);
           break;
         }
         case 'clear-cache': {
@@ -136,6 +117,25 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     if (webview) {
       webview.html = this.getHTMLForWebview(webview);
     }
+  }
+
+  public async deleteTestRecord(testID: string) {
+    const ids = this.memento.getTestIDs();
+    const historyIndex = ids.findIndex((id) => id == testID);
+    if (historyIndex < 0) {
+      return;
+    }
+
+    console.log('Deleting historic entry: ', historyIndex);
+
+    ids.splice(historyIndex, 1);
+    await this.memento.saveTestIDs(ids);
+    this.storage.deleteTestRecord(testID);
+
+    console.log('Test Record deleted.');
+
+    this.updateHistoryLinks();
+    executeShowTestGenerationPanelCommand();
   }
 
   public clearHistoryLinkSelection(): void {

@@ -61,29 +61,11 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
 
         case 'save-credentials': {
-          if (
-            !message.data.username ||
-            !message.data.accessKey ||
-            !message.data.region
-          ) {
-            toast.showError('Cannot save incomplete credentials.');
-            break;
-          }
-
-          try {
-            await this.memento.saveCredentials({
-              username: message.data.username,
-              accessKey: message.data.accessKey,
-              region: message.data.region,
-            });
-          } catch (e) {
-            console.error('Error saving credentials:', e);
-            toast.showError(`Failed to save credentials: ${errMsg(e)}`);
-            break;
-          }
-
-          toast.showInfo('Credentials saved successfully.');
-          webview.html = this.getHTMLForWebview(webview);
+          await this.saveCredentials(
+            message.data.username,
+            message.data.accessKey,
+            message.data.region,
+          );
           break;
         }
         case 'load-language':
@@ -127,6 +109,36 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         }
       }
     }, undefined);
+  }
+
+  public async saveCredentials(
+    username: string,
+    accessKey: string,
+    region: string,
+  ) {
+    if (!username || !accessKey || !region) {
+      toast.showError('Cannot save incomplete credentials.');
+      return;
+    }
+
+    try {
+      await this.memento.saveCredentials({
+        username: username,
+        accessKey: accessKey,
+        region: region,
+      });
+    } catch (e) {
+      console.error('Error saving credentials:', e);
+      toast.showError(`Failed to save credentials: ${errMsg(e)}`);
+      return;
+    }
+
+    toast.showInfo('Credentials saved successfully.');
+    // TODO(AP): Maybe a separate method for updating the webview?
+    const webview = this.view?.webview;
+    if (webview) {
+      webview.html = this.getHTMLForWebview(webview);
+    }
   }
 
   public clearHistoryLinkSelection(): void {

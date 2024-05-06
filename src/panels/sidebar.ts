@@ -126,19 +126,23 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   }
 
   public async deleteTestRecord(testID: string) {
-    const ids = this.memento.getTestIDs();
-    const historyIndex = ids.findIndex((id) => id == testID);
-    if (historyIndex < 0) {
-      return;
+    try {
+      const ids = this.memento.getTestIDs();
+      const historyIndex = ids.findIndex((id) => id == testID);
+      if (historyIndex < 0) {
+        return;
+      }
+
+      console.log('Deleting historic entry: ', historyIndex);
+
+      ids.splice(historyIndex, 1);
+      await this.memento.saveTestIDs(ids);
+      this.storage.deleteTestRecord(testID);
+
+      console.log('Test Record deleted.');
+    } catch (e) {
+      toast.showError(`Failed to delete test record: ${errMsg(e)}`);
     }
-
-    console.log('Deleting historic entry: ', historyIndex);
-
-    ids.splice(historyIndex, 1);
-    await this.memento.saveTestIDs(ids);
-    this.storage.deleteTestRecord(testID);
-
-    console.log('Test Record deleted.');
 
     this.updateHistoryLinks();
     executeShowTestGenerationPanelCommand();

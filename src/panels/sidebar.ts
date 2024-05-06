@@ -77,16 +77,26 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
         }
         case 'clear-cache': {
-          await this.memento.clearCache();
-          this.storage.clearHistory();
-          toast.showInfo('Test record history cache successfully cleared.');
-
-          this.updateHistoryLinks();
-          executeShowTestGenerationPanelCommand();
+          await this.clearCache();
           break;
         }
       }
     }, undefined);
+  }
+
+  public async clearCache() {
+    try {
+      await this.memento.clearCache();
+      this.storage.clearHistory();
+      toast.showInfo('Test record history cache successfully cleared.');
+    } catch (e) {
+      const msg = `Failed to clear cache: ${errMsg(e)}`;
+      console.error(msg);
+      toast.showError(msg);
+    }
+
+    this.updateHistoryLinks();
+    executeShowTestGenerationPanelCommand();
   }
 
   public async saveCredentials(

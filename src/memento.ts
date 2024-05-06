@@ -25,6 +25,7 @@ export class Memento {
   }
 
   async saveCredentials(credentials: Credentials) {
+    throw new Error('Just a stub');
     await this.save('credentials', credentials);
   }
 

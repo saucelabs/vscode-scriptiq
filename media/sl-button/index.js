@@ -1,17 +1,15 @@
+// @ts-check
 (function () {
   const template = document.createElement('template');
 
   template.innerHTML = `
     <style>
       button {
-        // padding: var(--offset-base) var(--offset-large);
         font-family: var(--sauce-font-mono);
         text-align: center;
         transition: all 0.15s ease-in-out;
         cursor: pointer;
         font-weight: bold;
-        padding: var(--offset-large) var(--offset-xlarge);
-        font-size: 1.1em;
       }
       
       button:focus {
@@ -25,33 +23,85 @@
         border: 1px solid var(--color-sauce-green);
       }
       
-      button.primary:hover {
+      button.primary:not(:disabled):hover {
         border: 1px solid var(--color-sauce-dark);
         background: var(--color-sauce-yellow);
       }
+
+      button.lg {
+        padding: var(--offset-large) var(--offset-xlarge);
+        font-size: 1.1em;
+      }
+
+      button.md {
+        padding: var(--offset-base) var(--offset-large);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        background-color: var(--color-sauce-gray-300);
+        color: var(--color-sauce-gray-disabled);
+        border: 1px solid var(--color-sauce-gray-300);
+      }
+
     </style>
 
-    <button class="primary">
+    <button id="host">
       <slot/>
     </button>
   `;
   class SLButton extends HTMLElement {
-    static observedAttributes = ['click'];
+    static observedAttributes = ['color', 'size'];
+
     constructor() {
       super();
+
+      this.color = 'primary';
+      this.size = 'lg';
+      this.disabled = false;
+
       this.attachShadow({ mode: 'open' });
+      this.shadowRoot?.appendChild(template.content.cloneNode(true));
     }
 
     connectedCallback() {
-      console.log('connected stateful-button');
-
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
+      const button = this.shadowRoot?.querySelector('button');
+      button?.addEventListener('click', () => {
+        this.dispatchEvent(
+          new CustomEvent('press', {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+          }),
+        );
+      });
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-      console.log(`Setting ${name} attribute: ${newValue}`);
-      const button = document.querySelector('button');
-      button.onclick = newValue;
+      if (oldValue === newValue) {
+        return;
+      }
+
+      switch (name) {
+        case 'color': {
+          this.color = newValue;
+          break;
+        }
+        case 'size': {
+          this.size = newValue;
+          break;
+        }
+        case 'disabled':
+          this.disabled = newValue;
+      }
+
+      const button = this.shadowRoot?.querySelector('button');
+      button?.setAttribute('class', `${this.color} ${this.size}`);
+      if (this.disabled === true) {
+        button?.setAttribute('disabled', '');
+      } else {
+        button?.removeAttribute('disabled');
+      }
     }
   }
 

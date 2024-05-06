@@ -146,7 +146,11 @@ export function isDoneResponse(data: unknown): data is DoneResponse {
 
 export type Platform = 'Android' | 'iOS';
 
-export function isValidRegion(region: any): region is Region {
+export function isValidRegion(region: unknown): region is Region {
+  if (typeof region !== 'string') {
+    return false;
+  }
+
   return ['us-west-1', 'eu-central-1', 'staging'].includes(region);
 }
 

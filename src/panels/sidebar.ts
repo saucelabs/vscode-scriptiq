@@ -4,6 +4,7 @@ import { Memento } from '../memento';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
 import { executeShowTestGenerationPanelCommand } from '../commands';
+import { errMsg } from '../error';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -52,73 +53,97 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
    */
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(async (message: any) => {
-      const action = message.action;
-      let historyIndex = -1;
-      switch (action) {
-        case 'show-test-generation-panel':
+      switch (message.action) {
+        case 'show-test-generation-panel': {
           executeShowTestGenerationPanelCommand(message.data);
           break;
-
+        }
         case 'save-credentials': {
-          if (
-            !message.data.username ||
-            !message.data.accessKey ||
-            !message.data.region
-          ) {
-            toast.showError('Cannot save incomplete credentials.');
-            break;
-          }
-
-          this.memento.saveCredentials({
-            username: message.data.username,
-            accessKey: message.data.accessKey,
-            region: message.data.region,
-          });
-          toast.showInfo('Credentials saved successfully.');
-          webview.html = this.getHTMLForWebview(webview);
+          await this.saveCredentials(
+            message.data.username,
+            message.data.accessKey,
+            message.data.region,
+          );
           break;
         }
-        case 'load-language':
+        case 'load-history-links': {
           this.updateHistoryLinks();
           break;
-
-        case 'load-history-links':
-          this.updateHistoryLinks();
-          break;
-
+        }
         case 'delete-test-record': {
-          const history = this.memento.getTestIDs();
-          for (let i = 0; i < history.length; i++) {
-            if (message.data == history[i]) {
-              historyIndex = i;
-              break;
-            }
-          }
-          if (historyIndex >= 0) {
-            console.log('Deleting historic entry: ', historyIndex);
-            console.log(message.data);
-
-            this.storage.deleteTestRecord(message.data);
-            console.log('Test Record deleted.');
-
-            history.splice(historyIndex, 1);
-            this.memento.saveTestIDs(history);
-            this.updateHistoryLinks();
-            executeShowTestGenerationPanelCommand();
-          }
+          await this.deleteTestRecord(message.data);
           break;
         }
         case 'clear-cache': {
-          await this.memento.clearCache();
-          await this.storage.clearHistory();
-          toast.showInfo('Test record history cache successfully cleared.');
-
-          this.updateHistoryLinks();
-          executeShowTestGenerationPanelCommand();
+          await this.clearCache();
           break;
         }
       }
     }, undefined);
+  }
+
+  public async clearCache() {
+    try {
+      await this.memento.clearCache();
+      this.storage.clearHistory();
+      toast.showInfo('Test record history cache successfully cleared.');
+    } catch (e) {
+      toast.showError(`Failed to clear cache: ${errMsg(e)}`);
+    }
+
+    this.updateHistoryLinks();
+    executeShowTestGenerationPanelCommand();
+  }
+
+  public async saveCredentials(
+    username: string,
+    accessKey: string,
+    region: string,
+  ) {
+    if (!username || !accessKey || !region) {
+      toast.showError('Cannot save incomplete credentials.');
+      return;
+    }
+
+    try {
+      await this.memento.saveCredentials({
+        username: username,
+        accessKey: accessKey,
+        region: region,
+      });
+    } catch (e) {
+      toast.showError(`Failed to save credentials: ${errMsg(e)}`);
+      return;
+    }
+
+    toast.showInfo('Credentials saved successfully.');
+    const webview = this.view?.webview;
+    if (webview) {
+      webview.html = this.getHTMLForWebview(webview);
+    }
+  }
+
+  public async deleteTestRecord(testID: string) {
+    try {
+      const ids = this.memento.getTestIDs();
+      const historyIndex = ids.findIndex((id) => id == testID);
+      if (historyIndex < 0) {
+        return;
+      }
+
+      console.log('Deleting historic entry: ', historyIndex);
+
+      ids.splice(historyIndex, 1);
+      await this.memento.saveTestIDs(ids);
+      this.storage.deleteTestRecord(testID);
+
+      console.log('Test Record deleted.');
+    } catch (e) {
+      toast.showError(`Failed to delete test record: ${errMsg(e)}`);
+    }
+
+    this.updateHistoryLinks();
+    executeShowTestGenerationPanelCommand();
   }
 
   public clearHistoryLinkSelection(): void {

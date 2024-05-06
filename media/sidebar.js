@@ -29,8 +29,6 @@ function main() {
     action: 'load-history-links',
   });
 
-  // createOutputLanguage();
-
   // Handle messages sent from the extension or panel to the webview
   window.addEventListener('message', (event) => {
     const message = event.data; // The json data that the extension sent
@@ -88,63 +86,6 @@ function handleClearCache() {
   vscode.postMessage({
     action: 'clear-cache',
   });
-}
-
-/**
- * Generate history links.
- */
-function createOutputLanguage() {
-  const languageOptions = document.getElementById('language-options');
-  languageOptions.classList.add('checkbox-container');
-
-  // Appium Python
-  var div = document.createElement('div');
-
-  var languageScriptChoice = document.createElement('input');
-  languageScriptChoice.type = 'radio';
-  languageScriptChoice.name = `language_choice`;
-  var radio_id = `language_appium_python`;
-  languageScriptChoice.id = radio_id;
-  languageScriptChoice.checked = true;
-  var labelLanguageScriptChoice = document.createElement('label');
-  labelLanguageScriptChoice.for = radio_id;
-  labelLanguageScriptChoice.innerHTML = 'Appium Python';
-
-  languageScriptChoice.onclick = function () {
-    vscode.postMessage({
-      action: 'load-language',
-      language: 'appium_python',
-    });
-  };
-
-  div.appendChild(languageScriptChoice);
-  div.appendChild(labelLanguageScriptChoice);
-  languageOptions.appendChild(div);
-
-  // Appium Java
-  div = document.createElement('div');
-
-  languageScriptChoice = document.createElement('input');
-  languageScriptChoice.type = 'radio';
-  languageScriptChoice.name = `language_choice`;
-  radio_id = `language_appium_java`;
-  languageScriptChoice.id = radio_id;
-  labelLanguageScriptChoice = document.createElement('label');
-  labelLanguageScriptChoice.for = radio_id;
-  labelLanguageScriptChoice.innerHTML = 'Appium Java';
-
-  languageScriptChoice.onclick = function () {
-    vscode.postMessage({
-      action: 'load-language',
-      language: 'appium_java',
-    });
-  };
-
-  div.appendChild(languageScriptChoice);
-  div.appendChild(labelLanguageScriptChoice);
-  languageOptions.appendChild(div);
-
-  languageOptions.appendChild(document.createElement('br'));
 }
 
 /**

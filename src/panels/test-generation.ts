@@ -142,9 +142,7 @@ export class TestGenerationPanel {
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(
       async (message: any) => {
-        const action = message.action;
-
-        switch (action) {
+        switch (message.action) {
           case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,
@@ -158,67 +156,15 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            const history = this.memento.getTestIDs();
-
-            for (let i = 0; i < history.length; i++) {
-              if (history[i] == message.data.test_id) {
-                console.log("Reloading history, don't save");
-                return;
-              }
-            }
-            if (history.length == MAX_HISTORY_LEN) {
-              const removedRecord = history.pop();
-              if (removedRecord) {
-                this.storage.deleteTestRecord(removedRecord);
-              }
-            }
-            history.unshift(message.data.test_id);
-            this.memento.saveTestIDs(history);
-
-            executeUpdateHistoryLinksCommand(0);
+            await this.addRecordToHistory(message.data.test_id);
             return;
           }
           case 'send-user-rating': {
-            const testRecord = this.storage.getTestRecord(message.data.test_id);
-            const creds = this.getCredentials();
-            if (!creds) {
-              throw new Error(
-                'Failed to retrieve credentials. Rating submission aborted.',
-              );
-            }
-
-            // Abort if the rated step is missing, indicating possible data corruption or incorrect operation.
-            if (!Array.isArray(testRecord.all_steps)) {
-              throw new Error('the stored test_record lacks any test steps');
-            }
-            const step = testRecord.all_steps.find(
-              (step) => step.step_num === message.data.step,
+            await this.sendUserRating(
+              message.data.testID,
+              message.data.step,
+              message.data.rating,
             );
-            if (!step) {
-              throw new Error('failed to find the specified rated test step');
-            }
-
-            const votes = this.storage.getVotes(message.data.test_id);
-            const vote = votes.find((f) => f.step_num === message.data.step);
-            // Append the record if it is missing, then sort by step_num.
-            // If the vote exists, locate and update it.
-            if (!vote) {
-              votes.push({
-                rating: message.data.rating,
-                step_num: message.data.step,
-              });
-              votes.sort((a, b) => a.step_num - b.step_num);
-            } else {
-              vote.rating = message.data.rating;
-            }
-
-            try {
-              await sendUserRating(votes, testRecord, creds);
-              this.storage.saveVotes(message.data.test_id, votes);
-            } catch (e) {
-              toast.showError(`Failed to send user feedback: ${errMsg(e)}.`);
-            }
-
             return;
           }
           case 'enable-test-record-navigation':
@@ -482,5 +428,81 @@ export class TestGenerationPanel {
         votes: this.storage.getVotes(testID),
       },
     });
+  }
+
+  public async addRecordToHistory(testID: string) {
+    try {
+      const history = this.memento.getTestIDs();
+
+      if (history.includes(testID)) {
+        console.log('Test record already in history');
+        return;
+      }
+
+      if (history.length == MAX_HISTORY_LEN) {
+        const removedRecord = history.pop();
+        if (removedRecord) {
+          this.storage.deleteTestRecord(removedRecord);
+        }
+      }
+      history.unshift(testID);
+      await this.memento.saveTestIDs(history);
+    } catch (e) {
+      toast.showError(`Failed to add test record to history: ${errMsg(e)}`);
+    }
+
+    executeUpdateHistoryLinksCommand(0);
+  }
+
+  public async sendUserRating(
+    testID: string,
+    stepNumber: number,
+    rating: string,
+  ) {
+    const testRecord = this.storage.getTestRecord(testID);
+    const creds = this.getCredentials();
+    if (!creds) {
+      toast.showError('Failed to submit rating: No credentials.');
+      return;
+    }
+
+    // Abort if the rated step is missing, indicating possible data corruption or incorrect operation.
+    if (!Array.isArray(testRecord.all_steps)) {
+      toast.showError(
+        'Failed to submit rating: Test record lacks any test steps.',
+      );
+      return;
+    }
+
+    const step = testRecord.all_steps.find(
+      (step) => step.step_num === stepNumber,
+    );
+    if (!step) {
+      toast.showError(
+        'Failed to submit rating: Step not found in test record.',
+      );
+      return;
+    }
+
+    const votes = this.storage.getVotes(testID);
+    const vote = votes.find((f) => f.step_num === stepNumber);
+    // Append the record if it is missing, then sort by step_num.
+    // If the vote exists, locate and update it.
+    if (!vote) {
+      votes.push({
+        rating: rating,
+        step_num: stepNumber,
+      });
+      votes.sort((a, b) => a.step_num - b.step_num);
+    } else {
+      vote.rating = rating;
+    }
+
+    try {
+      await sendUserRating(votes, testRecord, creds);
+      this.storage.saveVotes(testID, votes);
+    } catch (e) {
+      toast.showError(`Failed to submit rating: ${errMsg(e)}.`);
+    }
   }
 }

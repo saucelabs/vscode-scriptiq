@@ -21,8 +21,6 @@ const appName = document.getElementById('app-name-text-id');
 const goalText = document.getElementById('goal-text-id');
 const generateButton = document.getElementById('generate-button-id');
 
-const stopButton = document.getElementById('stop-button');
-
 const clearButton = document.getElementById('clear-button-id');
 const testHeader = document.getElementById('test-header');
 const assertContainer = document.getElementById('assert-container');
@@ -55,8 +53,6 @@ function main() {
   // Add event listeners.
   generateButton?.addEventListener('click', handleAskClick);
   clearButton?.addEventListener('click', handleClearClick);
-
-  stopButton?.addEventListener('click', handleStopClick);
 
   // goal enter event
   goalText?.addEventListener('keypress', function (event) {
@@ -241,6 +237,15 @@ function setUpStatusUpdates() {
 
   const statusBlockMessages = document.createElement('div');
   statusBlockMessages.classList.add('status-block-messages');
+
+  const stopButton = document.createElement('sl-button');
+  stopButton.innerText = 'Stop';
+  stopButton.setAttribute('id', 'stop-button');
+  stopButton.addEventListener('press', handleStopClick);
+  stopButton.setAttribute('color', 'primary');
+  stopButton.setAttribute('size', 'lg');
+  stopButton.setAttribute('disabled', '');
+  statusContainer.appendChild(stopButton);
 
   const statusField = document.createElement('span');
   statusField.classList.add('test-status-header');

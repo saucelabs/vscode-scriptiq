@@ -286,10 +286,6 @@ export class TestGenerationPanel {
               <button id="generate-button-id" class="button button-primary button-large">Generate</button>
               <button id="clear-button-id" class="button button-text">Clear</button>
             </div>
-
-            <div>
-              <sl-button id="stop-button">Stop</sl-button>
-            </div>
             <div id="test-header">
                 <h5 class="mt-30">Generated Test</h5>  
                 <div id="output-language-div" class="flex-container"> 

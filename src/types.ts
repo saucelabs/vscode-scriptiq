@@ -1,7 +1,9 @@
+export type Region = 'us-west-1' | 'eu-central-1' | 'staging';
+
 export interface Credentials {
   username: string;
   accessKey: string;
-  region: string;
+  region: Region;
 }
 
 export interface TestRecord {
@@ -142,3 +144,7 @@ export function isDoneResponse(data: unknown): data is DoneResponse {
 }
 
 export type Platform = 'Android' | 'iOS';
+
+export function isValidRegion(region: any): region is Region {
+  return ['us-west-1', 'eu-central-1', 'staging'].includes(region);
+}

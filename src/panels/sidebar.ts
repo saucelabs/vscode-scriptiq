@@ -54,10 +54,10 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(async (message: any) => {
       switch (message.action) {
-        case 'show-test-generation-panel':
+        case 'show-test-generation-panel': {
           executeShowTestGenerationPanelCommand(message.data);
           break;
-
+        }
         case 'save-credentials': {
           await this.saveCredentials(
             message.data.username,
@@ -66,11 +66,10 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           );
           break;
         }
-        case 'load-language':
-        case 'load-history-links':
+        case 'load-history-links': {
           this.updateHistoryLinks();
           break;
-
+        }
         case 'delete-test-record': {
           await this.deleteTestRecord(message.data);
           break;

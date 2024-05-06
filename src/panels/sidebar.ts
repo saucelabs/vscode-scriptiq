@@ -122,7 +122,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
     }
 
     toast.showInfo('Credentials saved successfully.');
-    // TODO(AP): Maybe a separate method for updating the webview?
     const webview = this.view?.webview;
     if (webview) {
       webview.html = this.getHTMLForWebview(webview);

@@ -142,9 +142,7 @@ export class TestGenerationPanel {
   private subscribeToWebviewEvents(webview: vscode.Webview) {
     webview.onDidReceiveMessage(
       async (message: any) => {
-        const action = message.action;
-
-        switch (action) {
+        switch (message.action) {
           case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,

@@ -90,9 +90,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       this.storage.clearHistory();
       toast.showInfo('Test record history cache successfully cleared.');
     } catch (e) {
-      const msg = `Failed to clear cache: ${errMsg(e)}`;
-      console.error(msg);
-      toast.showError(msg);
+      toast.showError(`Failed to clear cache: ${errMsg(e)}`);
     }
 
     this.updateHistoryLinks();
@@ -116,7 +114,6 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
         region: region,
       });
     } catch (e) {
-      console.error('Error saving credentials:', e);
       toast.showError(`Failed to save credentials: ${errMsg(e)}`);
       return;
     }

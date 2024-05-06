@@ -91,33 +91,31 @@ export class TestGenerationPanel {
     storage: GlobalStorage,
     testID?: string,
   ) {
-    // if exist show
-    if (TestGenerationPanel.currentPanel) {
-      if (!TestGenerationPanel.currentPanel.testRecordNavigation) {
-        toast.showError('Cannot open other panels while running tests.');
-        return;
-      }
-      TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
-      if (testID) {
-        TestGenerationPanel.currentPanel.showTestRecord(testID);
-      } else {
-        TestGenerationPanel.currentPanel.panel.webview.postMessage({
-          action: 'clear',
-        });
-      }
-    } else {
-      // if not exist create a new one.
+    if (!TestGenerationPanel.currentPanel) {
+      // Create a new panel.
       TestGenerationPanel.currentPanel = new TestGenerationPanel(
         context,
         memento,
         storage,
       );
       TestGenerationPanel.currentPanel.testRecordNavigation = true;
-
-      if (testID) {
-        TestGenerationPanel.currentPanel.showTestRecord(testID);
-      }
     }
+
+    if (!TestGenerationPanel.currentPanel.testRecordNavigation) {
+      toast.showError('Cannot open other panels while running tests.');
+      return;
+    }
+
+    TestGenerationPanel.currentPanel.panel.reveal(vscode.ViewColumn.One);
+
+    if (testID) {
+      TestGenerationPanel.currentPanel.showTestRecord(testID);
+      return;
+    }
+
+    TestGenerationPanel.currentPanel.panel.webview.postMessage({
+      action: 'clear',
+    });
   }
 
   /**

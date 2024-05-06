@@ -17,7 +17,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   private storage: GlobalStorage;
 
   constructor(
-    private readonly extensionUri: vscode.Uri,
+    private readonly context: vscode.ExtensionContext,
     memento: Memento,
     storage: GlobalStorage,
   ) {
@@ -39,8 +39,8 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
 
       localResourceRoots: [
-        this.extensionUri,
-        vscode.Uri.joinPath(this.extensionUri, 'media', 'images'),
+        this.context.extensionUri,
+        vscode.Uri.joinPath(this.context.extensionUri, 'media', 'images'),
       ],
     };
 
@@ -80,7 +80,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           break;
         }
       }
-    }, undefined);
+    }, this.context.subscriptions);
   }
 
   public async clearCache() {
@@ -170,12 +170,12 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   private getHTMLForWebview(webview: vscode.Webview) {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, 'media', 'sidebar.js'),
+      vscode.Uri.joinPath(this.context.extensionUri, 'media', 'sidebar.js'),
     );
 
     // Do the same for the stylesheet.
     const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, 'media', 'vscode.css'),
+      vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vscode.css'),
     );
 
     // Use a nonce to only allow a specific script to be run.

@@ -158,24 +158,7 @@ export class TestGenerationPanel {
             );
             return;
           case 'save-steps': {
-            const history = this.memento.getTestIDs();
-
-            for (let i = 0; i < history.length; i++) {
-              if (history[i] == message.data.test_id) {
-                console.log("Reloading history, don't save");
-                return;
-              }
-            }
-            if (history.length == MAX_HISTORY_LEN) {
-              const removedRecord = history.pop();
-              if (removedRecord) {
-                this.storage.deleteTestRecord(removedRecord);
-              }
-            }
-            history.unshift(message.data.test_id);
-            this.memento.saveTestIDs(history);
-
-            executeUpdateHistoryLinksCommand(0);
+            await this.addRecordToHistory(message.data.test_id);
             return;
           }
           case 'send-user-rating': {
@@ -482,5 +465,29 @@ export class TestGenerationPanel {
         votes: this.storage.getVotes(testID),
       },
     });
+  }
+
+  public async addRecordToHistory(testID: string) {
+    try {
+      const history = this.memento.getTestIDs();
+
+      if (history.includes(testID)) {
+        console.log('Test record already in history');
+        return;
+      }
+
+      if (history.length == MAX_HISTORY_LEN) {
+        const removedRecord = history.pop();
+        if (removedRecord) {
+          this.storage.deleteTestRecord(removedRecord);
+        }
+      }
+      history.unshift(testID);
+      await this.memento.saveTestIDs(history);
+    } catch (e) {
+      toast.showError(`Failed to add test record to history: ${errMsg(e)}`);
+    }
+
+    executeUpdateHistoryLinksCommand(0);
   }
 }

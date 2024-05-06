@@ -1,5 +1,6 @@
 import { ErrorEvent, WebSocket } from 'undici';
 import { Observable } from 'rxjs';
+import { randomUUID } from 'node:crypto';
 
 import { downloadImage } from './http';
 import { GlobalStorage } from '../../storage';
@@ -15,7 +16,9 @@ import {
   RecordUpdateResponse,
   StatusUpdateResponse,
   StepUpdateResponse,
+  StoppedResponse,
   TestRecord,
+  isStoppedResponse,
 } from '../../types';
 import { isError } from '../../error';
 import { Credentials } from '../../types';
@@ -38,6 +41,7 @@ export function generateTest(
   prevGoal: string = '',
   creds: Credentials,
 ): [
+  string,
   WebSocket,
   Observable<
     | DoneResponse
@@ -45,13 +49,15 @@ export function generateTest(
     | RecordUpdateResponse
     | StatusUpdateResponse
     | StepUpdateResponse
+    | StoppedResponse
   >,
 ] {
-  const ws = new WebSocket(`${wsServer}/v1/genTest`, {
+  const ws = new WebSocket(`${wsServer}/v1/ws`, {
     headers: {
       Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
     },
   });
+  const reqId = randomUUID().split('-')[0];
 
   const observable = new Observable<
     | DoneResponse
@@ -59,6 +65,7 @@ export function generateTest(
     | RecordUpdateResponse
     | StatusUpdateResponse
     | StepUpdateResponse
+    | StoppedResponse
   >((observer) => {
     if (prevGoal !== '') {
       if (prevGoal.startsWith('Edit: ')) {
@@ -83,6 +90,7 @@ export function generateTest(
     ws.onopen = () => {
       ws.send(
         JSON.stringify({
+          id: reqId,
           method: 'testgen.start',
           data: {
             username: username,
@@ -100,6 +108,7 @@ export function generateTest(
     };
 
     ws.onclose = () => {
+      console.log('closing ws');
       observer.next({
         type: 'com.saucelabs.scriptiq.done',
       });
@@ -177,10 +186,14 @@ export function generateTest(
           observer.next(recordUpdate);
           observer.next(resp);
         }
+        if (isStoppedResponse(resp)) {
+          console.log('Stopped.');
+          observer.next(resp);
+        }
       });
     };
   });
-  return [ws, observable];
+  return [reqId, ws, observable];
 }
 
 /**

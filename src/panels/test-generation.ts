@@ -11,6 +11,7 @@ import {
 } from '../commands';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { Uri } from 'vscode';
+import { WebSocket } from 'undici';
 import { Platform } from '../types';
 
 const MAX_HISTORY_LEN = 100;
@@ -29,6 +30,13 @@ export class TestGenerationPanel {
   public testRecordNavigation: boolean = true;
   private memento: Memento;
   private storage: GlobalStorage;
+
+  private socket:
+    | {
+        ws: WebSocket;
+        id: string;
+      }
+    | undefined;
 
   private constructor(
     context: vscode.ExtensionContext,
@@ -134,6 +142,19 @@ export class TestGenerationPanel {
     }
   }
 
+  private stopTestGeneration() {
+    if (this.socket) {
+      console.log('stopping test generation');
+      console.log('socket: ', this.socket);
+      this.socket.ws.send(
+        JSON.stringify({
+          id: this.socket.id,
+          method: 'testgen.stop',
+        }),
+      );
+    }
+  }
+
   /**
    * Add listeners to catch messages from mainview js.
    */
@@ -141,6 +162,9 @@ export class TestGenerationPanel {
     webview.onDidReceiveMessage(
       async (message: any) => {
         switch (message.action) {
+          case 'stop-generation':
+            this.stopTestGeneration();
+            return;
           case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,
@@ -196,6 +220,10 @@ export class TestGenerationPanel {
 
     const nonce = randomBytes(16).toString('base64');
 
+    const buttonComponentUri = webview.asWebviewUri(
+      Uri.joinPath(extensionMediaUri, 'sl-button/index.js'),
+    );
+
     return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
@@ -211,6 +239,7 @@ export class TestGenerationPanel {
                 var mediaPath = "${mediaPath}";
                 var historyPath = "${historyUri}";
             </script>
+            <script type="text/javascript" src="${buttonComponentUri}"></script>
           </head>
           <body>          
             <div class="form-container">
@@ -258,6 +287,9 @@ export class TestGenerationPanel {
               <button id="clear-button-id" class="button button-text">Clear</button>
             </div>
 
+            <div>
+              <sl-button id="stop-button">Stop</sl-button>
+            </div>
             <div id="test-header">
                 <h5 class="mt-30">Generated Test</h5>  
                 <div id="output-language-div" class="flex-container"> 
@@ -330,7 +362,7 @@ export class TestGenerationPanel {
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
 
-    const [, observable] = generateTest(
+    const [requestId, ws, observable] = generateTest(
       this.storage,
       goal,
       appName,
@@ -346,6 +378,11 @@ export class TestGenerationPanel {
       prevGoal,
       creds,
     );
+    this.socket = {
+      ws,
+      id: requestId,
+    };
+
     observable.subscribe({
       next: (data) => {
         let action = '';
@@ -366,6 +403,9 @@ export class TestGenerationPanel {
           case 'com.saucelabs.scriptiq.done':
             action = 'finalize';
             break;
+          case 'com.saucelabs.scriptiq.stopped':
+            action = 'finalize';
+            this.socket?.ws.close();
         }
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

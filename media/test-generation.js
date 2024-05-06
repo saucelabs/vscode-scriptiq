@@ -20,6 +20,9 @@ const outputScript = document.getElementById('output-script-container');
 const appName = document.getElementById('app-name-text-id');
 const goalText = document.getElementById('goal-text-id');
 const generateButton = document.getElementById('generate-button-id');
+
+const stopButton = document.getElementById('stop-button');
+
 const clearButton = document.getElementById('clear-button-id');
 const testHeader = document.getElementById('test-header');
 const assertContainer = document.getElementById('assert-container');
@@ -52,6 +55,8 @@ function main() {
   // Add event listeners.
   generateButton?.addEventListener('click', handleAskClick);
   clearButton?.addEventListener('click', handleClearClick);
+
+  stopButton?.addEventListener('click', handleStopClick);
 
   // goal enter event
   goalText?.addEventListener('keypress', function (event) {
@@ -175,6 +180,14 @@ function main() {
   } catch (err) {
     console.log(err);
   }
+}
+
+function handleStopClick() {
+  vscode.postMessage({
+    action: 'stop-generation',
+    data: {},
+  });
+  // TODO: Disable stop button
 }
 
 function handleAskClick() {

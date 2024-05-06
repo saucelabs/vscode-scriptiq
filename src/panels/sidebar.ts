@@ -5,6 +5,7 @@ import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
 import { executeShowTestGenerationPanelCommand } from '../commands';
 import { errMsg } from '../error';
+import { Region, isValidRegion } from '../types';
 
 export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-settings-id';
@@ -98,10 +99,16 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
   public async saveCredentials(
     username: string,
     accessKey: string,
-    region: string,
+    region: Region,
   ) {
     if (!username || !accessKey || !region) {
       toast.showError('Cannot save incomplete credentials.');
+      return;
+    }
+    if (!isValidRegion(region)) {
+      toast.showError(
+        `Invalid region. The value must be one of the following: 'us-west-1' or 'eu-central-1'."`,
+      );
       return;
     }
 

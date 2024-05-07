@@ -210,7 +210,7 @@ export class TestGenerationPanel {
 
     const nonce = randomBytes(16).toString('base64');
 
-    const buttonComponentUri = webview.asWebviewUri(
+    const slButtonUri = webview.asWebviewUri(
       Uri.joinPath(extensionMediaUri, 'sl-button/index.js'),
     );
 
@@ -229,7 +229,7 @@ export class TestGenerationPanel {
                 var mediaPath = "${mediaPath}";
                 var historyPath = "${historyUri}";
             </script>
-            <script type="text/javascript" src="${buttonComponentUri}"></script>
+            
           </head>
           <body>          
             <div class="form-container">
@@ -287,6 +287,7 @@ export class TestGenerationPanel {
             <div id="output-script-container">
             </div>
             <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
+            <script type="text/javascript" src="${slButtonUri}"></script>
           </body>
         </html>
         `;

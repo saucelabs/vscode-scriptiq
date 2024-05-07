@@ -51,7 +51,7 @@
     </button>
   `;
   class SLButton extends HTMLElement {
-    static observedAttributes = ['color', 'size'];
+    static observedAttributes = ['color', 'size', 'disabled'];
 
     constructor() {
       super();
@@ -92,12 +92,13 @@
           break;
         }
         case 'disabled':
-          this.disabled = newValue;
+          console.log('new disabled value:', newValue);
+          this.disabled = newValue !== null;
       }
 
       const button = this.shadowRoot?.querySelector('button');
       button?.setAttribute('class', `${this.color} ${this.size}`);
-      if (this.disabled === true) {
+      if (this.disabled) {
         button?.setAttribute('disabled', '');
       } else {
         button?.removeAttribute('disabled');

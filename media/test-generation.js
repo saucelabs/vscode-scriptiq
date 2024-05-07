@@ -244,7 +244,6 @@ function setUpStatusUpdates() {
   stopButton.addEventListener('press', handleStopClick);
   stopButton.setAttribute('color', 'primary');
   stopButton.setAttribute('size', 'lg');
-  stopButton.setAttribute('disabled', '');
   statusContainer.appendChild(stopButton);
 
   const statusField = document.createElement('span');

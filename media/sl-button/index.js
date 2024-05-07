@@ -1,8 +1,9 @@
 // @ts-check
 (function () {
+  const html = (strings, ...values) => String.raw({ raw: strings }, ...values);
   const template = document.createElement('template');
 
-  template.innerHTML = `
+  template.innerHTML = html`
     <style>
       button {
         font-family: var(--sauce-font-mono);
@@ -11,18 +12,18 @@
         cursor: pointer;
         font-weight: bold;
       }
-      
+
       button:focus {
         outline-color: var(--vscode-focusBorder);
       }
-      
+
       button.primary {
         background: var(--color-sauce-green);
         border-radius: var(--border-radius-large);
         color: var(--color-sauce-dark);
         border: 1px solid var(--color-sauce-green);
       }
-      
+
       button.primary:not(:disabled):hover {
         border: 1px solid var(--color-sauce-dark);
         background: var(--color-sauce-yellow);
@@ -51,11 +52,10 @@
         color: var(--color-sauce-gray-disabled);
         border: 1px solid var(--color-sauce-gray-300);
       }
-
     </style>
 
     <button id="host">
-      <slot/>
+      <slot />
     </button>
   `;
   class SLButton extends HTMLElement {

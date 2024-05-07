@@ -104,7 +104,6 @@ export function generateTest(
     };
 
     ws.onclose = () => {
-      console.log('closing ws');
       observer.next({
         type: 'com.saucelabs.scriptiq.done',
       });

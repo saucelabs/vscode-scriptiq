@@ -28,6 +28,14 @@
         background: var(--color-sauce-yellow);
       }
 
+      button.danger {
+        color: #fff;
+        background-color: var(--color-sauce-coral);
+        border: 1px solid var(--color-sauce-coral);
+        border-radius: var(--border-radius-large);
+        color: var(--color-sauce-dark);
+      }
+
       button.lg {
         padding: var(--offset-large) var(--offset-xlarge);
         font-size: 1.1em;

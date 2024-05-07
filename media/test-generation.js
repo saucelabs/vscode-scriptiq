@@ -242,7 +242,7 @@ function setUpStatusUpdates() {
   stopButton.innerText = 'Stop';
   stopButton.setAttribute('id', 'stop-button');
   stopButton.addEventListener('press', handleStopClick);
-  stopButton.setAttribute('color', 'primary');
+  stopButton.setAttribute('color', 'danger');
   stopButton.setAttribute('size', 'lg');
   statusContainer.appendChild(stopButton);
 

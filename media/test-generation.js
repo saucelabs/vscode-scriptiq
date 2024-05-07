@@ -51,7 +51,7 @@ function setStatus(message) {
 
 function main() {
   // Add event listeners.
-  generateButton?.addEventListener('click', handleAskClick);
+  generateButton?.addEventListener('press', handleAskClick);
   clearButton?.addEventListener('click', handleClearClick);
 
   // goal enter event
@@ -161,6 +161,7 @@ function main() {
           break;
         case 'finalize':
           testGallery.innerHTML = '';
+          generateButton?.removeAttribute('disabled');
           vscode.postMessage({
             action: 'enable-test-record-navigation',
           });
@@ -183,10 +184,10 @@ function handleStopClick() {
     action: 'stop-generation',
     data: {},
   });
-  // TODO: Disable stop button
 }
 
 function handleAskClick() {
+  generateButton?.setAttribute('disabled', '');
   // Clear answer filed.
   testGallery.innerHTML = '';
   outputScript.innerHTML = '';

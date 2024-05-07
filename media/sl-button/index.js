@@ -100,7 +100,6 @@
           break;
         }
         case 'disabled':
-          console.log('new disabled value:', newValue);
           this.disabled = newValue !== null;
       }
 

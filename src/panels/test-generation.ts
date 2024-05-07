@@ -31,12 +31,7 @@ export class TestGenerationPanel {
   private memento: Memento;
   private storage: GlobalStorage;
 
-  private socket:
-    | {
-        ws: WebSocket;
-        id: string;
-      }
-    | undefined;
+  private socket: WebSocket | undefined;
 
   private constructor(
     context: vscode.ExtensionContext,
@@ -144,11 +139,8 @@ export class TestGenerationPanel {
 
   private stopTestGeneration() {
     if (this.socket) {
-      console.log('stopping test generation');
-      console.log('socket: ', this.socket);
-      this.socket.ws.send(
+      this.socket.send(
         JSON.stringify({
-          id: this.socket.id,
           method: 'testgen.stop',
         }),
       );
@@ -359,7 +351,7 @@ export class TestGenerationPanel {
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
 
-    const [requestId, ws, observable] = generateTest(
+    const [ws, observable] = generateTest(
       this.storage,
       goal,
       appName,
@@ -375,10 +367,7 @@ export class TestGenerationPanel {
       prevGoal,
       creds,
     );
-    this.socket = {
-      ws,
-      id: requestId,
-    };
+    this.socket = ws;
 
     observable.subscribe({
       next: (data) => {
@@ -402,7 +391,7 @@ export class TestGenerationPanel {
             break;
           case 'com.saucelabs.scriptiq.stopped':
             action = 'finalize';
-            this.socket?.ws.close();
+            this.socket?.close();
         }
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

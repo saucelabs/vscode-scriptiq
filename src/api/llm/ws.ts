@@ -1,6 +1,5 @@
 import { ErrorEvent, WebSocket } from 'undici';
 import { Observable } from 'rxjs';
-import { randomUUID } from 'node:crypto';
 
 import { downloadImage } from './http';
 import { GlobalStorage } from '../../storage';
@@ -41,7 +40,6 @@ export function generateTest(
   prevGoal: string = '',
   creds: Credentials,
 ): [
-  string,
   WebSocket,
   Observable<
     | DoneResponse
@@ -52,12 +50,11 @@ export function generateTest(
     | StoppedResponse
   >,
 ] {
-  const ws = new WebSocket(`${wsServer}/v1/ws`, {
+  const ws = new WebSocket(`${wsServer}/v1/genTest`, {
     headers: {
       Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
     },
   });
-  const reqId = randomUUID().split('-')[0];
 
   const observable = new Observable<
     | DoneResponse
@@ -90,7 +87,6 @@ export function generateTest(
     ws.onopen = () => {
       ws.send(
         JSON.stringify({
-          id: reqId,
           method: 'testgen.start',
           data: {
             username: username,
@@ -193,7 +189,7 @@ export function generateTest(
       });
     };
   });
-  return [reqId, ws, observable];
+  return [ws, observable];
 }
 
 /**

@@ -59,6 +59,7 @@ export type JobUpdateType = 'com.saucelabs.scriptiq.testgen.job';
 export type StepUpdateType = 'com.saucelabs.scriptiq.testgen.step';
 export type DoneType = 'com.saucelabs.scriptiq.done';
 export type RecordUpdateType = 'com.saucelabs.scriptiq.testgen.record';
+export type WebSocketErrorType = 'com.saucelabs.scriptiq.error';
 
 export interface StatusUpdateResponse {
   type: StatusUpdateType;
@@ -145,6 +146,26 @@ export function isDoneResponse(data: unknown): data is DoneResponse {
 
 export type Platform = 'Android' | 'iOS';
 
-export function isValidRegion(region: any): region is Region {
+export function isValidRegion(region: unknown): region is Region {
+  if (typeof region !== 'string') {
+    return false;
+  }
+
   return ['us-west-1', 'eu-central-1', 'staging'].includes(region);
+}
+
+export interface WebSocketError {
+  id?: string;
+  type: WebSocketErrorType;
+  code: number;
+  reason: string;
+}
+
+export function isWebSocketError(data: unknown): data is WebSocketError {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'type' in data &&
+    data.type == 'com.saucelabs.scriptiq.error'
+  );
 }

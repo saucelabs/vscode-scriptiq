@@ -9,6 +9,7 @@ import {
   isJobUpdateResponse,
   isStatusUpdateResponse,
   isStepUpdateResponse,
+  isWebSocketError,
   JobUpdateResponse,
   Platform,
   RecordUpdateResponse,
@@ -109,6 +110,15 @@ export function generateTest(
       taskQueue.enqueue(async () => {
         const resp = JSON.parse(event.data) as unknown;
         console.log(resp);
+
+        if (isWebSocketError(resp)) {
+          observer.error(
+            new Error(
+              `Test generation request failed with ${resp.code}: ${resp.reason}`,
+            ),
+          );
+          return;
+        }
 
         if (isStatusUpdateResponse(resp)) {
           console.log('Status Update.');

@@ -42,11 +42,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   // Side Bar View Provider
-  const provider = new SidebarViewProvider(
-    context.extensionUri,
-    memento,
-    storage,
-  );
+  const provider = new SidebarViewProvider(context, memento, storage);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(

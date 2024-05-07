@@ -17,6 +17,7 @@ import {
   TestRecord,
 } from '../../types';
 import { isError } from '../../error';
+import { Credentials } from '../../types';
 
 const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
 
@@ -34,6 +35,7 @@ export function generateTest(
   assertions: string[],
   testID: string,
   prevGoal: string = '',
+  creds: Credentials,
 ) {
   return new Observable<
     | DoneResponse
@@ -42,7 +44,11 @@ export function generateTest(
     | StatusUpdateResponse
     | StepUpdateResponse
   >((observer) => {
-    const ws = new WebSocket(`${wsServer}/v1/genTest`);
+    const ws = new WebSocket(`${wsServer}/v1/genTest`, {
+      headers: {
+        Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
+      },
+    });
 
     if (prevGoal !== '') {
       if (prevGoal.startsWith('Edit: ')) {

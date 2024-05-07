@@ -391,7 +391,6 @@ export class TestGenerationPanel {
             break;
           case 'com.saucelabs.scriptiq.stopped':
             action = 'finalize';
-            this.socket?.close();
         }
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

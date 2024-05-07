@@ -150,6 +150,7 @@ function main() {
           generateFullTestDisplay();
           break;
         case 'error':
+          generateButton?.removeAttribute('disabled');
           // Retain the previous state, which may contain a useful error message
           // or snapshot of the video.
           vscode.postMessage({

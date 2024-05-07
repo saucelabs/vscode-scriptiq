@@ -138,13 +138,11 @@ export class TestGenerationPanel {
   }
 
   private stopTestGeneration() {
-    if (this.socket) {
-      this.socket.send(
-        JSON.stringify({
-          method: 'testgen.stop',
-        }),
-      );
-    }
+    this.socket?.send(
+      JSON.stringify({
+        method: 'testgen.stop',
+      }),
+    );
   }
 
   /**

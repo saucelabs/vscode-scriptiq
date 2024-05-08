@@ -344,6 +344,7 @@ export class TestGenerationPanel {
       assertions,
       testID,
       prevGoal,
+      creds,
     ).subscribe({
       next: (data) => {
         let action = '';

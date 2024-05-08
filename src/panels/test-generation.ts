@@ -273,7 +273,6 @@ export class TestGenerationPanel {
                 </div>            
             </div>
             <div class="mt-30">
-              <!-- <button id="generate-button-id" class="button button-primary button-large">Generate</button> -->
               <sl-button id="generate-button-id" size="lg" color="primary">Generate</sl-button>
               <button id="clear-button-id" class="button button-text">Clear</button>
             </div>

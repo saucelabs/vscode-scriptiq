@@ -103,7 +103,16 @@ export function generateTest(
       );
     };
 
-    ws.onclose = () => {
+    ws.onclose = (ev) => {
+      console.log('WebSocket closed:', ev.code);
+
+      if (ev.code !== 1000) {
+        observer.error(
+          new Error(`WebSocket closed with ${ev.code}: ${ev.reason}`),
+        );
+        return;
+      }
+
       observer.next({
         type: 'com.saucelabs.scriptiq.done',
       });

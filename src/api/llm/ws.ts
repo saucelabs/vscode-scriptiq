@@ -104,12 +104,10 @@ export function generateTest(
     };
 
     ws.onclose = (ev) => {
-      console.log('WebSocket closed:', ev.code);
-
       if (ev.code !== 1000) {
-        observer.error(
-          new Error(`WebSocket closed with ${ev.code}: ${ev.reason}`),
-        );
+        const msg = `WebSocket closed with ${ev.code}: ${ev.reason}`;
+        console.error(msg);
+        observer.error(new Error(msg));
         return;
       }
 

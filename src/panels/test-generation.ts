@@ -272,8 +272,9 @@ export class TestGenerationPanel {
                 <div id="rdc-checkbox-container">
                 </div>            
             </div>
-            <div class="mt-30">
+            <div class="mt-30" style="display: flex; align-items: center; column-gap: 8px;">
               <sl-button id="generate-button-id" size="lg" color="primary">Generate</sl-button>
+              <sl-button id="stop-button" size="lg" color="danger" disabled>Stop</sl-button>
               <button id="clear-button-id" class="button button-text">Clear</button>
             </div>
             <div id="test-header">

@@ -20,6 +20,7 @@ const outputScript = document.getElementById('output-script-container');
 const appName = document.getElementById('app-name-text-id');
 const goalText = document.getElementById('goal-text-id');
 const generateButton = document.getElementById('generate-button-id');
+const stopButton = document.getElementById('stop-button');
 
 const clearButton = document.getElementById('clear-button-id');
 const testHeader = document.getElementById('test-header');
@@ -52,6 +53,7 @@ function setStatus(message) {
 function main() {
   // Add event listeners.
   generateButton?.addEventListener('press', handleAskClick);
+  stopButton?.addEventListener('press', handleStopClick);
   clearButton?.addEventListener('click', handleClearClick);
 
   // goal enter event
@@ -151,6 +153,7 @@ function main() {
           break;
         case 'error':
           generateButton?.removeAttribute('disabled');
+          stopButton?.setAttribute('disabled', '');
           // Retain the previous state, which may contain a useful error message
           // or snapshot of the video.
           vscode.postMessage({
@@ -163,6 +166,7 @@ function main() {
         case 'finalize':
           testGallery.innerHTML = '';
           generateButton?.removeAttribute('disabled');
+          stopButton?.setAttribute('disabled', '');
           vscode.postMessage({
             action: 'enable-test-record-navigation',
           });
@@ -189,6 +193,7 @@ function handleStopClick() {
 
 function handleAskClick() {
   generateButton?.setAttribute('disabled', '');
+  stopButton?.removeAttribute('disabled');
   // Clear answer filed.
   testGallery.innerHTML = '';
   outputScript.innerHTML = '';
@@ -239,14 +244,6 @@ function setUpStatusUpdates() {
 
   const statusBlockMessages = document.createElement('div');
   statusBlockMessages.classList.add('status-block-messages');
-
-  const stopButton = document.createElement('sl-button');
-  stopButton.innerText = 'Stop';
-  stopButton.setAttribute('id', 'stop-button');
-  stopButton.addEventListener('press', handleStopClick);
-  stopButton.setAttribute('color', 'danger');
-  stopButton.setAttribute('size', 'lg');
-  statusContainer.appendChild(stopButton);
 
   const statusField = document.createElement('span');
   statusField.classList.add('test-status-header');

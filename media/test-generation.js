@@ -20,6 +20,8 @@ const outputScript = document.getElementById('output-script-container');
 const appName = document.getElementById('app-name-text-id');
 const goalText = document.getElementById('goal-text-id');
 const generateButton = document.getElementById('generate-button-id');
+const stopButton = document.getElementById('stop-button');
+
 const clearButton = document.getElementById('clear-button-id');
 const testHeader = document.getElementById('test-header');
 const assertContainer = document.getElementById('assert-container');
@@ -50,7 +52,8 @@ function setStatus(message) {
 
 function main() {
   // Add event listeners.
-  generateButton?.addEventListener('click', handleAskClick);
+  generateButton?.addEventListener('press', handleAskClick);
+  stopButton?.addEventListener('press', handleStopClick);
   clearButton?.addEventListener('click', handleClearClick);
 
   // goal enter event
@@ -149,6 +152,8 @@ function main() {
           generateFullTestDisplay();
           break;
         case 'error':
+          generateButton?.removeAttribute('disabled');
+          stopButton?.setAttribute('disabled', '');
           // Retain the previous state, which may contain a useful error message
           // or snapshot of the video.
           vscode.postMessage({
@@ -160,6 +165,8 @@ function main() {
           break;
         case 'finalize':
           testGallery.innerHTML = '';
+          generateButton?.removeAttribute('disabled');
+          stopButton?.setAttribute('disabled', '');
           vscode.postMessage({
             action: 'enable-test-record-navigation',
           });
@@ -177,7 +184,16 @@ function main() {
   }
 }
 
+function handleStopClick() {
+  vscode.postMessage({
+    action: 'stop-generation',
+    data: {},
+  });
+}
+
 function handleAskClick() {
+  generateButton?.setAttribute('disabled', '');
+  stopButton?.removeAttribute('disabled');
   // Clear answer filed.
   testGallery.innerHTML = '';
   outputScript.innerHTML = '';

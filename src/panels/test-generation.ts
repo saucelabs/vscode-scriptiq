@@ -11,6 +11,7 @@ import {
 } from '../commands';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { Uri } from 'vscode';
+import { WebSocket } from 'undici';
 import { Platform } from '../types';
 
 const MAX_HISTORY_LEN = 100;
@@ -29,6 +30,8 @@ export class TestGenerationPanel {
   public testRecordNavigation: boolean = true;
   private memento: Memento;
   private storage: GlobalStorage;
+
+  private socket: WebSocket | undefined;
 
   private constructor(
     context: vscode.ExtensionContext,
@@ -134,6 +137,14 @@ export class TestGenerationPanel {
     }
   }
 
+  private stopTestGeneration() {
+    this.socket?.send(
+      JSON.stringify({
+        method: 'testgen.stop',
+      }),
+    );
+  }
+
   /**
    * Add listeners to catch messages from mainview js.
    */
@@ -141,6 +152,9 @@ export class TestGenerationPanel {
     webview.onDidReceiveMessage(
       async (message: any) => {
         switch (message.action) {
+          case 'stop-generation':
+            this.stopTestGeneration();
+            return;
           case 'generate-test':
             this.askTestGenerationLLM(
               message.data.goal,
@@ -196,6 +210,10 @@ export class TestGenerationPanel {
 
     const nonce = randomBytes(16).toString('base64');
 
+    const slButtonUri = webview.asWebviewUri(
+      Uri.joinPath(extensionMediaUri, 'sl-button/index.js'),
+    );
+
     return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
@@ -211,6 +229,7 @@ export class TestGenerationPanel {
                 var mediaPath = "${mediaPath}";
                 var historyPath = "${historyUri}";
             </script>
+            
           </head>
           <body>          
             <div class="form-container">
@@ -253,11 +272,11 @@ export class TestGenerationPanel {
                 <div id="rdc-checkbox-container">
                 </div>            
             </div>
-            <div class="mt-30">
-              <button id="generate-button-id" class="button button-primary button-large">Generate</button>
+            <div class="mt-30" style="display: flex; align-items: center; column-gap: 8px;">
+              <sl-button id="generate-button-id" size="lg" color="primary">Generate</sl-button>
+              <sl-button id="stop-button" size="lg" color="danger" disabled>Stop</sl-button>
               <button id="clear-button-id" class="button button-text">Clear</button>
             </div>
-
             <div id="test-header">
                 <h5 class="mt-30">Generated Test</h5>  
                 <div id="output-language-div" class="flex-container"> 
@@ -268,6 +287,7 @@ export class TestGenerationPanel {
             <div id="output-script-container">
             </div>
             <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
+            <script type="text/javascript" src="${slButtonUri}"></script>
           </body>
         </html>
         `;
@@ -330,7 +350,7 @@ export class TestGenerationPanel {
     const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
 
-    generateTest(
+    const [ws, observable] = generateTest(
       this.storage,
       goal,
       appName,
@@ -345,7 +365,10 @@ export class TestGenerationPanel {
       testID,
       prevGoal,
       creds,
-    ).subscribe({
+    );
+    this.socket = ws;
+
+    observable.subscribe({
       next: (data) => {
         let action = '';
         switch (data.type) {
@@ -365,6 +388,8 @@ export class TestGenerationPanel {
           case 'com.saucelabs.scriptiq.done':
             action = 'finalize';
             break;
+          case 'com.saucelabs.scriptiq.stopped':
+            action = 'finalize';
         }
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({

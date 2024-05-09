@@ -15,7 +15,9 @@ import {
   RecordUpdateResponse,
   StatusUpdateResponse,
   StepUpdateResponse,
+  StoppedResponse,
   TestRecord,
+  isStoppedResponse,
 } from '../../types';
 import { isError } from '../../error';
 import { Credentials } from '../../types';
@@ -37,20 +39,31 @@ export function generateTest(
   testID: string,
   prevGoal: string = '',
   creds: Credentials,
-) {
-  return new Observable<
+): [
+  WebSocket,
+  Observable<
     | DoneResponse
     | JobUpdateResponse
     | RecordUpdateResponse
     | StatusUpdateResponse
     | StepUpdateResponse
-  >((observer) => {
-    const ws = new WebSocket(`${wsServer}/v1/genTest`, {
-      headers: {
-        Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
-      },
-    });
+    | StoppedResponse
+  >,
+] {
+  const ws = new WebSocket(`${wsServer}/v1/genTest`, {
+    headers: {
+      Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
+    },
+  });
 
+  const observable = new Observable<
+    | DoneResponse
+    | JobUpdateResponse
+    | RecordUpdateResponse
+    | StatusUpdateResponse
+    | StepUpdateResponse
+    | StoppedResponse
+  >((observer) => {
     if (prevGoal !== '') {
       if (prevGoal.startsWith('Edit: ')) {
         goal = 'Edit: ' + goal + ', ' + prevGoal;
@@ -168,9 +181,14 @@ export function generateTest(
           observer.next(recordUpdate);
           observer.next(resp);
         }
+        if (isStoppedResponse(resp)) {
+          console.log('Stopped.');
+          observer.next(resp);
+        }
       });
     };
   });
+  return [ws, observable];
 }
 
 /**

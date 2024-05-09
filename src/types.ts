@@ -60,6 +60,7 @@ export type StepUpdateType = 'com.saucelabs.scriptiq.testgen.step';
 export type DoneType = 'com.saucelabs.scriptiq.done';
 export type RecordUpdateType = 'com.saucelabs.scriptiq.testgen.record';
 export type WebSocketErrorType = 'com.saucelabs.scriptiq.error';
+export type StoppedType = 'com.saucelabs.scriptiq.stopped';
 
 export interface StatusUpdateResponse {
   type: StatusUpdateType;
@@ -141,6 +142,21 @@ export function isDoneResponse(data: unknown): data is DoneResponse {
     data != null &&
     'type' in data &&
     data.type == 'com.saucelabs.scriptiq.done'
+  );
+}
+
+export interface StoppedResponse {
+  id: string;
+  type: StoppedType;
+  result?: never;
+}
+
+export function isStoppedResponse(data: unknown): data is StoppedResponse {
+  return (
+    typeof data === 'object' &&
+    data != null &&
+    'type' in data &&
+    data.type === 'com.saucelabs.scriptiq.stopped'
   );
 }
 

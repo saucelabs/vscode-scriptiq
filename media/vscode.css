@@ -9,6 +9,8 @@
   --color-sauce-green: #3ddc91;
   --color-sauce-yellow: #ffcd48;
   --color-sauce-dark: #142222;
+  --color-sauce-gray-300: #dbe0ea;
+  --color-sauce-gray-disabled: rgba(30, 33, 39, 0.45);
   --color-link: #27b974;
   --color-sauce-lighter-coral: #f1997b;
   --sauce-font-sans: 'DM Sans';

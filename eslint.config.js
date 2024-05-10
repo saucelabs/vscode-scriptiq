@@ -7,7 +7,14 @@ module.exports = ts.config(
   ...ts.configs.recommended,
   prettier,
   {
-    ignores: ['out/**', 'dist/**', 'media/**', '.vscode-test/**'],
+    ignores: [
+      'out/**',
+      'dist/**',
+      'media/**',
+      '.vscode-test/**',
+      'webview-ui/**/build',
+      'webview-ui/**/scripts',
+    ],
   },
   {
     files: ['*.js'],

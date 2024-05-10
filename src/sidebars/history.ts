@@ -1,41 +1,57 @@
 import * as vscode from 'vscode';
 
+import { Memento } from '../memento';
+import { GlobalStorage } from '../storage';
+import { TestStep, TestRecord } from '../types';
+
 export class HistoryProvider
-  implements vscode.TreeDataProvider<vscode.TreeItem>
+  implements vscode.TreeDataProvider<TestStep | TestRecord>
 {
   public static readonly viewType = 'scriptiq-history';
-  // onDidChangeTreeData?: vscode.Event<void | vscode.TreeItem | vscode.TreeItem[] | null | undefined> | undefined;
+
+  constructor(
+    private readonly _storage: GlobalStorage,
+    private readonly _memento: Memento,
+  ) {}
+
   getTreeItem(
-    element: vscode.TreeItem,
+    element: TestStep | TestRecord,
   ): vscode.TreeItem | Thenable<vscode.TreeItem> {
-    return element;
+    if ('app_name' in element) {
+      return new TestRecordItem(element);
+    }
+    return new TestStepItem(element);
   }
   getChildren(
-    _element?: vscode.TreeItem | undefined,
-  ): vscode.ProviderResult<vscode.TreeItem[]> {
-    return [
-      new vscode.TreeItem(
-        'yelp.apk',
-        vscode.TreeItemCollapsibleState.Collapsed,
-      ),
-      new vscode.TreeItem(
-        'Android-MyDemoAppRN.1.3.0.build0-2244.apk',
-        vscode.TreeItemCollapsibleState.Collapsed,
-      ),
-      new vscode.TreeItem(
-        'yelp-1.2.3.apk',
-        vscode.TreeItemCollapsibleState.Collapsed,
-      ),
-      new vscode.TreeItem(
-        'swag-native-orig.apk',
-        vscode.TreeItemCollapsibleState.Collapsed,
-      ),
-    ];
+    element?: TestStep | TestRecord | undefined,
+  ): vscode.ProviderResult<TestRecord[] | TestStep[]> {
+    if (element) {
+      if ('all_steps' in element) {
+        return (element as TestRecord).all_steps;
+      }
+    } else {
+      return this._getTestHistory();
+    }
   }
-  // getParent?(element: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem> {
-  //     throw new Error('Method not implemented.');
-  // }
-  // resolveTreeItem?(item: vscode.TreeItem, element: vscode.TreeItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TreeItem> {
-  //     throw new Error('Method not implemented.');
-  // }
+
+  _getTestHistory() {
+    const ids = this._memento.getTestIDs();
+    const testRecords = this._storage.getTestRecords(ids);
+
+    return testRecords;
+  }
+}
+
+class TestRecordItem extends vscode.TreeItem {
+  constructor(record: TestRecord) {
+    super(record.app_name, vscode.TreeItemCollapsibleState.Collapsed);
+  }
+}
+
+class TestStepItem extends vscode.TreeItem {
+  constructor(step: TestStep) {
+    super(step.event_reason, vscode.TreeItemCollapsibleState.None);
+
+    // TODO: Define icon, action, context
+  }
 }

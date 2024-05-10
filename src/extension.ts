@@ -50,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
     ),
   );
 
-  const historyProvider = new HistoryProvider();
+  const historyProvider = new HistoryProvider(storage, memento);
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider(
       HistoryProvider.viewType,

@@ -63,7 +63,8 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
-    "build": "webpack",
+    "build:webview:connect": "cd webview-ui/connect && npm run build",
+    "build": "webpack && npm run build:webview:connect",
     "package": "webpack --mode production --devtool hidden-source-map",
     "build-tests": "tsc -p . --outDir out",
     "pretest": "npm run build && npm run build-tests",

@@ -59,7 +59,6 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
           <title>Connect</title>
         </head>
         <body>
-          <h1>Connect</h1>
           <div id="root" />
           <script nonce="${nonce}" src="${scriptUri}"></script>
         </body>

@@ -38,8 +38,12 @@
       "scriptiq-settings": [
         {
           "type": "webview",
-          "id": "scriptiq-settings-id",
-          "name": "Test Generation Panel"
+          "id": "scriptiq-connect",
+          "name": "Connect"
+        },
+        {
+          "id": "scriptiq-history",
+          "name": "History"
         }
       ]
     },

@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
+import { ConnectViewProvider } from './sidebars/connect';
 import { GlobalStorage } from './storage';
 import { Memento } from './memento';
 import {
@@ -41,23 +42,31 @@ export async function activate(context: vscode.ExtensionContext) {
     TestGenerationPanel.render(context, memento, storage, testID);
   });
 
-  // Side Bar View Provider
-  const provider = new SidebarViewProvider(context, memento, storage);
+  const connectProvider = new ConnectViewProvider();
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      SidebarViewProvider.viewType,
-      provider,
+      ConnectViewProvider.viewType,
+      connectProvider,
     ),
   );
+  // Side Bar View Provider
+  // const provider = new SidebarViewProvider(context, memento, storage);
 
-  registerUpdateHistoryLinksCommand(context, (selected = -1) => {
-    provider.updateHistoryLinks(selected);
-  });
+  // context.subscriptions.push(
+  //   vscode.window.registerWebviewViewProvider(
+  //     SidebarViewProvider.viewType,
+  //     provider,
+  //   ),
+  // );
 
-  registerClearHistoryLinkSelectionCommand(context, () => {
-    provider.clearHistoryLinkSelection();
-  });
+  // registerUpdateHistoryLinksCommand(context, (selected = -1) => {
+  //   provider.updateHistoryLinks(selected);
+  // });
+
+  // registerClearHistoryLinkSelectionCommand(context, () => {
+  //   provider.clearHistoryLinkSelection();
+  // });
 }
 
 // This method is called when your extension is deactivated

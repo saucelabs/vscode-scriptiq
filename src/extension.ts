@@ -43,11 +43,18 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 
   const connectProvider = new ConnectViewProvider(context.extensionUri);
-
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       ConnectViewProvider.viewType,
       connectProvider,
+    ),
+  );
+
+  const historyProvider = new HistoryProvider();
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      HistoryProvider.viewType,
+      historyProvider,
     ),
   );
   // Side Bar View Provider

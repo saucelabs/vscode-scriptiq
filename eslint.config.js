@@ -20,6 +20,18 @@ module.exports = ts.config(
       // Long term, we should disallow the use of 'any'. But for now, we'll just
       // warn, and fix them as we go.
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          args: 'all',
+          argsIgnorePattern: '^_',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
     },
     languageOptions: {
       globals: {

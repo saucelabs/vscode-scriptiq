@@ -1,3 +1,5 @@
+// @ts-check
+
 const ts = require('typescript-eslint');
 const js = require('@eslint/js');
 const prettier = require('eslint-config-prettier');

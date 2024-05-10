@@ -7,6 +7,8 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
 
+  constructor(private readonly _extensionUri: vscode.Uri) {}
+
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext<unknown>,
@@ -16,9 +18,22 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.options = {
       enableScripts: true,
+
+      localResourceRoots: [this._extensionUri],
     };
 
     const nonce = getNonce();
+    const scriptUri = webviewView.webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        'webview-ui',
+        'connect',
+        'build',
+        'static',
+        'js',
+        'main.js',
+      ),
+    );
 
     webviewView.webview.html = html`
       <!doctype html>
@@ -45,6 +60,8 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
         </head>
         <body>
           <h1>Connect</h1>
+          <div id="root" />
+          <script nonce="${nonce}" src="${scriptUri}"></script>
         </body>
       </html>
     `;

@@ -42,6 +42,10 @@
           "dark": "./media/icons/icn-trash-outline-dark.svg",
           "light": "./media/icons/icn-trash-outline-light.svg"
         }
+      },
+      {
+        "command": "scriptiq-history.deleteAll",
+        "title": "Delete All"
       }
     ],
     "views": {
@@ -65,6 +69,12 @@
           "command": "scriptiq-history.deleteEntry",
           "when": "view == scriptiq-history && viewItem == testRecord",
           "group": "inline"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "scriptiq-history.deleteAll",
+          "when": "view == scriptiq-history"
         }
       ]
     },

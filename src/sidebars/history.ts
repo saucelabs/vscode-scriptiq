@@ -3,6 +3,8 @@ import * as vscode from 'vscode';
 import { Memento } from '../memento';
 import { GlobalStorage } from '../storage';
 import { TestStep, TestRecord } from '../types';
+import * as toast from '../toast';
+import { errMsg } from '../error';
 
 export class HistoryProvider
   implements vscode.TreeDataProvider<TestStep | TestRecord>
@@ -24,10 +26,12 @@ export class HistoryProvider
         arguments: [element.test_id],
         title: 'Show Test',
       };
+      item.contextValue = 'testRecord';
       return item;
     }
     return new TestStepItem(element);
   }
+
   getChildren(
     element?: TestStep | TestRecord | undefined,
   ): vscode.ProviderResult<TestRecord[] | TestStep[]> {
@@ -36,15 +40,47 @@ export class HistoryProvider
         return (element as TestRecord).all_steps;
       }
     } else {
-      return this._getTestHistory();
+      const ids = this._memento.getTestIDs();
+      const testRecords = this._storage.getTestRecords(ids);
+
+      return testRecords;
     }
   }
 
-  _getTestHistory() {
-    const ids = this._memento.getTestIDs();
-    const testRecords = this._storage.getTestRecords(ids);
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    void | TestStep | TestRecord | (TestStep | TestRecord)[] | null | undefined
+  > = new vscode.EventEmitter<
+    void | TestStep | TestRecord | (TestStep | TestRecord)[] | null | undefined
+  >();
+  readonly onDidChangeTreeData: vscode.Event<
+    void | TestStep | TestRecord | (TestStep | TestRecord)[] | null | undefined
+  > = this._onDidChangeTreeData.event;
 
-    return testRecords;
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
+  async deleteItem(testID: string) {
+    try {
+      const ids = this._memento.getTestIDs();
+      const historyIndex = ids.findIndex((id) => id == testID);
+      if (historyIndex < 0) {
+        return;
+      }
+
+      console.log('Deleting historic entry: ', historyIndex);
+
+      ids.splice(historyIndex, 1);
+      await this._memento.saveTestIDs(ids);
+      this._storage.deleteTestRecord(testID);
+
+      console.log('Test Record deleted.');
+    } catch (e) {
+      toast.showError(`Failed to delete test record: ${errMsg(e)}`);
+    }
+
+    this.refresh();
+    // TODO: Do something to the test generation panel?
   }
 }
 

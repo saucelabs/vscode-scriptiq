@@ -1,16 +1,18 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { SidebarViewProvider } from './panels/sidebar';
+// import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
 import { ConnectViewProvider } from './sidebars/connect';
+import { HistoryProvider } from './sidebars/history';
 import { GlobalStorage } from './storage';
 import { Memento } from './memento';
 import {
-  registerClearHistoryLinkSelectionCommand,
+  // registerClearHistoryLinkSelectionCommand,
   registerShowTestGenerationPanelCommand,
-  registerUpdateHistoryLinksCommand,
+  // registerUpdateHistoryLinksCommand,
 } from './commands';
+import { TestRecord } from './types';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -20,6 +22,8 @@ export async function activate(context: vscode.ExtensionContext) {
   console.log(
     'Congratulations, your extension "sauce-scriptiq" is now active!',
   );
+
+  // vscode.window.registerTreeDataProvider
 
   const storage = new GlobalStorage(context.globalStorageUri);
   storage.init();
@@ -55,6 +59,15 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider(
       HistoryProvider.viewType,
       historyProvider,
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'scriptiq-history.deleteEntry',
+      async (testRecord: TestRecord) => {
+        await historyProvider.deleteItem(testRecord.test_id);
+      },
     ),
   );
   // Side Bar View Provider

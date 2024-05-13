@@ -34,6 +34,16 @@
         }
       ]
     },
+    "commands": [
+      {
+        "command": "history.deleteEntry",
+        "title": "Delete",
+        "icon": {
+          "dark": "./media/icons/icn-trash-outline.svg",
+          "light": "./media/icons/icn-trash-outline.svg"
+        }
+      }
+    ],
     "views": {
       "scriptiq-settings": [
         {
@@ -49,7 +59,14 @@
     },
     "menus": {
       "commandPalette": [],
-      "editor/context": []
+      "editor/context": [],
+      "view/item/context": [
+        {
+          "command": "scriptiq-history.deleteEntry",
+          "when": "view == scriptiq-history && viewItem == testRecord",
+          "group": "inline"
+        }
+      ]
     },
     "webviews": [
       {

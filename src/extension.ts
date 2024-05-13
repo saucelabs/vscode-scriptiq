@@ -10,6 +10,7 @@ import { Memento } from './memento';
 import {
   // registerClearHistoryLinkSelectionCommand,
   registerShowTestGenerationPanelCommand,
+  registerUpdateHistoryLinksCommand,
   // registerUpdateHistoryLinksCommand,
 } from './commands';
 import { TestRecord } from './types';
@@ -70,6 +71,17 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     ),
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('scriptiq-history.deleteAll', async () => {
+      await historyProvider.deleteAll();
+    }),
+  );
+
+  registerUpdateHistoryLinksCommand(context, () => {
+    historyProvider.refresh();
+  });
+
   // Side Bar View Provider
   // const provider = new SidebarViewProvider(context, memento, storage);
 

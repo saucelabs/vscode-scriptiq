@@ -45,7 +45,7 @@
       },
       {
         "command": "scriptiq-history.deleteAll",
-        "title": "Delete All"
+        "title": "Clear cache"
       }
     ],
     "views": {

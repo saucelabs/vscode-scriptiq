@@ -5,6 +5,7 @@ import { GlobalStorage } from '../storage';
 import { TestStep, TestRecord } from '../types';
 import * as toast from '../toast';
 import { errMsg } from '../error';
+import { executeShowTestGenerationPanelCommand } from '../commands';
 
 export class HistoryProvider
   implements vscode.TreeDataProvider<TestStep | TestRecord>
@@ -80,7 +81,20 @@ export class HistoryProvider
     }
 
     this.refresh();
-    // TODO: Do something to the test generation panel?
+    executeShowTestGenerationPanelCommand();
+  }
+
+  async deleteAll() {
+    try {
+      await this._memento.clearCache();
+      this._storage.clearHistory();
+      toast.showInfo('Test record history cache successfully cleared.');
+    } catch (e) {
+      toast.showError(`Failed to clear cache: ${errMsg(e)}`);
+    }
+
+    this.refresh();
+    executeShowTestGenerationPanelCommand();
   }
 }
 

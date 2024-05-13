@@ -34,6 +34,12 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "scriptiq-history",
+        "contents": "Your goal history will appear here once you generate tests.\n[Start a test](command:scriptiq.showTestGenerationPanel)"
+      }
+    ],
     "commands": [
       {
         "command": "scriptiq-history.deleteEntry",

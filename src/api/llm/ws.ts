@@ -18,11 +18,11 @@ import {
   StoppedResponse,
   TestRecord,
   isStoppedResponse,
+  Region,
 } from '../../types';
 import { isError } from '../../error';
 import { Credentials } from '../../types';
-
-const wsServer = process.env.SCRIPTIQ_WS_SERVER || 'ws://127.0.0.1:8000';
+import { getWSServer } from './config';
 
 export function generateTest(
   storage: GlobalStorage,
@@ -31,7 +31,7 @@ export function generateTest(
   maxTestSteps: number,
   username: string,
   accessKey: string,
-  region: string,
+  region: Region,
   devices: string[],
   platform: Platform,
   platformVersion: string,
@@ -50,7 +50,7 @@ export function generateTest(
     | StoppedResponse
   >,
 ] {
-  const ws = new WebSocket(`${wsServer}/v1/genTest`, {
+  const ws = new WebSocket(`${getWSServer(region)}/genTest`, {
     headers: {
       Authorization: 'Basic ' + btoa(creds.username + ':' + creds.accessKey),
     },

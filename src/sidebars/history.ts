@@ -18,7 +18,13 @@ export class HistoryProvider
     element: TestStep | TestRecord,
   ): vscode.TreeItem | Thenable<vscode.TreeItem> {
     if ('app_name' in element) {
-      return new TestRecordItem(element);
+      const item = new TestRecordItem(element);
+      item.command = {
+        command: 'scriptiq.showTestGenerationPanel',
+        arguments: [element.test_id],
+        title: 'Show Test',
+      };
+      return item;
     }
     return new TestStepItem(element);
   }

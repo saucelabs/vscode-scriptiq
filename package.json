@@ -36,11 +36,11 @@
     },
     "commands": [
       {
-        "command": "history.deleteEntry",
+        "command": "scriptiq-history.deleteEntry",
         "title": "Delete",
         "icon": {
-          "dark": "./media/icons/icn-trash-outline.svg",
-          "light": "./media/icons/icn-trash-outline.svg"
+          "dark": "./media/icons/icn-trash-outline-dark.svg",
+          "light": "./media/icons/icn-trash-outline-light.svg"
         }
       }
     ],

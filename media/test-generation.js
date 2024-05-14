@@ -151,7 +151,7 @@ function main() {
           updateStepDataState(message.data);
           generateFullTestDisplay();
           break;
-        case 'error':
+        case 'recover-from-error':
           generateButton?.removeAttribute('disabled');
           stopButton?.setAttribute('disabled', '');
           // Retain the previous state, which may contain a useful error message

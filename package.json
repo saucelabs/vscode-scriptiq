@@ -101,8 +101,8 @@
     "package": "webpack --mode production --devtool hidden-source-map",
     "build-tests": "tsc -p . --outDir out",
     "pretest": "npm run build && npm run build-tests",
-    "lint": "prettier --check '**/*.{js,ts,mjs,cjs}' && eslint .",
-    "fmt": "prettier --write '**/*.{js,ts,mjs,cjs}'",
+    "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",
+    "fmt": "prettier --write '**/*.{js,ts,mjs,cjs,jsx,tsx}'",
     "test": "vscode-test",
     "prepare": "husky"
   },

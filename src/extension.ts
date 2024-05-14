@@ -44,7 +44,10 @@ export async function activate(context: vscode.ExtensionContext) {
     TestGenerationPanel.render(context, memento, storage, testID);
   });
 
-  const connectProvider = new ConnectViewProvider(context.extensionUri);
+  const connectProvider = new ConnectViewProvider(
+    context.extensionUri,
+    memento,
+  );
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       ConnectViewProvider.viewType,

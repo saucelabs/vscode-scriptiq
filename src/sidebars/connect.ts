@@ -1,13 +1,20 @@
 import * as vscode from 'vscode';
 
 import { getNonce, html } from '../html';
+import { Memento } from '../memento';
+import * as toast from '../toast';
+import { errMsg } from '../error';
+import { isValidRegion } from '../types';
 
 export class ConnectViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-connect';
 
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(
+    private readonly _extensionUri: vscode.Uri,
+    private readonly _memento: Memento,
+  ) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -35,6 +42,8 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
       ),
     );
 
+    const creds = this._memento.getCredentials();
+
     webviewView.webview.html = html`
       <!doctype html>
       <html lang="en">
@@ -57,6 +66,9 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
           />
 
           <title>Connect</title>
+          <script nonce="${nonce}">
+            window.creds = '${JSON.stringify(creds)}';
+          </script>
         </head>
         <body>
           <div id="root" />
@@ -64,5 +76,48 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
         </body>
       </html>
     `;
+
+    webviewView.webview.onDidReceiveMessage(async (msg: any) => {
+      switch (msg.action) {
+        case 'save-credentials': {
+          await this.saveCredentials(
+            msg.data.username,
+            msg.data.accessKey,
+            msg.data.region,
+          );
+          break;
+        }
+      }
+    });
+  }
+
+  private async saveCredentials(
+    username: string,
+    accessKey: string,
+    region: unknown,
+  ) {
+    if (!username || !accessKey || !region) {
+      toast.showError('Cannot save incomplete credentials.');
+      return;
+    }
+    if (!isValidRegion(region)) {
+      toast.showError(
+        "Invalid region. The value must be one of the following: 'us-west-1' or 'eu-central-1'.",
+      );
+      return;
+    }
+
+    try {
+      await this._memento.saveCredentials({
+        username: username,
+        accessKey: accessKey,
+        region: region,
+      });
+    } catch (e) {
+      toast.showError(`Failed to save credentials: ${errMsg(e)}`);
+      return;
+    }
+
+    toast.showInfo('Credentials saved successfully.');
   }
 }

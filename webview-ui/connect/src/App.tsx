@@ -7,7 +7,6 @@ import {
 } from '@vscode/webview-ui-toolkit/react';
 
 import { vscode } from './utilities/vscode';
-import './App.css';
 
 function App() {
   let creds: Credentials = {

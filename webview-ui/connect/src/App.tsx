@@ -51,6 +51,7 @@ function App() {
       <header>
         <p
           style={{
+            fontWeight: '500',
             textAlign: 'center',
           }}
         >
@@ -106,7 +107,11 @@ function App() {
               </VSCodeOption>
             </VSCodeDropdown>
           </section>
-          <VSCodeButton type="submit" formId="credentials-form">
+          <VSCodeButton
+            style={{ width: '81px' }}
+            type="submit"
+            formId="credentials-form"
+          >
             Connect
           </VSCodeButton>
         </form>

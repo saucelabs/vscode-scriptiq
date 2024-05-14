@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'node:path';
 
 import { Memento } from '../memento';
 import { GlobalStorage } from '../storage';
@@ -21,14 +22,7 @@ export class HistoryProvider
     element: TestStep | TestRecord,
   ): vscode.TreeItem | Thenable<vscode.TreeItem> {
     if ('app_name' in element) {
-      const item = new TestRecordItem(element);
-      item.command = {
-        command: 'scriptiq.showTestGenerationPanel',
-        arguments: [element.test_id],
-        title: 'Show Test',
-      };
-      item.contextValue = 'testRecord';
-      return item;
+      return new TestRecordItem(element);
     }
     return new TestStepItem(element);
   }
@@ -101,13 +95,27 @@ export class HistoryProvider
 class TestRecordItem extends vscode.TreeItem {
   constructor(record: TestRecord) {
     super(record.app_name, vscode.TreeItemCollapsibleState.Collapsed);
+
+    this.contextValue = 'testRecord';
+    this.command = {
+      command: 'scriptiq.showTestGenerationPanel',
+      arguments: [record.test_id],
+      title: 'Show Test',
+    };
   }
 }
 
 class TestStepItem extends vscode.TreeItem {
   constructor(step: TestStep) {
     super(step.event_reason, vscode.TreeItemCollapsibleState.None);
-
-    // TODO: Define icon, action, context
   }
+
+  iconPath = path.join(
+    __filename,
+    '..',
+    '..',
+    'media',
+    'icons',
+    'icn-edit-file-outline.svg',
+  );
 }

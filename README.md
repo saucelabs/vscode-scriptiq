@@ -1,6 +1,6 @@
 # VSCode ScriptIQ Extension
 
-## Development
+## Local Development
 
 Instructions to run this VSCode Extension.
 
@@ -10,7 +10,22 @@ Instructions to run this VSCode Extension.
 npm i
 ```
 
-2. Configure the ScriptIQ API server by setting the environment variable: `SCRIPTIQ_API_SERVER`.
+2. Configure the current NODE_ENV by updating the settings in [VSCode launch.json](./.vscode/launch.json).
+
+```
+  ...
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      ...
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    ...
+```
+
 3. Open this project in a VS Code Window: go to `File` -> `Open Folder`.
 4. Run the extension using the F5 button on your keyboard, or click: `Run` -> `Debugging`.
 5. Click the `Sauce Lab's ScriptIQ` icon on the left bar (should be the last icon on the left bar. It is a right arrow followed by an underscore). This will open a side bar.

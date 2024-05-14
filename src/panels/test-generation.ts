@@ -12,7 +12,7 @@ import {
 import { randomBytes, randomUUID } from 'node:crypto';
 import { Uri } from 'vscode';
 import { WebSocket } from 'undici';
-import { Platform } from '../types';
+import { Platform, Credentials } from '../types';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -413,7 +413,7 @@ export class TestGenerationPanel {
     return randomUUID().replaceAll('-', '');
   }
 
-  private getCredentials() {
+  private getCredentials(): Credentials | undefined {
     const creds = this.memento.getCredentials();
     if (!creds) {
       toast.showError('Please add your credentials!');

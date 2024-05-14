@@ -65,7 +65,7 @@ function App() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '8px',
+            gap: '12px',
           }}
           onSubmit={handleSave}
         >

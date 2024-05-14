@@ -94,7 +94,7 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
   private async saveCredentials(
     username: string,
     accessKey: string,
-    region: unknown,
+    region: string,
   ) {
     if (!username || !accessKey || !region) {
       toast.showError('Cannot save incomplete credentials.');

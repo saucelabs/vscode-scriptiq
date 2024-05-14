@@ -102,6 +102,7 @@
     ]
   },
   "scripts": {
+    "install:all": "npm install && cd webview-ui/connect && npm install",
     "vscode:prepublish": "npm run package",
     "build:webview:connect": "cd webview-ui/connect && npm run build",
     "build": "webpack && npm run build:webview:connect",

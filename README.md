@@ -12,7 +12,7 @@ npm i
 
 2. Configure the current NODE_ENV by updating the settings in [VSCode launch.json](./.vscode/launch.json).
 
-```json
+```
   ...
   "configurations": [
     {

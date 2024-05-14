@@ -168,10 +168,10 @@ export class TestGenerationPanel {
                 '',
               );
             } catch (e) {
-              toast.showError(errMsg(e));
               TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-                action: 'error',
+                action: 'recover-from-error',
               });
+              toast.showError(errMsg(e));
             }
             return;
           case 'save-steps': {
@@ -410,7 +410,7 @@ export class TestGenerationPanel {
         console.error(`Test generation failed: ${err}`);
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          action: 'error',
+          action: 'recover-from-error',
         });
         toast.showError(err.message);
       },

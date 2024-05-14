@@ -44,10 +44,7 @@
       {
         "command": "scriptiq-history.deleteEntry",
         "title": "Delete",
-        "icon": {
-          "dark": "./media/icons/icn-trash-outline-dark.svg",
-          "light": "./media/icons/icn-trash-outline-light.svg"
-        }
+        "icon": "$(trash)"
       },
       {
         "command": "scriptiq-history.deleteAll",

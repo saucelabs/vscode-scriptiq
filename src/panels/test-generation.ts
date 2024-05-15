@@ -180,7 +180,7 @@ export class TestGenerationPanel {
           }
           case 'send-user-rating': {
             await this.sendUserRating(
-              message.data.testID,
+              message.data.test_id,
               message.data.step,
               message.data.rating,
             );
@@ -531,7 +531,7 @@ export class TestGenerationPanel {
     }
 
     try {
-      await sendUserRating(votes, testRecord, creds);
+      await sendUserRating(votes, testRecord.test_id, creds);
       this.storage.saveVotes(testID, votes);
     } catch (e) {
       toast.showError(`Failed to submit rating: ${errMsg(e)}.`);

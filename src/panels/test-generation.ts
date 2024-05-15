@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { Uri } from 'vscode';
 import { sendUserRating } from '../api/llm/http';
 import { Memento } from '../memento';
 import { generateTest } from '../api/llm/ws';
@@ -9,10 +10,9 @@ import {
   executeClearHistoryLinkSelectionCommand,
   executeUpdateHistoryLinksCommand,
 } from '../commands';
-import { randomBytes, randomUUID } from 'node:crypto';
-import { Uri } from 'vscode';
+import { randomBytes } from 'node:crypto';
 import { WebSocket } from 'undici';
-import { Platform, Credentials } from '../types';
+import { Credentials, Platform } from '../types';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -355,7 +355,6 @@ export class TestGenerationPanel {
       );
     }
 
-    const testID = this.createTestRecordID();
     this.testRecordNavigation = false;
 
     const [ws, observable] = generateTest(
@@ -370,7 +369,6 @@ export class TestGenerationPanel {
       platform,
       platformVersion,
       assertions,
-      testID,
       prevGoal,
       creds,
     );
@@ -415,10 +413,6 @@ export class TestGenerationPanel {
         toast.showError(err.message);
       },
     });
-  }
-
-  private createTestRecordID() {
-    return randomUUID().replaceAll('-', '');
   }
 
   private getCredentials(): Credentials | undefined {

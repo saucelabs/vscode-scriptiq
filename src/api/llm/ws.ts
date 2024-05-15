@@ -36,7 +36,6 @@ export function generateTest(
   platform: Platform,
   platformVersion: string,
   assertions: string[],
-  testID: string,
   prevGoal: string = '',
   creds: Credentials,
 ): [
@@ -73,7 +72,7 @@ export function generateTest(
     }
     const testRecord: TestRecord = {
       all_steps: [],
-      test_id: testID,
+      test_id: '',
       app_name: appName,
       goal: goal,
       user_screen_descs: assertions,
@@ -148,6 +147,8 @@ export function generateTest(
         if (isJobUpdateResponse(resp)) {
           console.log('Job created.');
           observer.next(resp);
+
+          testRecord.test_id = resp.result.job_id;
           testRecord.selected_device_name = resp.result.selected_device_name;
           testRecord.selected_platform_version =
             resp.result.selected_platform_version;
@@ -160,7 +161,7 @@ export function generateTest(
           console.log('Step created.');
           observer.next(resp);
           await downloadImage(
-            testID,
+            testRecord.test_id,
             resp.result.step.img_url,
             resp.result.step.img_name,
             username,

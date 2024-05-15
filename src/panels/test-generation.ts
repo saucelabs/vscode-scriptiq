@@ -156,16 +156,23 @@ export class TestGenerationPanel {
             this.stopTestGeneration();
             return;
           case 'generate-test':
-            this.askTestGenerationLLM(
-              message.data.goal,
-              message.data.app_name,
-              message.data.max_test_steps,
-              message.data.devices,
-              message.data.platform,
-              message.data.platform_version,
-              message.data.assertions,
-              '',
-            );
+            try {
+              this.askTestGenerationLLM(
+                message.data.goal,
+                message.data.app_name,
+                message.data.max_test_steps,
+                message.data.devices,
+                message.data.platform,
+                message.data.platform_version,
+                message.data.assertions,
+                '',
+              );
+            } catch (e) {
+              TestGenerationPanel.currentPanel?.panel.webview.postMessage({
+                action: 'recover-from-error',
+              });
+              toast.showError(errMsg(e));
+            }
             return;
           case 'save-steps': {
             await this.addRecordToHistory(message.data.test_id);
@@ -312,15 +319,17 @@ export class TestGenerationPanel {
     appName = appName.trim();
 
     if (!creds) {
-      return;
+      throw new Error(
+        'Empty credentials detected. Please verify and update your configuration settings.',
+      );
     }
     if (!goal) {
-      toast.showError('Please add a Goal!');
-      return;
+      throw new Error('No goal specified. Please add a goal.');
     }
     if (!appName) {
-      toast.showError('Please add an app filename!');
-      return;
+      throw new Error(
+        'Application name is missing. Please specify an app filename.',
+      );
     }
 
     // Notes: Temporary solution for validating the application name.
@@ -329,22 +338,21 @@ export class TestGenerationPanel {
     // allowing selection from a dropdown menu.
     const androidFileEnding = /.+\.(apk|aab)$/;
     if (platform === 'Android' && !androidFileEnding.test(appName)) {
-      toast.showError(
-        'Please use a valid app filename! Allowed file types for Android are: apk, aab.',
+      throw new Error(
+        'Invalid app filename. For Android, allowed file types are: apk, aab.',
       );
-      return;
     }
     const iosFileEnding = /.+\.(ipa|app)$/;
     if (platform === 'iOS' && !iosFileEnding.test(appName)) {
-      toast.showError(
-        'Please use a valid app filename! Allowed file types for iOS are: ipa, app.',
+      throw new Error(
+        'Invalid app filename. For iOS, allowed file types are: ipa, app.',
       );
-      return;
     }
 
     if (maxTestSteps < 1 || maxTestSteps > 20) {
-      toast.showError('The number of test steps must be between 1 and 20.');
-      return;
+      throw new Error(
+        'Invalid number of test steps. Please enter a value between 1 and 20.',
+      );
     }
 
     const testID = this.createTestRecordID();
@@ -402,7 +410,7 @@ export class TestGenerationPanel {
         console.error(`Test generation failed: ${err}`);
 
         TestGenerationPanel.currentPanel?.panel.webview.postMessage({
-          action: 'error',
+          action: 'recover-from-error',
         });
         toast.showError(err.message);
       },

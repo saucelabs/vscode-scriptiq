@@ -4,7 +4,7 @@ export function getWSServer(region: Region): string {
   if (process.env.NODE_ENV === 'development') {
     return 'ws://127.0.0.1:8000/v1';
   }
-  return `ws://${getDomain(region)}/v1/scriptiq-llm`;
+  return `wss://${getDomain(region)}/v1/scriptiq-llm`;
 }
 
 export function getHTTPServer(region: Region): string {

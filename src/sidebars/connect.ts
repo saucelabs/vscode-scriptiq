@@ -36,9 +36,8 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
         'webview-ui',
         'connect',
         'build',
-        'static',
-        'js',
-        'main.js',
+        'assets',
+        'index.js',
       ),
     );
 

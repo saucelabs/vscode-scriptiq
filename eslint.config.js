@@ -15,7 +15,6 @@ module.exports = ts.config(
       'media/**',
       '.vscode-test/**',
       'webview-ui/**/build',
-      'webview-ui/**/scripts',
     ],
   },
   {

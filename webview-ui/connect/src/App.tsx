@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   VSCodeButton,
   VSCodeTextField,
@@ -29,22 +29,25 @@ function App() {
     // NOTE: if the credentials can't be parsed just ignore and assume it is unset
   }
 
-  const handleSave = useCallback((e: React.SyntheticEvent) => {
-    e.preventDefault();
+  const [username, setUsername] = useState(creds.username);
+  const [accessKey, setAccessKey] = useState(creds.accessKey);
+  const [region, setRegion] = useState(creds.region);
 
-    vscode.postMessage({
-      action: 'save-credentials',
-      data: {
-        username: usernameRef.current?.value ?? '',
-        accessKey: accessKeyRef.current?.value ?? '',
-        region: regionRef.current?.value ?? '',
-      },
-    });
-  }, []);
+  const handleSave = useCallback(
+    (e: React.SyntheticEvent) => {
+      e.preventDefault();
 
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const accessKeyRef = useRef<HTMLInputElement>(null);
-  const regionRef = useRef<HTMLSelectElement>(null);
+      vscode.postMessage({
+        action: 'save-credentials',
+        data: {
+          username: username,
+          accessKey: accessKey,
+          region: region,
+        },
+      });
+    },
+    [username, accessKey, region],
+  );
 
   return (
     <>
@@ -70,16 +73,22 @@ function App() {
           onSubmit={handleSave}
         >
           <VSCodeTextField
-            // @ts-expect-error ref type is not correct for the generated component type
-            ref={usernameRef}
-            value={creds.username}
+            onInput={(e) => {
+              if (e.target && 'value' in e.target) {
+                setUsername(e.target.value as string);
+              }
+            }}
+            value={username}
           >
             Sauce Username
           </VSCodeTextField>
           <VSCodeTextField
-            // @ts-expect-error ref type is not correct for the generated component type
-            ref={accessKeyRef}
-            value={creds.accessKey}
+            onInput={(e) => {
+              if (e.target && 'value' in e.target) {
+                setAccessKey(e.target.value as string);
+              }
+            }}
+            value={accessKey}
             type="password"
           >
             Sauce Access Key
@@ -94,10 +103,14 @@ function App() {
               Sauce Labs Data Center
             </label>
             <VSCodeDropdown
-              // @ts-expect-error ref type is not correct for the generated component type
-              ref={regionRef}
+              onChange={(e) => {
+                console.log(e);
+                if (e.target && 'value' in e.target) {
+                  setRegion(e.target.value as string);
+                }
+              }}
               position="below"
-              value={creds.region}
+              value={region}
             >
               <VSCodeOption selected={creds.region === 'us-west-1'}>
                 us-west-1

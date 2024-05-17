@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   VSCodeButton,
   VSCodeTextField,
@@ -29,7 +29,7 @@ function App() {
     // NOTE: if the credentials can't be parsed just ignore and assume it is unset
   }
 
-  const handleSave = useCallback((e) => {
+  const handleSave = useCallback((e: React.SyntheticEvent) => {
     e.preventDefault();
 
     vscode.postMessage({

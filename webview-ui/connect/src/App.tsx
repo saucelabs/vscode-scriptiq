@@ -59,7 +59,6 @@ function App() {
           }}
         >
           Create test scripts in minutes with the power of Sauce Labs AI.
-          Connect to get started.
         </p>
       </header>
       <main>
@@ -125,7 +124,7 @@ function App() {
             type="submit"
             formId="credentials-form"
           >
-            Connect
+            Save
           </VSCodeButton>
         </form>
       </main>

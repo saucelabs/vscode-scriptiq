@@ -46,17 +46,4 @@ const extensionConfig = {
   },
 };
 
-// Config for webview source code (to be run in a web-based context)
-/** @type WebpackConfig */
-const webviewConfig = {
-  ...baseConfig,
-  target: ['web', 'es2020'],
-  entry: './webview-ui/connect/build/assets/index.js',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'webview-connect.js',
-    libraryTarget: 'commonjs2',
-  },
-};
-
-module.exports = [extensionConfig, webviewConfig];
+module.exports = [extensionConfig];

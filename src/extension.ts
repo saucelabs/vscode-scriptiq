@@ -21,8 +21,6 @@ export async function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "sauce-scriptiq" is now active!',
   );
 
-  // vscode.window.registerTreeDataProvider
-
   const storage = new GlobalStorage(context.globalStorageUri);
   storage.init();
 

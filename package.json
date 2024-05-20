@@ -17,7 +17,7 @@
     "lowcode"
   ],
   "engines": {
-    "vscode": "^1.84.0"
+    "vscode": "^1.86.0"
   },
   "categories": [
     "Testing"
@@ -103,10 +103,9 @@
   },
   "scripts": {
     "install:all": "npm install && cd webview-ui/connect && npm install",
-    "vscode:prepublish": "npm run package",
+    "vscode:prepublish": "npm run build",
     "build:webview:connect": "cd webview-ui/connect && npm run build",
     "build": "npm run build:webview:connect && webpack",
-    "package": "webpack --mode production --devtool hidden-source-map",
     "build-tests": "tsc -p . --outDir out",
     "pretest": "npm run build && npm run build-tests",
     "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",

@@ -1,15 +1,16 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { SidebarViewProvider } from './panels/sidebar';
 import { TestGenerationPanel } from './panels/test-generation';
+import { ConnectViewProvider } from './sidebars/connect';
+import { HistoryProvider } from './sidebars/history';
 import { GlobalStorage } from './storage';
 import { Memento } from './memento';
 import {
-  registerClearHistoryLinkSelectionCommand,
   registerShowTestGenerationPanelCommand,
   registerUpdateHistoryLinksCommand,
 } from './commands';
+import { TestRecord } from './types';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -41,22 +42,42 @@ export async function activate(context: vscode.ExtensionContext) {
     TestGenerationPanel.render(context, memento, storage, testID);
   });
 
-  // Side Bar View Provider
-  const provider = new SidebarViewProvider(context, memento, storage);
-
+  const connectProvider = new ConnectViewProvider(
+    context.extensionUri,
+    memento,
+  );
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      SidebarViewProvider.viewType,
-      provider,
+      ConnectViewProvider.viewType,
+      connectProvider,
     ),
   );
 
-  registerUpdateHistoryLinksCommand(context, (selected = -1) => {
-    provider.updateHistoryLinks(selected);
-  });
+  const historyProvider = new HistoryProvider(storage, memento);
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      HistoryProvider.viewType,
+      historyProvider,
+    ),
+  );
 
-  registerClearHistoryLinkSelectionCommand(context, () => {
-    provider.clearHistoryLinkSelection();
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'scriptiq-history.deleteEntry',
+      async (testRecord: TestRecord) => {
+        await historyProvider.deleteItem(testRecord.test_id);
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('scriptiq-history.deleteAll', async () => {
+      await historyProvider.deleteAll();
+    }),
+  );
+
+  registerUpdateHistoryLinksCommand(context, () => {
+    historyProvider.refresh();
   });
 }
 

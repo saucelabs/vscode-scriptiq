@@ -34,18 +34,62 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "scriptiq-history",
+        "contents": "Your goal history will appear here once you generate tests.\n[Start a test](command:scriptiq.showTestGenerationPanel)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "scriptiq-history.deleteEntry",
+        "title": "Delete",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "scriptiq-history.deleteAll",
+        "title": "Clear cache"
+      },
+      {
+        "command": "scriptiq.showTestGenerationPanel",
+        "title": "New Test",
+        "icon": "$(add)"
+      }
+    ],
     "views": {
       "scriptiq-settings": [
         {
           "type": "webview",
-          "id": "scriptiq-settings-id",
-          "name": "Test Generation Panel"
+          "id": "scriptiq-connect",
+          "name": "Connect"
+        },
+        {
+          "id": "scriptiq-history",
+          "name": "History"
         }
       ]
     },
     "menus": {
       "commandPalette": [],
-      "editor/context": []
+      "editor/context": [],
+      "view/item/context": [
+        {
+          "command": "scriptiq-history.deleteEntry",
+          "when": "view == scriptiq-history && viewItem == testRecord",
+          "group": "inline"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "scriptiq-history.deleteAll",
+          "when": "view == scriptiq-history"
+        },
+        {
+          "group": "navigation",
+          "when": "view == scriptiq-connect",
+          "command": "scriptiq.showTestGenerationPanel"
+        }
+      ]
     },
     "webviews": [
       {
@@ -58,13 +102,15 @@
     ]
   },
   "scripts": {
+    "install:all": "npm install && cd webview-ui/connect && npm install",
     "vscode:prepublish": "npm run package",
-    "build": "webpack",
+    "build:webview:connect": "cd webview-ui/connect && npm run build",
+    "build": "npm run build:webview:connect && webpack",
     "package": "webpack --mode production --devtool hidden-source-map",
     "build-tests": "tsc -p . --outDir out",
     "pretest": "npm run build && npm run build-tests",
-    "lint": "prettier --check '**/*.{js,ts,mjs,cjs}' && eslint .",
-    "fmt": "prettier --write '**/*.{js,ts,mjs,cjs}'",
+    "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",
+    "fmt": "prettier --write '**/*.{js,ts,mjs,cjs,jsx,tsx}'",
     "test": "vscode-test",
     "prepare": "husky"
   },

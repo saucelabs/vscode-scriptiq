@@ -53,9 +53,6 @@ const watchConfig = {
         ...extensionConfig,
         ...watchConfig,
       });
-      await build({
-        ...watchConfig,
-      });
       console.log('[watch] build finished');
     } else {
       // Build extension and webview code

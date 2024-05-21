@@ -126,7 +126,6 @@
     "@vscode/test-cli": "0.0.6",
     "@vscode/test-electron": "2.3.9",
     "esbuild": "0.21.3",
-    "esbuild-plugin-copy": "2.1.1",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "glob": "10.3.10",

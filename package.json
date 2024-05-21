@@ -108,7 +108,7 @@
     "build-tests": "tsc -p . --outDir out",
     "build-watch": "npm run build:root -- --sourcemap --watch",
     "fmt": "prettier --write '**/*.{js,ts,mjs,cjs,jsx,tsx}'",
-    "install:all": "npm install && npm --prefix webview-ui/connect install",
+    "preinstall": "npm --prefix webview-ui/connect install",
     "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",
     "pretest": "npm run build && npm run build-tests",
     "package": "npm run build:web -- --mode production && npm run build:root -- --minify",

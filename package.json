@@ -17,7 +17,7 @@
     "lowcode"
   ],
   "engines": {
-    "vscode": "^1.84.0"
+    "vscode": "^1.86.0"
   },
   "categories": [
     "Testing"
@@ -105,8 +105,8 @@
     "install:all": "npm install && cd webview-ui/connect && npm install",
     "vscode:prepublish": "npm run package",
     "build:webview:connect": "cd webview-ui/connect && npm run build",
-    "build": "npm run build:webview:connect && webpack",
-    "package": "webpack --mode production --devtool hidden-source-map",
+    "build": "npm run build:webview:connect && node ./esbuild.js",
+    "package": "npm run build:webview:connect && NODE_ENV=production node ./esbuild.js",
     "build-tests": "tsc -p . --outDir out",
     "pretest": "npm run build && npm run build-tests",
     "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",
@@ -123,6 +123,8 @@
     "@typescript-eslint/parser": "7.0.2",
     "@vscode/test-cli": "0.0.6",
     "@vscode/test-electron": "2.3.9",
+    "esbuild": "0.21.3",
+    "esbuild-plugin-copy": "2.1.1",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "glob": "10.3.10",
@@ -132,9 +134,7 @@
     "pretty-quick": "4.0.0",
     "ts-loader": "9.5.1",
     "typescript": "5.3.3",
-    "typescript-eslint": "7.1.0",
-    "webpack": "5.90.3",
-    "webpack-cli": "5.1.4"
+    "typescript-eslint": "7.1.0"
   },
   "dependencies": {
     "@fontsource/dm-mono": "5.0.18",

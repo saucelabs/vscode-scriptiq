@@ -114,7 +114,10 @@
     "package": "npm run build:web -- --mode production && npm run build:root -- --minify",
     "prepare": "husky",
     "test": "vscode-test",
-    "vscode:prepublish": "npm run package"
+    "vscode:prepublish": "npm run package",
+    "watch": "npm-run-all --parallel watch:root watch:web",
+    "watch:root": "npm run build:root -- --sourcemap --watch",
+    "watch:web": "npm --prefix webview-ui/connect run build -- --watch"
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",
@@ -132,6 +135,7 @@
     "glob": "10.3.10",
     "husky": "9.0.11",
     "mocha": "10.3.0",
+    "npm-run-all": "4.1.5",
     "prettier": "3.2.5",
     "pretty-quick": "4.0.0",
     "ts-loader": "9.5.1",

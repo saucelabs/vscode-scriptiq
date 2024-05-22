@@ -136,3 +136,5 @@ node_modules/
 media/screenshots/
 media/data/
 
+# VSCode Extension Package
+*.vsix

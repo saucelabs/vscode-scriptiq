@@ -1,6 +1,6 @@
 # ScriptIQ: AI-powered Mobile App Testing for Visual Studio Code
 
-**Write mobile app test scripts without writing code!**
+**Test mobile apps without writing code!**
 
 ScriptIQ is a revolutionary Visual Studio Code extension that empowers you to test mobile applications on real devices using natural language. Simply describe the goal you want to achieve within your app, and ScriptIQ's powerful AI engine will automatically navigate the app and reach your desired outcome.
 

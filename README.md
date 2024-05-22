@@ -24,6 +24,6 @@ ScriptIQ is a Visual Studio Code extension that empowers you to test mobile appl
 4. Click "Generate" to let ScriptIQ navigate your app on a Sauce Labs real device.
 5. Review the test results and iterate on your test goals as needed.
 
-Say goodbye to complex scripting languages! ScriptIQ brings the power of AI to mobile app testing, making it easier, and more accessible than ever.
+ScriptIQ brings the power of AI to mobile app testing, making it easier, and more accessible than ever.
 
 For more information and documentation, please visit the ScriptIQ website (coming soon).

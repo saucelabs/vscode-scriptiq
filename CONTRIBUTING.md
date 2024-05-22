@@ -2,7 +2,7 @@
 
 ## Development Requirements
 
-- [Node.js](https://nodejs.org/) (v22 or higher)
+- [Node.js](https://nodejs.org/) (v20 or higher)
 - [Visual Studio Code](https://code.visualstudio.com/) (v1.86 or higher)
 
 ## Install Dependencies

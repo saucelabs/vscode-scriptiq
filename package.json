@@ -8,6 +8,7 @@
     "url": "git+ssh://git@github.com/saucelabs/vscode-scriptiq.git"
   },
   "publisher": "saucelabs-devx",
+  "icon": "media/icons/Lowcode_icon_storefront.png",
   "keywords": [
     "llm",
     "gpt",

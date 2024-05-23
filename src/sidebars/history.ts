@@ -80,11 +80,11 @@ export class HistoryProvider
 
   async deleteAll() {
     try {
-      await this._memento.clearCache();
+      await this._memento.clearHistory();
       this._storage.clearHistory();
       toast.showInfo('Test record history cache successfully cleared.');
     } catch (e) {
-      toast.showError(`Failed to clear cache: ${errMsg(e)}`);
+      toast.showError(`Failed to clear history: ${errMsg(e)}`);
     }
 
     this.refresh();

@@ -1,26 +1,29 @@
-# VSCode ScriptIQ Extension
+# ScriptIQ: AI-powered Mobile App Testing for Visual Studio Code
 
-## Local Development
+**Test mobile apps without writing code!**
 
-Instructions to run this VSCode Extension.
+ScriptIQ is a Visual Studio Code extension that empowers you to test mobile applications on real devices using natural language. Simply describe the goal you want to achieve within your app, and ScriptIQ's powerful AI engine will automatically navigate the app and reach your desired outcome.
 
-1. Install the npm dependencies.
+**Boost your mobile app testing efficiency with ScriptIQ:**
 
-```bash
-npm i
-```
+- **Intuitive Testing:** Describe your test goals in plain English, making mobile app testing accessible to everyone.
+- **AI-powered Automation:** ScriptIQ leverages AI to intelligently interact with your mobile app, mimicking real user behavior.
+- **Real Device Testing:** Validate your app's functionality directly on real mobile devices, ensuring a true-to-life testing experience.
 
-2. Open this project in a VS Code Window: go to `File` -> `Open Folder`.
-3. Run the extension using the F5 button on your keyboard, or click: `Run` -> `Debugging`. To run against a local Sauce Labs environment, make sure to select the "Run Extension Local Dev" target first.
-4. Click the `Sauce Lab's ScriptIQ` icon on the left bar (should be the last icon on the left bar. It is a right arrow followed by an underscore). This will open a side bar.
-5. Fill in your Sauce Credentials into the appropriate fields and click `Save`. You only need to do this once.
-6. Click `New Test Generation`. This will open a window with an APK and test goal field.
-7. Fill in your App filename (which matches the filename of an App in your App Management).
+**Who is ScriptIQ for?**
 
-- To upload app, go to: [https://app.saucelabs.com/app-management](https://app.saucelabs.com/app-management)
+- Mobile app developers and testers of all skill levels.
+- QA professionals looking to automate mobile app testing.
+- Anyone who wants to test mobile apps on real devices without writing code.
 
-8. Fill in a goal field with what you want the test to accomplish.
-9. Click `Generate`. It may take a few minutes to generate the output.
-10. After the test has been generated, you can go through the candidate test steps. You can use the preselected identifier to interact with an element or select from the other options.
-11. At the end of the test steps, there is a button called `Create Script`. Click this to generate a script you can run outside of ScriptIQ.
-12. The left sidebar will store test history which you can reopen by clicking the links. (These can also be deleted to keep the sidebar organized)
+**Getting Started with ScriptIQ:**
+
+1. Install the ScriptIQ extension from the VS Code marketplace.
+2. Upload your mobile app file via [Sauce Labs App Management](https://app.saucelabs.com/app-management).
+3. Describe your test goal in plain English.
+4. Click "Generate" to let ScriptIQ navigate your app on a Sauce Labs real device.
+5. Review the test results and iterate on your test goals as needed.
+
+ScriptIQ brings the power of AI to mobile app testing, making it easier, and more accessible than ever.
+
+For more information and documentation, please visit the ScriptIQ website (coming soon).

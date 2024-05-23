@@ -51,7 +51,7 @@
       },
       {
         "command": "scriptiq-history.deleteAll",
-        "title": "Clear cache"
+        "title": "Clear History"
       },
       {
         "command": "scriptiq.showTestGenerationPanel",

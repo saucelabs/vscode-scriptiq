@@ -88,7 +88,7 @@
         },
         {
           "group": "navigation",
-          "when": "view == scriptiq-connect",
+          "when": "view == scriptiq-history",
           "command": "scriptiq.showTestGenerationPanel"
         }
       ]

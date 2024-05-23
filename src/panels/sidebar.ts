@@ -75,21 +75,21 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
           await this.deleteTestRecord(message.data);
           break;
         }
-        case 'clear-cache': {
-          await this.clearCache();
+        case 'clear-history': {
+          await this.clearHistory();
           break;
         }
       }
     }, this.context.subscriptions);
   }
 
-  public async clearCache() {
+  public async clearHistory() {
     try {
-      await this.memento.clearCache();
+      await this.memento.clearHistory();
       this.storage.clearHistory();
       toast.showInfo('Test record history cache successfully cleared.');
     } catch (e) {
-      toast.showError(`Failed to clear cache: ${errMsg(e)}`);
+      toast.showError(`Failed to clear history: ${errMsg(e)}`);
     }
 
     this.updateHistoryLinks();
@@ -228,7 +228,7 @@ export class SidebarViewProvider implements vscode.WebviewViewProvider {
       <div id="history" class="tab-pane fade${historyTabData}">
         <div class="tab-title history-title">
           <h5>History</h5>
-          <button id="clear-cache" class="clear-cache button button-minus-row risky">Clear Cache</button>
+          <button id="clear-history" class="clear-history button button-minus-row risky">Clear History</button>
         </div>
         <div class="history-empty">
           <p id="history-intro" class="intro-container">Your goal history will appear here once you generate tests. Click the <code>Create New Test</code> button to start.</p>

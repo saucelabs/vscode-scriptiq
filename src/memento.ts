@@ -54,9 +54,9 @@ export class Memento {
   }
 
   /**
-   * Clears the cache by emptying the list of stored test IDs.
+   * Clears the test history by emptying the list of stored test IDs.
    */
-  async clearCache() {
+  async clearHistory() {
     console.log('Removing test records from Memento...');
     await this.saveTestIDs([]);
   }

@@ -118,11 +118,14 @@
     "prepare": "husky",
     "test": "vscode-test",
     "vscode:prepublish": "npm run package",
-    "release": "release-it --github.release",
+    "release": "release-it --github.release --github.assets=*.vsix",
     "release:ci": "npm run release -- --ci --no-git.requireCleanWorkingDir",
     "release:patch": "npm run release -- patch",
     "release:minor": "npm run release -- minor",
     "release:major": "npm run release -- major"
+  },
+  "hooks": {
+    "after:bump": "vsce package"
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",

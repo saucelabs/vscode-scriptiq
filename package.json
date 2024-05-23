@@ -3,6 +3,7 @@
   "displayName": "ScriptIQ",
   "description": "A VSCode extension for auto-generating Android tests with LLM and Sauce Labs RDC.",
   "version": "0.0.2",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/saucelabs/vscode-scriptiq.git"
@@ -116,7 +117,15 @@
     "package": "npm run build:web -- --mode production && npm run build:root -- --minify",
     "prepare": "husky",
     "test": "vscode-test",
-    "vscode:prepublish": "npm run package"
+    "vscode:prepublish": "npm run package",
+    "release": "release-it --github.release --github.assets=*.vsix",
+    "release:ci": "npm run release -- --ci --no-git.requireCleanWorkingDir",
+    "release:patch": "npm run release -- patch",
+    "release:minor": "npm run release -- minor",
+    "release:major": "npm run release -- major"
+  },
+  "hooks": {
+    "after:bump": "vsce package"
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",
@@ -135,6 +144,7 @@
     "mocha": "10.3.0",
     "prettier": "3.2.5",
     "pretty-quick": "4.0.0",
+    "release-it": "17.3.0",
     "ts-loader": "9.5.1",
     "typescript": "5.3.3",
     "typescript-eslint": "7.1.0"

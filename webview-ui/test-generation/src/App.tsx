@@ -1,16 +1,25 @@
 import { vscode } from './utilities/vscode';
 import {
   VSCodeButton,
+  VSCodeCheckbox,
+  VSCodeDropdown,
+  VSCodeOption,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
 import { useState } from 'react';
 
 function App() {
-  const [appName, setAppName] = useState('asdfasdfasfd');
+  const [appName, setAppName] = useState('');
   const [testGoal, setTestGoal] = useState('');
 
   const handleGenerateTest = () => {
-    vscode.postMessage({});
+    vscode.postMessage({
+      action: '',
+      data: {
+        appName,
+        testGoal,
+      },
+    });
   };
 
   return (
@@ -43,7 +52,32 @@ function App() {
       >
         Test Goal
       </VSCodeTextField>
-      <section>Assert Inputs Additional settings</section>
+      <section>
+        <VSCodeTextField>Cut off steps at</VSCodeTextField>
+        <section
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <label style={{ marginBottom: '2px' }}>Platform</label>
+          <VSCodeDropdown>
+            <VSCodeOption>Android</VSCodeOption>
+            <VSCodeOption>iOS</VSCodeOption>
+          </VSCodeDropdown>
+        </section>
+        <VSCodeTextField>Platform Version (optional)</VSCodeTextField>
+        <section
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <label style={{ marginBottom: '2px' }}>Device Name (optional)</label>
+          <VSCodeCheckbox>Google (any)</VSCodeCheckbox>
+          <VSCodeCheckbox>Samsung (any)</VSCodeCheckbox>
+        </section>
+      </section>
       <section
         style={{
           display: 'flex',

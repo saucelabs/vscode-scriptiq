@@ -7,6 +7,6 @@
     "assets": ["*.vsix"]
   },
   "hooks": {
-    "after:bump": "vsce package"
+    "after:bump": "npx vsce package"
   }
 }

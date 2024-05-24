@@ -1,0 +1,12 @@
+{
+  "git": {
+    "requireCleanWorkingDir": false
+  },
+  "github": {
+    "release": true,
+    "assets": ["*.vsix"]
+  },
+  "hooks": {
+    "after:bump": "npx vsce package"
+  }
+}

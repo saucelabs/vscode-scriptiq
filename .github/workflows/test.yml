@@ -23,11 +23,11 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
-      - name: Build
-        run: npm run build
-
       - name: Lint
         run: npm run lint
 
       - name: Test
         run: xvfb-run -a npm run test
+
+      - name: Package
+        run: npx vsce package

@@ -107,7 +107,7 @@
   "scripts": {
     "build": "npm run build:web && npm run build:root",
     "build:root": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
-    "build:web": "npm --prefix webview-ui/connect run build --",
+    "build:web": "npm --prefix webview-ui/connect run build -- && npm --prefix webview-ui/test-generation run build --",
     "build-tests": "tsc -p . --outDir out",
     "build-watch": "npm run build:root -- --sourcemap --watch",
     "fmt": "prettier --write '**/*.{js,ts,mjs,cjs,jsx,tsx}'",

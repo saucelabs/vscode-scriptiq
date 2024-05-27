@@ -54,16 +54,9 @@ function App() {
       >
         Test Goal
       </VSCodeTextField>
-      <section
-        style={{ display: 'flex', flexDirection: 'column', rowGap: '8px' }}
-      >
+      <section className="inputs">
         <VSCodeTextField>Cut off steps at</VSCodeTextField>
-        <section
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
+        <section className="with-label">
           <label style={{ marginBottom: '2px' }}>Platform</label>
           <VSCodeDropdown>
             <VSCodeOption>Android</VSCodeOption>
@@ -71,24 +64,13 @@ function App() {
           </VSCodeDropdown>
         </section>
         <VSCodeTextField>Platform Version (optional)</VSCodeTextField>
-        <section
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
+        <section className="with-label">
           <label style={{ marginBottom: '2px' }}>Device Name (optional)</label>
           <VSCodeCheckbox>Google (any)</VSCodeCheckbox>
           <VSCodeCheckbox>Samsung (any)</VSCodeCheckbox>
         </section>
       </section>
-      <section
-        style={{
-          display: 'flex',
-          columnGap: '8px',
-          marginTop: '16px',
-        }}
-      >
+      <section className="buttons">
         <VSCodeButton onClick={handleGenerateTest}>Generate Test</VSCodeButton>
         <VSCodeButton
           appearance="secondary"

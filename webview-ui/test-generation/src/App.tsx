@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 import {
   VSCodeButton,
   VSCodeCheckbox,
@@ -8,12 +8,13 @@ import {
 } from '@vscode/webview-ui-toolkit/react';
 
 import './App.css';
+import { initialState, reducer } from './state';
 import { vscode } from './utilities/vscode';
 
 function App() {
-  const [appName, setAppName] = useState('');
-  const [testGoal, setTestGoal] = useState('');
+  const [state, dispatch] = useReducer(reducer, initialState);
 
+  const { appName, testGoal } = state;
   const handleGenerateTest = () => {
     vscode.postMessage({
       action: '',
@@ -31,7 +32,10 @@ function App() {
         value={appName}
         onInput={(e) => {
           if (e.target && 'value' in e.target) {
-            setAppName(e.target.value as string);
+            dispatch({
+              type: 'setAppName',
+              value: e.target.value as string,
+            });
           }
         }}
       >
@@ -41,7 +45,10 @@ function App() {
         value={testGoal}
         onInput={(e) => {
           if (e.target && 'value' in e.target) {
-            setTestGoal(e.target.value as string);
+            dispatch({
+              type: 'setTestGoal',
+              value: e.target.value as string,
+            });
           }
         }}
       >
@@ -83,8 +90,9 @@ function App() {
         <VSCodeButton
           appearance="secondary"
           onClick={() => {
-            setAppName('');
-            setTestGoal('');
+            dispatch({
+              type: 'clear',
+            });
           }}
         >
           Clear

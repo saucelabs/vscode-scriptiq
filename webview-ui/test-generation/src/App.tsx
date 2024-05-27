@@ -13,8 +13,8 @@ import { vscode } from './utilities/vscode';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-
   const { appName, testGoal } = state;
+
   const handleGenerateTest = () => {
     vscode.postMessage({
       action: '',
@@ -54,7 +54,9 @@ function App() {
       >
         Test Goal
       </VSCodeTextField>
-      <section style={{ display: 'flex', flexDirection: 'column' }}>
+      <section
+        style={{ display: 'flex', flexDirection: 'column', rowGap: '8px' }}
+      >
         <VSCodeTextField>Cut off steps at</VSCodeTextField>
         <section
           style={{
@@ -84,6 +86,7 @@ function App() {
         style={{
           display: 'flex',
           columnGap: '8px',
+          marginTop: '16px',
         }}
       >
         <VSCodeButton onClick={handleGenerateTest}>Generate Test</VSCodeButton>

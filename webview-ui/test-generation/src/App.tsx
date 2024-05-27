@@ -1,4 +1,4 @@
-import { vscode } from './utilities/vscode';
+import { useState } from 'react';
 import {
   VSCodeButton,
   VSCodeCheckbox,
@@ -6,7 +6,9 @@ import {
   VSCodeOption,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
-import { useState } from 'react';
+
+import './App.css';
+import { vscode } from './utilities/vscode';
 
 function App() {
   const [appName, setAppName] = useState('');
@@ -23,14 +25,7 @@ function App() {
   };
 
   return (
-    <main
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: '340px',
-        rowGap: '8px',
-      }}
-    >
+    <section className="inputs">
       <p>What do you want to test?</p>
       <VSCodeTextField
         value={appName}
@@ -52,7 +47,7 @@ function App() {
       >
         Test Goal
       </VSCodeTextField>
-      <section>
+      <section style={{ display: 'flex', flexDirection: 'column' }}>
         <VSCodeTextField>Cut off steps at</VSCodeTextField>
         <section
           style={{
@@ -95,7 +90,7 @@ function App() {
           Clear
         </VSCodeButton>
       </section>
-    </main>
+    </section>
   );
 }
 

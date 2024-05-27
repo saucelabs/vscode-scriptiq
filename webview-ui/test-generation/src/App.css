@@ -1,0 +1,6 @@
+.inputs {
+  display: flex;
+  flex-direction: column;
+  max-width: 340px;
+  row-gap: 8px;
+}

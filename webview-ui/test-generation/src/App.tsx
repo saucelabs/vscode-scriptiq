@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import {
   VSCodeButton,
   VSCodeCheckbox,
@@ -13,6 +13,86 @@ import { vscode } from './utilities/vscode';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    function handler(event: any) {
+      const message = event.data; // The json data that the extension sent
+      switch (message.action) {
+        case 'update-test-progress':
+          // setStatus(message.data.status_message);
+          break;
+        case 'show-video': {
+          // setStatus(message.data.status_message);
+          // const { username, accessKey, region } = message.credentials;
+          // startDeviceWebsocket(
+          //   username,
+          //   accessKey,
+          //   region,
+          //   message.data.session_id,
+          // );
+          break;
+        }
+        case 'show-test-record':
+          // Append answer.
+          // testHeader.style.display = 'block';
+          // console.log('Reading in history');
+          // console.log(message.data);
+
+          // const testRecord = message.data?.testRecord ?? {};
+          // const votes = message.data?.votes ?? [];
+          // updateStepDataState(testRecord);
+          // updateState('votes', votes);
+          // generateFullTestDisplay();
+          break;
+        case 'show-new-test-record':
+          // FIXME The difference between this and 'show-test-record' is confusing.
+          // `show-test-record` is used to display the test record in the panel
+          // when loading the test record from the history.
+          // While `show-new-test-record` is the finished record that comes fresh
+          // from the test generation process.
+          // testGallery.innerHTML = '';
+          // outputScript.innerHTML = '';
+          // vscode.postMessage({
+          //   action: 'save-steps',
+          //   data: message.data,
+          // });
+          // updateStepDataState(message.data);
+          // generateFullTestDisplay();
+          break;
+        case 'recover-from-error':
+          // generateButton?.removeAttribute('disabled');
+          // stopButton?.setAttribute('disabled', '');
+          // // Retain the previous state, which may contain a useful error message
+          // // or snapshot of the video.
+          // vscode.postMessage({
+          //   action: 'enable-test-record-navigation',
+          // });
+          // if (ws !== undefined) {
+          //   ws.close();
+          // }
+          break;
+        case 'finalize':
+          // testGallery.innerHTML = '';
+          // generateButton?.removeAttribute('disabled');
+          // stopButton?.setAttribute('disabled', '');
+          // vscode.postMessage({
+          //   action: 'enable-test-record-navigation',
+          // });
+          // if (ws !== undefined) {
+          //   ws.close();
+          // }
+          break;
+        case 'clear':
+          // clearScreen();
+          break;
+      }
+    }
+
+    window.addEventListener('message', handler);
+
+    return () => window.removeEventListener('message', handler);
+  }, [dispatch]);
+
   const { appName, testGoal } = state;
 
   const handleGenerateTest = () => {

@@ -93,7 +93,7 @@ function App() {
     return () => window.removeEventListener('message', handler);
   }, [dispatch]);
 
-  const { appName, testGoal } = state;
+  const { appName, testGoal, maxSteps } = state;
 
   const handleGenerateTest = () => {
     vscode.postMessage({
@@ -135,7 +135,19 @@ function App() {
         Test Goal
       </VSCodeTextField>
       <section className="inputs">
-        <VSCodeTextField>Cut off steps at</VSCodeTextField>
+        <VSCodeTextField
+          value={maxSteps.toString()}
+          onInput={(e) => {
+            if (e.target && 'value' in e.target) {
+              dispatch({
+                type: 'setMaxSteps',
+                value: parseInt(e.target.value as string),
+              });
+            }
+          }}
+        >
+          Cut off steps at
+        </VSCodeTextField>
         <section className="with-label">
           <label style={{ marginBottom: '2px' }}>Platform</label>
           <VSCodeDropdown>

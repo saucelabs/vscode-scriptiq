@@ -32,6 +32,7 @@ export type Action =
   | { type: 'clear' }
   | { type: 'setAppName'; value: State['appName'] }
   | { type: 'setTestGoal'; value: State['testGoal'] }
+  | { type: 'setMaxSteps'; value: State['maxSteps'] }
   | { type: 'startGeneration' }
   | { type: 'stopGeneration' };
 
@@ -48,6 +49,11 @@ export const reducer = (current: State, action: Action): State => {
       return {
         ...current,
         testGoal: action.value,
+      };
+    case 'setMaxSteps':
+      return {
+        ...current,
+        maxSteps: action.value,
       };
     case 'startGeneration':
       return {

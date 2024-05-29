@@ -93,7 +93,7 @@ function App() {
     return () => window.removeEventListener('message', handler);
   }, [dispatch]);
 
-  const { appName, testGoal, maxSteps } = state;
+  const { appName, testGoal, maxSteps, platform } = state;
 
   const handleGenerateTest = () => {
     vscode.postMessage({
@@ -139,6 +139,7 @@ function App() {
           value={maxSteps.toString()}
           onInput={(e) => {
             if (e.target && 'value' in e.target) {
+              // TODO: Value needs to be validated
               dispatch({
                 type: 'setMaxSteps',
                 value: parseInt(e.target.value as string),
@@ -150,12 +151,34 @@ function App() {
         </VSCodeTextField>
         <section className="with-label">
           <label style={{ marginBottom: '2px' }}>Platform</label>
-          <VSCodeDropdown>
+          <VSCodeDropdown
+            onInput={(e) => {
+              if (e.target && 'value' in e.target) {
+                dispatch({
+                  type: 'setPlatformName',
+                  value: e.target.value as 'iOS' | 'Android',
+                });
+              }
+            }}
+            value={platform.name}
+          >
             <VSCodeOption>Android</VSCodeOption>
             <VSCodeOption>iOS</VSCodeOption>
           </VSCodeDropdown>
         </section>
-        <VSCodeTextField>Platform Version (optional)</VSCodeTextField>
+        <VSCodeTextField
+          onInput={(e) => {
+            if (e.target && 'value' in e.target) {
+              dispatch({
+                type: 'setPlatformVersion',
+                value: e.target.value as string,
+              });
+            }
+          }}
+          value={platform.version}
+        >
+          Platform Version (optional)
+        </VSCodeTextField>
         <section className="with-label">
           <label style={{ marginBottom: '2px' }}>Device Name (optional)</label>
           <VSCodeCheckbox>Google (any)</VSCodeCheckbox>

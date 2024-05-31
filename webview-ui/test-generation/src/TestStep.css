@@ -8,6 +8,12 @@ section.test-step header {
   display: flex;
   flex-direction: row;
   column-gap: 8px;
+  align-items: center;
+}
+
+section.test-step header .icon {
+  width: 16px;
+  height: 16px;
 }
 
 section.test-step .body {

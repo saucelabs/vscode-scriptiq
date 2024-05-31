@@ -1,13 +1,19 @@
 import { TestRecord } from './../../../src/types';
 import './TestStep.css';
+import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
+import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 
 export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
   return (
     <section className="test-step">
       <header>
-        <div className="action-icon">Action Icon</div>
+        <div className="action-icon">
+          <img className="icon" src={tapIconUrl} />
+        </div>
         <div className="title">Step 1</div>
-        <div className="fullscreen">Fullscreen icon</div>
+        <div className="fullscreen">
+          <img className="icon" src={fullScreenIcon} />
+        </div>
       </header>
       <div className="body">
         <section className="screenshot">

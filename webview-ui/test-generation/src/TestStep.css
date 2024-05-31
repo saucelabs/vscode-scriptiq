@@ -2,6 +2,7 @@ section.test-step {
   display: flex;
   flex-direction: column;
   padding: 8px;
+  row-gap: 4px;
 }
 
 section.test-step header {
@@ -20,12 +21,20 @@ section.test-step .body {
   display: flex;
   flex-direction: row;
   column-gap: 16px;
+  flex-grow: 1;
 }
 
 section.test-step .body .description {
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
+  row-gap: 4px;
+  flex-grow: 1;
+}
+
+section.test-step .body .description section {
+  background: var(--Sidebar-bg, rgba(120, 132, 131, 0.08));
+  border-radius: 2px;
+  padding: 4px;
 }
 
 section.step-info {

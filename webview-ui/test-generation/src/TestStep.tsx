@@ -27,7 +27,10 @@ export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
         </section>
         <section className="description">
           <section className="reasoning">
-            <header>ScriptIQ Reasoning</header>
+            <header>
+              <div>Icon</div>
+              <div>ScriptIQ Reasoning</div>
+            </header>
             <p className="goal">
               The goal is to skip logging in, find a plumber and then look at
               the reviews. The first step is to skip logging in.{' '}

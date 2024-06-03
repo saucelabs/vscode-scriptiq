@@ -3,6 +3,8 @@ section.test-step {
   flex-direction: column;
   padding: 8px;
   row-gap: 4px;
+  background-color: rgb(23, 23, 23);
+  color: rgb(204, 204, 204);
 }
 
 section.test-step header {
@@ -31,7 +33,7 @@ section.test-step .body .description {
   flex-grow: 1;
 }
 
-section.test-step .body .description section {
+section.test-step .body .description > section {
   background: var(--Sidebar-bg, rgba(120, 132, 131, 0.08));
   border-radius: 2px;
   padding: 4px;
@@ -42,5 +44,31 @@ section.step-info {
 }
 
 section.test-step header .title {
+  text-transform: uppercase;
+}
+
+.assertions header {
+  text-transform: uppercase;
+}
+
+.assertions ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.assertions li {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.assertions li > div {
+  display: flex;
+  background: rgba(234, 234, 234, 0.1);
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+
+.assertions .value {
   text-transform: uppercase;
 }

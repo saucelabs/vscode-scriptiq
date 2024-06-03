@@ -2,6 +2,7 @@ import { TestRecord } from './../../../src/types';
 import './TestStep.css';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
+import botIcon from './icons/icn-bot-fill.svg';
 
 export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
   return (
@@ -28,13 +29,15 @@ export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
         <section className="description">
           <section className="reasoning">
             <header>
-              <div>Icon</div>
+              <div>
+                <img className="icon" src={botIcon} />
+              </div>
               <div>ScriptIQ Reasoning</div>
             </header>
-            <p className="goal">
+            <div className="goal">
               The goal is to skip logging in, find a plumber and then look at
-              the reviews. The first step is to skip logging in.{' '}
-            </p>
+              the reviews. The first step is to skip logging in.
+            </div>
             <ul className="screen-descriptions">
               <li>Sign up page.</li>
               <li>Yelp sign up page.</li>
@@ -45,10 +48,12 @@ export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
             <header>Assertions</header>
             <ul>
               <li>
-                <div className="description">
-                  Home page with search bar and categories.
+                <div>
+                  <div className="description">
+                    Home page with search bar and categories.
+                  </div>
+                  <div className="value">True</div>
                 </div>
-                <div className="value">True</div>
               </li>
             </ul>
           </section>

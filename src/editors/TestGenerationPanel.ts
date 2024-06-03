@@ -30,6 +30,9 @@ export class TestGenerationPanel {
   private _socket: WebSocket | undefined;
   private _disposables: Disposable[] = [];
 
+  // private _messages: any[];
+  private _msgQueue: MessageQueue;
+
   private constructor(
     panel: WebviewPanel,
     context: ExtensionContext,
@@ -52,13 +55,15 @@ export class TestGenerationPanel {
 
     // Set an event listener to listen for messages passed from the webview context
     this._setWebviewMessageListener(this._panel.webview);
+
+    this._msgQueue = new MessageQueue(this._panel.webview);
   }
 
   public static render(
     context: ExtensionContext,
     memento: Memento,
     storage: GlobalStorage,
-    // testID?: string,
+    testID?: string,
   ) {
     if (TestGenerationPanel.currentPanel) {
       // If the webview panel already exists reveal it
@@ -84,6 +89,14 @@ export class TestGenerationPanel {
         storage,
       );
     }
+    if (testID) {
+      TestGenerationPanel.currentPanel.showTestRecord(testID);
+      return;
+    }
+
+    TestGenerationPanel.currentPanel._panel.webview.postMessage({
+      action: 'clear',
+    });
   }
 
   /**
@@ -102,6 +115,35 @@ export class TestGenerationPanel {
         disposable.dispose();
       }
     }
+  }
+
+  /**
+   * Show the test record in the webview.
+   */
+  private showTestRecord(testID: string) {
+    const testRecord = this._memento.getTestIDs().find((id) => id === testID);
+    if (!testRecord) {
+      toast.showError('Unable to find test record.');
+      return;
+    }
+
+    console.log('showTestRecord');
+    this._msgQueue.enqueue({
+      action: 'show-test-record',
+      data: {
+        testRecord: this._storage.getTestRecord(testID),
+        votes: this._storage.getVotes(testID),
+      },
+    });
+    // setTimeout(() => {
+    // TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+    //   action: 'show-test-record',
+    //   data: {
+    //     testRecord: this._storage.getTestRecord(testID),
+    //     votes: this._storage.getVotes(testID),
+    //   },
+    // });
+    // }, 100);
   }
 
   /**
@@ -176,6 +218,11 @@ export class TestGenerationPanel {
     webview.onDidReceiveMessage(
       async (message: any) => {
         switch (message.action) {
+          case 'ready':
+            console.log('webview ready');
+
+            this._msgQueue.ready();
+            break;
           case 'generate-test':
             try {
               this.askTestGenerationLLM(
@@ -365,5 +412,32 @@ export class TestGenerationPanel {
         toast.showError(err.message);
       },
     });
+  }
+}
+
+class MessageQueue {
+  private _messages: any[];
+  private _ready: boolean;
+  private _webview: Webview;
+
+  constructor(webview: Webview) {
+    this._ready = false;
+    this._messages = [];
+    this._webview = webview;
+  }
+
+  enqueue(msg: any) {
+    if (!this._ready) {
+      this._messages.push(msg);
+      return;
+    }
+
+    this._webview.postMessage(msg);
+  }
+
+  ready() {
+    this._ready = true;
+
+    this._messages.forEach((msg) => this._webview.postMessage(msg));
   }
 }

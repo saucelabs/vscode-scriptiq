@@ -11,13 +11,16 @@ import './App.css';
 import { initialState, reducer } from './state';
 import { vscode } from './utilities/vscode';
 import { TestStep } from './TestStep';
+import { PostedMessage } from './types';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
+    console.log('attaching message listener');
     function handler(event: any) {
-      const message = event.data; // The json data that the extension sent
+      const message = event.data as PostedMessage; // The json data that the extension sent
+      console.log(message);
       switch (message.action) {
         case 'update-test-progress':
           // setStatus(message.data.status_message);
@@ -26,28 +29,33 @@ function App() {
             value: message.data.status_message,
           });
           break;
-        case 'show-video': {
-          // setStatus(message.data.status_message);
-          // const { username, accessKey, region } = message.credentials;
-          // startDeviceWebsocket(
-          //   username,
-          //   accessKey,
-          //   region,
-          //   message.data.session_id,
-          // );
-          break;
-        }
+        // case 'show-video': {
+        //   // setStatus(message.data.status_message);
+        //   // const { username, accessKey, region } = message.credentials;
+        //   // startDeviceWebsocket(
+        //   //   username,
+        //   //   accessKey,
+        //   //   region,
+        //   //   message.data.session_id,
+        //   // );
+        //   break;
+        // }
         case 'show-test-record':
-          // Append answer.
-          // testHeader.style.display = 'block';
-          // console.log('Reading in history');
-          // console.log(message.data);
+          //   // Append answer.
+          //   // testHeader.style.display = 'block';
+          //   // console.log('Reading in history');
+          //   // console.log(message.data);
 
-          // const testRecord = message.data?.testRecord ?? {};
-          // const votes = message.data?.votes ?? [];
-          // updateStepDataState(testRecord);
-          // updateState('votes', votes);
-          // generateFullTestDisplay();
+          //   // const testRecord = message.data?.testRecord ?? {};
+          //   // const votes = message.data?.votes ?? [];
+          //   // updateStepDataState(testRecord);
+          //   // updateState('votes', votes);
+          //   // generateFullTestDisplay();
+          console.log(message);
+          dispatch({
+            type: 'showTestRecord',
+            value: message.data.testRecord,
+          });
           break;
         case 'show-new-test-record':
           // FIXME The difference between this and 'show-test-record' is confusing.
@@ -61,42 +69,55 @@ function App() {
             action: 'save-steps',
             data: message.data,
           });
+          dispatch({
+            type: 'showTestRecord',
+            value: message.data,
+          });
           // updateStepDataState(message.data);
           // generateFullTestDisplay();
           break;
-        case 'recover-from-error':
-          // generateButton?.removeAttribute('disabled');
-          // stopButton?.setAttribute('disabled', '');
-          // // Retain the previous state, which may contain a useful error message
-          // // or snapshot of the video.
-          // vscode.postMessage({
-          //   action: 'enable-test-record-navigation',
-          // });
-          // if (ws !== undefined) {
-          //   ws.close();
-          // }
-          break;
-        case 'finalize':
-          // testGallery.innerHTML = '';
-          // generateButton?.removeAttribute('disabled');
-          // stopButton?.setAttribute('disabled', '');
-          // vscode.postMessage({
-          //   action: 'enable-test-record-navigation',
-          // });
-          // if (ws !== undefined) {
-          //   ws.close();
-          // }
-          break;
-        case 'clear':
-          // clearScreen();
-          break;
+        // case 'recover-from-error':
+        //   // generateButton?.removeAttribute('disabled');
+        //   // stopButton?.setAttribute('disabled', '');
+        //   // // Retain the previous state, which may contain a useful error message
+        //   // // or snapshot of the video.
+        //   // vscode.postMessage({
+        //   //   action: 'enable-test-record-navigation',
+        //   // });
+        //   // if (ws !== undefined) {
+        //   //   ws.close();
+        //   // }
+        //   break;
+        // case 'finalize':
+        //   // testGallery.innerHTML = '';
+        //   // generateButton?.removeAttribute('disabled');
+        //   // stopButton?.setAttribute('disabled', '');
+        //   // vscode.postMessage({
+        //   //   action: 'enable-test-record-navigation',
+        //   // });
+        //   // if (ws !== undefined) {
+        //   //   ws.close();
+        //   // }
+        //   break;
+        // case 'clear':
+        //   // clearScreen();
+        //   break;
       }
     }
 
     window.addEventListener('message', handler);
 
-    return () => window.removeEventListener('message', handler);
+    return () => {
+      console.log('removing message handler');
+      window.removeEventListener('message', handler);
+    };
   }, [dispatch]);
+
+  useEffect(() => {
+    vscode.postMessage({
+      action: 'ready',
+    });
+  }, []);
 
   const { appName, testGoal, maxSteps, platform, status } = state;
 
@@ -149,7 +170,7 @@ function App() {
         </VSCodeTextField>
         <section className="inputs">
           <VSCodeTextField
-            value={maxSteps.toString()}
+            value={maxSteps?.toString() ?? '10'}
             onInput={(e) => {
               if (e.target && 'value' in e.target) {
                 // TODO: Value needs to be validated

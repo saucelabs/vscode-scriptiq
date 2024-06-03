@@ -1,17 +1,19 @@
+import { TestRecord } from '../../../src/types';
+
 export interface Assertion {
   value: string;
 }
 
 export interface Platform {
   name: 'iOS' | 'Android';
-  version: string;
+  version?: string;
 }
 
 export interface State {
   appName: string;
   testGoal: string;
   assertions: Assertion[];
-  maxSteps: number;
+  maxSteps?: number;
   platform: Platform;
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
   status: string;
@@ -38,6 +40,7 @@ export type Action =
   | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
+  | { type: 'showTestRecord'; value: TestRecord }
   | { type: 'startGeneration' }
   | { type: 'stopGeneration' };
 
@@ -90,6 +93,19 @@ export const reducer = (current: State, action: Action): State => {
       return {
         ...current,
         status: action.value,
+      };
+    case 'showTestRecord':
+      return {
+        ...current,
+        appName: action.value.app_name,
+        testGoal: action.value.goal,
+        platform: {
+          name: action.value.platform,
+          version: action.value.platform_version,
+        },
+        maxSteps: action.value.max_test_steps,
+        status: '',
+        generationState: 'idle',
       };
     default:
       return current;

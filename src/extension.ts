@@ -39,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   registerShowTestGenerationPanelCommand(context, (testID?: string) => {
-    TestGenerationPanel.render(context, memento, storage);
+    TestGenerationPanel.render(context, memento, storage, testID);
   });
 
   const connectProvider = new ConnectViewProvider(

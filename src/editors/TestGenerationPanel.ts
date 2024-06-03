@@ -1,20 +1,32 @@
 import {
   Disposable,
+  ExtensionContext,
   Uri,
   ViewColumn,
   Webview,
   WebviewPanel,
   window,
 } from 'vscode';
+import { Memento } from '../memento';
+import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
 
 export class TestGenerationPanel {
   public static currentPanel: TestGenerationPanel | undefined;
   private readonly _panel: WebviewPanel;
+  private _memento: Memento;
+  private _storage: GlobalStorage;
   private _disposables: Disposable[] = [];
 
-  private constructor(panel: WebviewPanel, extensionUri: Uri) {
+  private constructor(
+    panel: WebviewPanel,
+    context: ExtensionContext,
+    memento: Memento,
+    storage: GlobalStorage,
+  ) {
     this._panel = panel;
+    this._memento = memento;
+    this._storage = storage;
 
     // Set an event listener to listen for when the panel is disposed (i.e. when the user closes
     // the panel or when the panel is closed programmatically)
@@ -23,14 +35,19 @@ export class TestGenerationPanel {
     // Set the HTML content for the webview panel
     this._panel.webview.html = this._getWebviewContent(
       this._panel.webview,
-      extensionUri,
+      context.extensionUri,
     );
 
     // Set an event listener to listen for messages passed from the webview context
     this._setWebviewMessageListener(this._panel.webview);
   }
 
-  public static render(extensionUri: Uri) {
+  public static render(
+    context: ExtensionContext,
+    memento: Memento,
+    storage: GlobalStorage,
+    // testID?: string,
+  ) {
     if (TestGenerationPanel.currentPanel) {
       // If the webview panel already exists reveal it
       TestGenerationPanel.currentPanel._panel.reveal(ViewColumn.One);
@@ -44,13 +61,15 @@ export class TestGenerationPanel {
           // Enable JavaScript in the webview
           enableScripts: true,
           // Restrict the webview to only load resources from the `out` and `webview-ui/build` directories
-          localResourceRoots: [extensionUri],
+          localResourceRoots: [context.extensionUri],
         },
       );
 
       TestGenerationPanel.currentPanel = new TestGenerationPanel(
         panel,
-        extensionUri,
+        context,
+        memento,
+        storage,
       );
     }
   }
@@ -121,7 +140,7 @@ export class TestGenerationPanel {
           />
           <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';"
+            content="style-src ${webview.cspSource}; script-src 'nonce-${nonce}';"
           />
           <link rel="stylesheet" type="text/css" href="${stylesUri}" />
           <title>Test Generation</title>

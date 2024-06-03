@@ -3,7 +3,6 @@ section.test-step {
   flex-direction: column;
   padding: 8px;
   row-gap: 4px;
-  background-color: rgb(23, 23, 23);
   color: rgb(204, 204, 204);
 }
 

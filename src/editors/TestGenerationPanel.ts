@@ -15,6 +15,12 @@ import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
 import { Credentials, Platform } from '../types';
 import { generateTest } from '../api/llm/ws';
+import {
+  executeClearHistoryLinkSelectionCommand,
+  executeUpdateHistoryLinksCommand,
+} from '../commands';
+
+const MAX_HISTORY_LEN = 100;
 
 export class TestGenerationPanel {
   public static currentPanel: TestGenerationPanel | undefined;
@@ -168,7 +174,7 @@ export class TestGenerationPanel {
    */
   private _setWebviewMessageListener(webview: Webview) {
     webview.onDidReceiveMessage(
-      (message: any) => {
+      async (message: any) => {
         switch (message.action) {
           case 'generate-test':
             try {
@@ -189,11 +195,39 @@ export class TestGenerationPanel {
               toast.showError(errMsg(e));
             }
             return;
+          case 'save-steps': {
+            await this.addRecordToHistory(message.data.test_id);
+            return;
+          }
         }
       },
       undefined,
       this._disposables,
     );
+  }
+
+  public async addRecordToHistory(testID: string) {
+    try {
+      const history = this._memento.getTestIDs();
+
+      if (history.includes(testID)) {
+        console.log('Test record already in history');
+        return;
+      }
+
+      if (history.length == MAX_HISTORY_LEN) {
+        const removedRecord = history.pop();
+        if (removedRecord) {
+          this._storage.deleteTestRecord(removedRecord);
+        }
+      }
+      history.unshift(testID);
+      await this._memento.saveTestIDs(history);
+    } catch (e) {
+      toast.showError(`Failed to add test record to history: ${errMsg(e)}`);
+    }
+
+    executeUpdateHistoryLinksCommand(0);
   }
 
   private getCredentials(): Credentials | undefined {

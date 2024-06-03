@@ -14,6 +14,7 @@ export interface State {
   maxSteps: number;
   platform: Platform;
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
+  status: string;
 }
 
 export const initialState: State = {
@@ -26,6 +27,7 @@ export const initialState: State = {
     version: '10',
   },
   generationState: 'idle',
+  status: '',
 };
 
 export type Action =
@@ -35,6 +37,7 @@ export type Action =
   | { type: 'setMaxSteps'; value: State['maxSteps'] }
   | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
+  | { type: 'setStatus'; value: State['status'] }
   | { type: 'startGeneration' }
   | { type: 'stopGeneration' };
 
@@ -82,6 +85,11 @@ export const reducer = (current: State, action: Action): State => {
       return {
         ...current,
         generationState: 'idle',
+      };
+    case 'setStatus':
+      return {
+        ...current,
+        status: action.value,
       };
     default:
       return current;

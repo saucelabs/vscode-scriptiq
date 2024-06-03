@@ -7,15 +7,21 @@ import {
   WebviewPanel,
   window,
 } from 'vscode';
+import { WebSocket } from 'undici';
+import * as toast from '../toast';
+import { errMsg } from '../error';
 import { Memento } from '../memento';
 import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
+import { Credentials, Platform } from '../types';
+import { generateTest } from '../api/llm/ws';
 
 export class TestGenerationPanel {
   public static currentPanel: TestGenerationPanel | undefined;
   private readonly _panel: WebviewPanel;
   private _memento: Memento;
   private _storage: GlobalStorage;
+  private _socket: WebSocket | undefined;
   private _disposables: Disposable[] = [];
 
   private constructor(
@@ -162,22 +168,168 @@ export class TestGenerationPanel {
    */
   private _setWebviewMessageListener(webview: Webview) {
     webview.onDidReceiveMessage(
-      (_message: any) => {
-        // const command = message.command;
-        // const text = message.text;
-        // switch (
-        //   command
-        //   //   case "hello":
-        //   //     // Code that should run in response to the hello message command
-        //   //     // window.showInformationMessage(text);
-        //   //     return;
-        //   //   // Add more switch case statements here as more webview message commands
-        //   //   // are created within the webview context (i.e. inside media/main.js)
-        // ) {
-        // }
+      (message: any) => {
+        switch (message.action) {
+          case 'generate-test':
+            try {
+              this.askTestGenerationLLM(
+                message.data.goal,
+                message.data.app_name,
+                message.data.max_test_steps,
+                message.data.devices,
+                message.data.platform,
+                message.data.platform_version,
+                message.data.assertions,
+                '',
+              );
+            } catch (e) {
+              TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+                action: 'recover-from-error',
+              });
+              toast.showError(errMsg(e));
+            }
+            return;
+        }
       },
       undefined,
       this._disposables,
     );
+  }
+
+  private getCredentials(): Credentials | undefined {
+    const creds = this._memento.getCredentials();
+    if (!creds) {
+      toast.showError('Please add your credentials!');
+      return creds;
+    }
+
+    // executeClearHistoryLinkSelectionCommand();
+
+    if (!creds.username) {
+      toast.showError('Please add your Username!');
+    }
+    if (!creds.accessKey) {
+      toast.showError('Please add your Access Key!');
+    }
+    if (!creds.region) {
+      toast.showError('Please add your Region!');
+    }
+
+    return creds;
+  }
+
+  /**
+   * Generate test using an LLM.
+   */
+  private askTestGenerationLLM(
+    goal: string,
+    appName: string,
+    maxTestSteps: number,
+    devices: string[],
+    platform: Platform,
+    platformVersion: string,
+    assertions: string[],
+    prevGoal: string,
+  ) {
+    const creds = this.getCredentials();
+    // executeClearHistoryLinkSelectionCommand();
+    goal = goal.trim();
+    appName = appName.trim();
+
+    if (!creds) {
+      throw new Error(
+        'Empty credentials detected. Please verify and update your configuration settings.',
+      );
+    }
+    if (!goal) {
+      throw new Error('No goal specified. Please add a goal.');
+    }
+    if (!appName) {
+      throw new Error(
+        'Application name is missing. Please specify an app filename.',
+      );
+    }
+
+    // Notes: Temporary solution for validating the application name.
+    // This check can be removed once a better method for retrieving the
+    // application name is implemented, such as fetching an app list and
+    // allowing selection from a dropdown menu.
+    const androidFileEnding = /.+\.(apk|aab)$/;
+    if (platform === 'Android' && !androidFileEnding.test(appName)) {
+      throw new Error(
+        'Invalid app filename. For Android, allowed file types are: apk, aab.',
+      );
+    }
+    const iosFileEnding = /.+\.(ipa|app)$/;
+    if (platform === 'iOS' && !iosFileEnding.test(appName)) {
+      throw new Error(
+        'Invalid app filename. For iOS, allowed file types are: ipa, app.',
+      );
+    }
+
+    if (maxTestSteps < 1 || maxTestSteps > 20) {
+      throw new Error(
+        'Invalid number of test steps. Please enter a value between 1 and 20.',
+      );
+    }
+
+    // this.testRecordNavigation = false;
+
+    const [ws, observable] = generateTest(
+      this._storage,
+      goal,
+      appName,
+      maxTestSteps,
+      creds.username,
+      creds.accessKey,
+      creds.region,
+      devices,
+      platform,
+      platformVersion,
+      assertions,
+      prevGoal,
+      creds,
+    );
+    this._socket = ws;
+
+    observable.subscribe({
+      next: (data) => {
+        let action = '';
+        switch (data.type) {
+          case 'com.saucelabs.scriptiq.testgen.status':
+            action = 'update-test-progress';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.job':
+            action = 'show-video';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.step':
+            // FIXME it's treated like a status update; so why have it in the first place?
+            action = 'update-test-progress';
+            break;
+          case 'com.saucelabs.scriptiq.testgen.record':
+            action = 'show-new-test-record';
+            break;
+          case 'com.saucelabs.scriptiq.done':
+            action = 'finalize';
+            break;
+          case 'com.saucelabs.scriptiq.stopped':
+            action = 'finalize';
+        }
+
+        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+          action: action,
+          credentials: creds,
+          data: data.result,
+        });
+      },
+      error: (err: Error) => {
+        console.error(`Test generation failed: ${err}`);
+
+        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+          action: 'recover-from-error',
+        });
+        toast.showError(err.message);
+      },
+    });
   }
 }

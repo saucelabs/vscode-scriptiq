@@ -71,13 +71,6 @@ export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
       </div>
 
       <footer>
-        <section className="note">
-          <header>
-            <div className="icon">Info</div>
-            <div>Note</div>
-          </header>
-          <p className="note">Script did not reach the end goal.</p>
-        </section>
         <section className="controls">
           <button>View Test on Sauce</button>
           <button>Download Test Script</button>

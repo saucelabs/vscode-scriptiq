@@ -15,10 +15,7 @@ import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
 import { Credentials, Platform } from '../types';
 import { generateTest } from '../api/llm/ws';
-import {
-  executeClearHistoryLinkSelectionCommand,
-  executeUpdateHistoryLinksCommand,
-} from '../commands';
+import { executeUpdateHistoryLinksCommand } from '../commands';
 
 const MAX_HISTORY_LEN = 100;
 

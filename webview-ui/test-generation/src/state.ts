@@ -1,4 +1,4 @@
-import { TestRecord } from '../../../src/types';
+import { TestRecord, TestStep } from '../../../src/types';
 
 export interface Assertion {
   value: string;
@@ -17,6 +17,7 @@ export interface State {
   platform: Platform;
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
   status: string;
+  steps?: TestStep[];
 }
 
 export const initialState: State = {
@@ -106,6 +107,7 @@ export const reducer = (current: State, action: Action): State => {
         maxSteps: action.value.max_test_steps,
         status: '',
         generationState: 'idle',
+        steps: action.value.all_steps,
       };
     default:
       return current;

@@ -119,7 +119,7 @@ function App() {
     });
   }, []);
 
-  const { appName, testGoal, maxSteps, platform, status } = state;
+  const { appName, testGoal, maxSteps, platform, status, steps } = state;
 
   const handleGenerateTest = () => {
     vscode.postMessage({
@@ -238,10 +238,14 @@ function App() {
         </section>
       </section>
       <section className="status">{status}</section>
-      {/* <section className="steps">
-        <h5>Test Steps</h5>
-        <TestStep />
-      </section> */}
+      {steps && (
+        <section className="steps">
+          <h5>Test Steps</h5>
+          {steps.map((step) => (
+            <TestStep step={step} />
+          ))}
+        </section>
+      )}
     </main>
   );
 }

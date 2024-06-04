@@ -30,7 +30,6 @@ export class TestGenerationPanel {
   private _socket: WebSocket | undefined;
   private _disposables: Disposable[] = [];
 
-  // private _messages: any[];
   private _msgQueue: MessageQueue;
 
   private constructor(

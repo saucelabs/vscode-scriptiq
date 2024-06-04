@@ -1,10 +1,10 @@
-import { TestRecord } from './../../../src/types';
+import { TestStep as TestStepRecord } from './../../../src/types';
 import './TestStep.css';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 
-export function TestStep({ testRecord: _tr }: { testRecord?: TestRecord }) {
+export function TestStep({ step }: { step: TestStepRecord }) {
   return (
     <section className="test-step">
       <header>

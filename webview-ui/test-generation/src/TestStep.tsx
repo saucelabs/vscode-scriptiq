@@ -76,13 +76,6 @@ export function TestStep({ step }: { step: TestStepRecord }) {
           )}
         </section>
       </div>
-
-      <footer>
-        <section className="controls">
-          <button>View Test on Sauce</button>
-          <button>Download Test Script</button>
-        </section>
-      </footer>
     </section>
   );
 }

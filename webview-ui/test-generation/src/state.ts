@@ -1,9 +1,5 @@
 import { TestRecord, TestStep } from '../../../src/types';
 
-export interface Assertion {
-  value: string;
-}
-
 export interface Platform {
   name: 'iOS' | 'Android';
   version?: string;
@@ -12,7 +8,7 @@ export interface Platform {
 export interface State {
   appName: string;
   testGoal: string;
-  assertions: Assertion[];
+  assertions: string[];
   maxSteps?: number;
   platform: Platform;
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';

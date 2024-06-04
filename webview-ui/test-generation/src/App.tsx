@@ -12,6 +12,7 @@ import { initialState, reducer } from './state';
 import { vscode } from './utilities/vscode';
 import { TestStep } from './TestStep';
 import { PostedMessage } from './types';
+import { AssertionInput } from './AssertionInput';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -166,6 +167,12 @@ function App() {
         >
           Test Goal
         </VSCodeTextField>
+        <section className="with-label">
+          <label style={{ marginBottom: '2px' }}>
+            Assert Inputs (optional)
+          </label>
+          <AssertionInput dispatch={dispatch} />
+        </section>
         <section className="inputs">
           <VSCodeTextField
             value={maxSteps?.toString() ?? '10'}

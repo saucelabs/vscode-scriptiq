@@ -1,18 +1,10 @@
-import { CodeTemplate } from './base';
+import { AbstractBaseGenerator } from './base';
 
-// @ts-check
-export class AppiumPython extends CodeTemplate {
+export class AppiumPython extends AbstractBaseGenerator {
   name = 'appium_python';
 
-  /**
-   * Code to find element
-   * @param {string} id_type identifier type (resource-id, text, content-desc, class)
-   * @param {string} id_value value of the identifier
-   * @param {number} id_index identifier number when multiple of same type and value on screen
-   * @returns string with html of code
-   */
-  findElementCode(id_type, id_value, id_index = 0) {
-    var by_choice = 'XPATH';
+  findElementCode(id_type: string, id_value: string, id_index = 0) {
+    let by_choice = 'XPATH';
     if (id_type == 'resource-id') {
       by_choice = 'ID';
     } else if (id_type == 'content-desc') {
@@ -21,10 +13,9 @@ export class AppiumPython extends CodeTemplate {
       by_choice = 'CLASS_NAME';
     }
 
+    let value = `${id_value}`;
     if (by_choice == 'XPATH') {
-      var value = `//*[@${id_type}='${id_value}']`;
-    } else {
-      var value = `${id_value}`;
+      value = `//*[@${id_type}='${id_value}']`;
     }
 
     if (id_index == 0) {
@@ -34,20 +25,14 @@ export class AppiumPython extends CodeTemplate {
     }
   }
 
-  /**
-   * Generates the first line of code for each type of action.
-   * @param {dict} bestIdentifier the type, value and index
-   * @param {string} action (click, scroll, set_text)
-   * @returns {string} the line of code
-   */
-  genCodeLine(bestIdentifier, action, number = '') {
-    var findElement = this.findElementCode(
+  genCodeLine(bestIdentifier: any, action: string) {
+    const findElement = this.findElementCode(
       bestIdentifier.type,
       bestIdentifier.value,
       bestIdentifier.index,
     );
 
-    var codeStepText = ``;
+    let codeStepText = ``;
     if (action == 'set_text') {
       codeStepText += `element = ${findElement}${this.preNewLine}`;
     } else if (action == 'click') {
@@ -68,20 +53,13 @@ export class AppiumPython extends CodeTemplate {
     );
   }
 
-  /**
-   * Lines of code to swipe given a location of a element
-   * @param {string} direction
-   * @param {boolean} is_for_script is this in the full code output?
-   * @returns string with html of code
-   */
-  swipeCodeComment(direction, is_for_script = false, number = '') {
-    var frontLine;
+  swipeCodeComment(direction: string, is_for_script = false) {
+    let frontLine = '';
     if (is_for_script) {
       frontLine = this.preTab;
-    } else {
-      frontLine = ``;
     }
-    var text = ``;
+
+    let text = '';
     if (!is_for_script) {
       text += `${this.preNewLine}<span ${this.code_comment_class}># SWIPE CODE:</span>${this.preNewLine}`;
     }
@@ -101,21 +79,13 @@ export class AppiumPython extends CodeTemplate {
     return text;
   }
 
-  /**
-   * Lines of code to send text given an element
-   * @param {string} set_text that is being sent
-   * @param {boolean} is_for_script is this in the full code output?
-   * @returns string with html of code
-   */
-  sendTextCodeComment(set_text, is_for_script = false, number = '') {
-    var frontLine;
+  sendTextCodeComment(set_text: string, is_for_script = false) {
+    let frontLine = '';
     if (is_for_script) {
       frontLine = this.preTab;
-    } else {
-      frontLine = ``;
     }
 
-    var text = ``;
+    let text = ``;
     if (!is_for_script) {
       text += `${this.preNewLine}<span ${this.code_comment_class}># RETURN TEXT CODE:</span>${this.preNewLine}`;
     }
@@ -126,17 +96,13 @@ export class AppiumPython extends CodeTemplate {
     return text;
   }
 
-  /**
-   * Header for output script.
-   * @returns string with header
-   */
   scriptHeaderCode(
-    goal,
-    appName,
-    device_name,
-    platform_version,
-    region,
-    platform,
+    goal: string,
+    appName: string,
+    device_name: string,
+    platform_version: string,
+    region: string,
+    platform: string,
   ) {
     const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `<span ${this.code_parameter_class}>import</span> os
@@ -188,24 +154,17 @@ ${this.preTab}<span ${this.code_parameter_class}>print</span>(e)
 driver.quit()`;
   }
 
-  /**
-   * Split the comment across multiple lines. Cutoff when number of words exceeds 125 characters
-   * @param {string} comment to split
-   * @param {boolean} has_start_tab
-   * @param {string} starting_value header to comment
-   * @returns string of html of comment split into parts
-   */
-  splitComments(comment, has_start_tab = false, starting_value = ``) {
-    var startTab = ``;
+  splitComments(comment: string, has_start_tab = false, starting_value = ``) {
+    let startTab = '';
     if (has_start_tab) {
       startTab = this.preTab;
     }
 
     const cutoff_line_len = 125;
-    var comment_words = comment.split(' ');
-    var lines = [];
-    var curr_word = `${startTab}# ${starting_value}`;
-    for (let word of comment_words) {
+    const comment_words = comment.split(' ');
+    const lines = [];
+    let curr_word = `${startTab}# ${starting_value}`;
+    for (const word of comment_words) {
       curr_word += word + ' ';
       if (curr_word.length > cutoff_line_len) {
         lines.push(curr_word);
@@ -215,6 +174,6 @@ driver.quit()`;
     if (curr_word.length !== `${startTab}# `.length) {
       lines.push(curr_word);
     }
-    return `<span class=\"code-comment\">${lines.join('<br>')}</span>${this.preNewLine}`;
+    return `<span class="code-comment">${lines.join('<br>')}</span>${this.preNewLine}`;
   }
 }

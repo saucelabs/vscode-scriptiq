@@ -23,7 +23,6 @@ function App() {
       console.log(message);
       switch (message.action) {
         case 'update-test-progress':
-          // setStatus(message.data.status_message);
           dispatch({
             type: 'setStatus',
             value: message.data.status_message,
@@ -51,7 +50,6 @@ function App() {
           //   // updateStepDataState(testRecord);
           //   // updateState('votes', votes);
           //   // generateFullTestDisplay();
-          console.log(message);
           dispatch({
             type: 'showTestRecord',
             value: message.data.testRecord,

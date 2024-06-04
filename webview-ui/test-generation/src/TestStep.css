@@ -82,3 +82,29 @@ footer .controls {
   display: flex;
   column-gap: 8px;
 }
+
+/* -------------CODE EDITOR STYLES--------------- */
+
+.code-comment {
+  color: rgb(255, 143, 143); /*rgb(106, 2, 2)*/
+}
+
+.code-string {
+  color: var(--color-sauce-green) /*rgb(13, 137, 13)*/;
+}
+
+.code-class {
+  color: rgb(255, 145, 255); /*rgb(62, 4, 62)*/
+}
+
+.code-parameter {
+  color: rgb(139, 139, 249); /*darkblue*/
+}
+
+.code-number {
+  color: rgb(1, 228, 228); /*rgb(1, 96, 96)*/
+}
+
+.code-created-class {
+  color: rgb(255, 132, 24); /*rgb(62, 4, 62)*/
+}

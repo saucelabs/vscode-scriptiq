@@ -106,7 +106,6 @@ function App() {
     window.addEventListener('message', handler);
 
     return () => {
-      console.log('removing message handler');
       window.removeEventListener('message', handler);
     };
   }, [dispatch]);
@@ -127,21 +126,6 @@ function App() {
     status,
     steps,
   } = state;
-
-  const handleGenerateTest = () => {
-    vscode.postMessage({
-      action: 'generate-test',
-      data: {
-        goal: testGoal,
-        app_name: appName,
-        assertions: [],
-        max_test_steps: maxSteps,
-        devices: devices,
-        platform: platform.name,
-        platform_version: platform.version,
-      },
-    });
-  };
 
   return (
     <main>
@@ -273,7 +257,22 @@ function App() {
           </section>
         </section>
         <section className="buttons">
-          <VSCodeButton onClick={handleGenerateTest}>
+          <VSCodeButton
+            onClick={() => {
+              vscode.postMessage({
+                action: 'generate-test',
+                data: {
+                  goal: testGoal,
+                  app_name: appName,
+                  assertions: [],
+                  max_test_steps: maxSteps,
+                  devices: devices,
+                  platform: platform.name,
+                  platform_version: platform.version,
+                },
+              });
+            }}
+          >
             Generate Test
           </VSCodeButton>
           <VSCodeButton

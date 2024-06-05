@@ -256,7 +256,7 @@ function App() {
         <section className="steps">
           <h5>Test Steps</h5>
           {steps.map((step) => (
-            <TestStep step={step} />
+            <TestStep step={step} assertions={assertions} />
           ))}
         </section>
       )}

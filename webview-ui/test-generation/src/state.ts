@@ -139,7 +139,11 @@ export const reducer = (current: State, action: Action): State => {
         ...current,
         status: action.value,
       };
-    case 'showTestRecord':
+    case 'showTestRecord': {
+      let { user_screen_descs = [''] } = action.value;
+      if (user_screen_descs.length === 0) {
+        user_screen_descs = [''];
+      }
       return {
         ...current,
         appName: action.value.app_name,
@@ -152,7 +156,12 @@ export const reducer = (current: State, action: Action): State => {
         status: '',
         generationState: 'idle',
         steps: action.value.all_steps,
+        assertions: user_screen_descs.map((value) => ({
+          key: uuidv4(),
+          value,
+        })),
       };
+    }
     default:
       return current;
   }

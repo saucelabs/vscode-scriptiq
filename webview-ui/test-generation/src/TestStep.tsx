@@ -4,8 +4,15 @@ import './TestStep.css';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
+import { Assertion } from './state';
 
-export function TestStep({ step }: { step: TestStepRecord }) {
+export function TestStep({
+  step,
+  assertions,
+}: {
+  step: TestStepRecord;
+  assertions: Assertion[];
+}) {
   const codeGenerator = new AppiumPython();
 
   return (
@@ -44,15 +51,15 @@ export function TestStep({ step }: { step: TestStepRecord }) {
               ))}
             </ul>
           </section>
-          {step.sd_asserts.length > 0 && (
+          {step.sd_asserts.length > 0 && assertions && (
             <section className="assertions">
               <header>Assertions</header>
               <ul>
-                {step.screen_descs.map((description, i) => {
+                {assertions.map((assertion, i) => {
                   return (
                     <li>
                       <div>
-                        <div className="description">{description}</div>
+                        <div className="description">{assertion.value}</div>
                         <div className="value">
                           {step.sd_asserts[i] ? 'true' : 'false'}
                         </div>

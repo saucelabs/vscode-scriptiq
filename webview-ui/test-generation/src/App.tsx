@@ -127,10 +127,8 @@ function App() {
       data: {
         goal: testGoal,
         app_name: appName,
-        // assertions: assertInputDescs,
         assertions: [],
         max_test_steps: maxSteps,
-        // devices: getSelectedDevices(),
         devices: ['Google.*'],
         platform: platform.name,
         platform_version: platform.version,

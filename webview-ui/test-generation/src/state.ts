@@ -17,6 +17,7 @@ export interface State {
   assertions: Assertion[];
   maxSteps?: number;
   platform: Platform;
+  devices: string[];
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
   status: string;
   steps?: TestStep[];
@@ -38,6 +39,7 @@ export const initialState: State = {
   },
   generationState: 'idle',
   status: '',
+  devices: [],
 };
 
 export type Action =
@@ -48,6 +50,7 @@ export type Action =
   | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
+  | { type: 'toggleDevice'; value: string }
   | { type: 'showTestRecord'; value: TestRecord }
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
@@ -58,6 +61,20 @@ export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
     case 'clear':
       return initialState;
+    case 'toggleDevice': {
+      const { value: device } = action;
+      let devices = current.devices;
+      if (devices.includes(device)) {
+        devices = devices.filter((d) => d !== device);
+      } else {
+        devices = [...devices, device];
+      }
+
+      return {
+        ...current,
+        devices,
+      };
+    }
     case 'setAssertionValue': {
       const { key, value } = action.value;
       return {
@@ -156,6 +173,7 @@ export const reducer = (current: State, action: Action): State => {
         status: '',
         generationState: 'idle',
         steps: action.value.all_steps,
+        devices: action.value.devices ?? [],
         assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,

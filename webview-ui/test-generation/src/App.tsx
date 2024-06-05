@@ -1,7 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import {
   VSCodeButton,
-  VSCodeCheckbox,
   VSCodeDropdown,
   VSCodeOption,
   VSCodeTextField,
@@ -118,8 +117,16 @@ function App() {
     });
   }, []);
 
-  const { appName, assertions, testGoal, maxSteps, platform, status, steps } =
-    state;
+  const {
+    appName,
+    assertions,
+    devices,
+    testGoal,
+    maxSteps,
+    platform,
+    status,
+    steps,
+  } = state;
 
   const handleGenerateTest = () => {
     vscode.postMessage({
@@ -129,7 +136,7 @@ function App() {
         app_name: appName,
         assertions: [],
         max_test_steps: maxSteps,
-        devices: ['Google.*'],
+        devices: devices,
         platform: platform.name,
         platform_version: platform.version,
       },
@@ -231,8 +238,38 @@ function App() {
             <label style={{ marginBottom: '2px' }}>
               Device Name (optional)
             </label>
-            <VSCodeCheckbox>Google (any)</VSCodeCheckbox>
-            <VSCodeCheckbox>Samsung (any)</VSCodeCheckbox>
+            <div style={{ display: 'flex', columnGap: '10px' }}>
+              <input
+                type="checkbox"
+                checked={devices.includes('Google.*')}
+                onChange={(e) => {
+                  if (e.target && 'value' in e.target) {
+                    dispatch({
+                      type: 'toggleDevice',
+                      value: e.target.value as string,
+                    });
+                  }
+                }}
+                value="Google.*"
+              />
+              <label>Google (any)</label>
+            </div>
+            <div style={{ display: 'flex', columnGap: '10px' }}>
+              <input
+                type="checkbox"
+                checked={devices.includes('Samsung.*')}
+                onChange={(e) => {
+                  if (e.target && 'value' in e.target) {
+                    dispatch({
+                      type: 'toggleDevice',
+                      value: e.target.value as string,
+                    });
+                  }
+                }}
+                value="Samsung.*"
+              />
+              <label>Samsung (any)</label>
+            </div>
           </section>
         </section>
         <section className="buttons">

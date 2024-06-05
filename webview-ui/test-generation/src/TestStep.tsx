@@ -44,19 +44,25 @@ export function TestStep({ step }: { step: TestStepRecord }) {
               ))}
             </ul>
           </section>
-          <section className="assertions">
-            <header>Assertions</header>
-            <ul>
-              <li>
-                <div>
-                  <div className="description">
-                    Home page with search bar and categories.
-                  </div>
-                  <div className="value">True</div>
-                </div>
-              </li>
-            </ul>
-          </section>
+          {step.sd_asserts.length > 0 && (
+            <section className="assertions">
+              <header>Assertions</header>
+              <ul>
+                {step.screen_descs.map((description, i) => {
+                  return (
+                    <li>
+                      <div>
+                        <div className="description">{description}</div>
+                        <div className="value">
+                          {step.sd_asserts[i] ? 'true' : 'false'}
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
           {step.potential_identifiers.length > 0 && (
             <section className="command">
               <header>Command</header>

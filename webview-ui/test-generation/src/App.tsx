@@ -118,7 +118,8 @@ function App() {
     });
   }, []);
 
-  const { appName, testGoal, maxSteps, platform, status, steps } = state;
+  const { appName, assertions, testGoal, maxSteps, platform, status, steps } =
+    state;
 
   const handleGenerateTest = () => {
     vscode.postMessage({
@@ -171,7 +172,17 @@ function App() {
           <label style={{ marginBottom: '2px' }}>
             Assert Inputs (optional)
           </label>
-          <AssertionInput dispatch={dispatch} />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              rowGap: '8px',
+            }}
+          >
+            {assertions.map((assertion) => (
+              <AssertionInput assertion={assertion} dispatch={dispatch} />
+            ))}
+          </div>
         </section>
         <section className="inputs">
           <VSCodeTextField

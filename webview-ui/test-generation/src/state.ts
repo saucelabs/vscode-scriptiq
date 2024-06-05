@@ -1,4 +1,10 @@
+import { v4 as uuidv4 } from 'uuid';
 import { TestRecord, TestStep } from '../../../src/types';
+
+export interface Assertion {
+  value: string;
+  key: string;
+}
 
 export interface Platform {
   name: 'iOS' | 'Android';
@@ -8,7 +14,7 @@ export interface Platform {
 export interface State {
   appName: string;
   testGoal: string;
-  assertions: string[];
+  assertions: Assertion[];
   maxSteps?: number;
   platform: Platform;
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
@@ -19,7 +25,12 @@ export interface State {
 export const initialState: State = {
   appName: '',
   testGoal: '',
-  assertions: [],
+  assertions: [
+    {
+      value: '',
+      key: uuidv4(),
+    },
+  ],
   maxSteps: 10,
   platform: {
     name: 'Android',
@@ -38,6 +49,8 @@ export type Action =
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
   | { type: 'showTestRecord'; value: TestRecord }
+  | { type: 'addAssertion'; value: { key: string } }
+  | { type: 'setAssertionValue'; value: { key: string; value: string } }
   | { type: 'startGeneration' }
   | { type: 'stopGeneration' };
 
@@ -45,6 +58,41 @@ export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
     case 'clear':
       return initialState;
+    case 'setAssertionValue': {
+      const { key, value } = action.value;
+      return {
+        ...current,
+        assertions: [
+          ...current.assertions.map((assertion) => {
+            if (assertion.key === key) {
+              return {
+                key,
+                value,
+              };
+            } else {
+              return assertion;
+            }
+          }),
+        ],
+      };
+    }
+    case 'addAssertion': {
+      const { key } = action.value;
+      const i = current.assertions.findIndex(
+        (assertion) => assertion.key === key,
+      );
+      return {
+        ...current,
+        assertions: [
+          ...current.assertions.slice(0, i + 1),
+          {
+            key: uuidv4(),
+            value: '',
+          },
+          ...current.assertions.slice(i + 1),
+        ],
+      };
+    }
     case 'setAppName':
       return {
         ...current,

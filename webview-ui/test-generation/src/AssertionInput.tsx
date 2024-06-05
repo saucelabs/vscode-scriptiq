@@ -2,17 +2,17 @@ import {
   VSCodeButton,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
-import { Action } from './state';
+import { Action, Assertion } from './state';
 import trashIcon from './icons/icn-trash-fill.svg';
 import plusIcon from './icons/icn-plus-fill.svg';
 
 interface AssertionInputProps {
   dispatch: React.Dispatch<Action>;
-  value?: string;
+  assertion: Assertion;
 }
 
 export function AssertionInput(props: AssertionInputProps) {
-  const { value } = props;
+  const { dispatch, assertion } = props;
   return (
     <div
       style={{
@@ -22,13 +22,28 @@ export function AssertionInput(props: AssertionInputProps) {
       }}
     >
       <VSCodeTextField
+        onInput={(e) => {
+          if (e.target && 'value' in e.target) {
+            dispatch({
+              type: 'setAssertionValue',
+              value: {
+                key: assertion.key,
+                value: e.target.value as string,
+              },
+            });
+          }
+        }}
         placeholder="e.g. Number of items in the cart should be 1"
         style={{
           width: '100%',
         }}
-        value={value ?? ''}
+        value={assertion.value ?? ''}
       ></VSCodeTextField>
-      <VSCodeButton appearance="icon" aria-label="Delete" disabled={!value}>
+      <VSCodeButton
+        appearance="icon"
+        aria-label="Delete"
+        disabled={!assertion.value}
+      >
         <img
           style={{
             width: '16px',
@@ -38,7 +53,13 @@ export function AssertionInput(props: AssertionInputProps) {
           src={trashIcon}
         />
       </VSCodeButton>
-      <VSCodeButton appearance="icon" aria-label="Add">
+      <VSCodeButton
+        appearance="icon"
+        aria-label="Add"
+        onClick={() =>
+          dispatch({ type: 'addAssertion', value: { key: assertion.key } })
+        }
+      >
         <img
           style={{
             width: '16px',

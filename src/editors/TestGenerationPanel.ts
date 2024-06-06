@@ -74,7 +74,7 @@ export class TestGenerationPanel {
           // Enable JavaScript in the webview
           enableScripts: true,
           // Restrict the webview to only load resources from the `out` and `webview-ui/build` directories
-          localResourceRoots: [context.extensionUri],
+          localResourceRoots: [context.extensionUri, storage.getHistoryUri()],
         },
       );
 
@@ -113,33 +113,35 @@ export class TestGenerationPanel {
     }
   }
 
+  get historyUri() {
+    return this._panel.webview.asWebviewUri(this._storage.getHistoryUri());
+  }
+
   /**
    * Show the test record in the webview.
    */
   private showTestRecord(testID: string) {
-    const testRecord = this._memento.getTestIDs().find((id) => id === testID);
-    if (!testRecord) {
+    // const testRecord = this._memento.getTestIDs().find((id) => id === testID);
+    const isValidId = this._memento.getTestIDs().some((id) => id === testID);
+    if (!isValidId) {
       toast.showError('Unable to find test record.');
       return;
     }
 
-    console.log('showTestRecord');
+    const testRecord = this._storage.getTestRecord(testID);
+    testRecord.all_steps = testRecord.all_steps?.map((step) => {
+      return {
+        ...step,
+        img_path: `${this.historyUri}/${testID}/${step.img_name}`,
+      };
+    });
     this._msgQueue.enqueue({
       action: 'show-test-record',
       data: {
-        testRecord: this._storage.getTestRecord(testID),
+        testRecord,
         votes: this._storage.getVotes(testID),
       },
     });
-    // setTimeout(() => {
-    // TestGenerationPanel.currentPanel?._panel.webview.postMessage({
-    //   action: 'show-test-record',
-    //   data: {
-    //     testRecord: this._storage.getTestRecord(testID),
-    //     votes: this._storage.getVotes(testID),
-    //   },
-    // });
-    // }, 100);
   }
 
   /**

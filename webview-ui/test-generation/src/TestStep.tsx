@@ -28,13 +28,7 @@ export function TestStep({
       </header>
       <div className="body">
         <section className="screenshot">
-          <div
-            style={{
-              backgroundColor: 'salmon',
-              width: '120px',
-              height: '200px',
-            }}
-          />
+          <img src={step.img_path} />
         </section>
         <section className="description">
           <section className="reasoning">

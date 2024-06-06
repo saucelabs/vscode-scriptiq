@@ -36,6 +36,7 @@ export function TestStep({
               src={step.img_path}
               width={screen.width}
               height={screen.height}
+              annotation={step.location}
             />
           </section>
         )}

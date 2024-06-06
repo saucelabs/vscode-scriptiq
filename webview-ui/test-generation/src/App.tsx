@@ -327,6 +327,7 @@ function App() {
               {steps.map((step) => (
                 <TestStep
                   step={step}
+                  recordId={state.testId ?? ''}
                   assertions={assertions}
                   screen={state.screen}
                 />

@@ -47,9 +47,6 @@ export interface TestStep {
   event_reason: string;
   screen_descs: string[];
   sd_asserts: string[];
-
-  // The local path for the image, computed when the TestRecord is about to be rendered.
-  img_path?: string;
 }
 
 export interface Vote {

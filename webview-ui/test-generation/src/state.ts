@@ -28,6 +28,7 @@ export interface State {
 
   sessionId?: string;
   credentials?: Credentials;
+  testId?: string;
 }
 
 export const initialState: State = {
@@ -211,6 +212,7 @@ export const reducer = (current: State, action: Action): State => {
           value,
         })),
         screen,
+        testId: action.value.test_id,
       };
     }
     case 'showVideo': {

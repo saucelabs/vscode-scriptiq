@@ -10,13 +10,17 @@ import { Screenshot } from './Screenshot';
 export function TestStep({
   step,
   assertions,
+  recordId,
   screen,
 }: {
   step: TestStepRecord;
   assertions: Assertion[];
+  recordId: string;
   screen?: { width: number; height: number };
 }) {
   const codeGenerator = new AppiumPython();
+
+  const imgSrc = `${window.historyPath}/${recordId}/${step.img_name}`;
 
   return (
     <section className="test-step">
@@ -30,10 +34,10 @@ export function TestStep({
         </div>
       </header>
       <div className="body">
-        {step.img_path && screen && (
+        {step.img_name && screen && (
           <section className="screenshot">
             <Screenshot
-              src={step.img_path}
+              src={imgSrc}
               width={screen.width}
               height={screen.height}
               annotation={step.location}

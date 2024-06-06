@@ -130,12 +130,7 @@ export class TestGenerationPanel {
     }
 
     const testRecord = this._storage.getTestRecord(testID);
-    testRecord.all_steps = testRecord.all_steps?.map((step) => {
-      return {
-        ...step,
-        img_path: `${this.historyUri}/${testID}/${step.img_name}`,
-      };
-    });
+
     this._msgQueue.enqueue({
       action: 'show-test-record',
       data: {
@@ -197,6 +192,10 @@ export class TestGenerationPanel {
           />
           <link rel="stylesheet" type="text/css" href="${stylesUri}" />
           <title>Test Generation</title>
+
+          <script nonce="${nonce}">
+            window.historyPath = '${this.historyUri.toString()}';
+          </script>
         </head>
         <body>
           <div id="root"></div>

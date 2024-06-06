@@ -97,9 +97,11 @@ function App() {
         //   //   ws.close();
         //   // }
         //   break;
-        // case 'clear':
-        //   // clearScreen();
-        //   break;
+        case 'clear':
+          dispatch({
+            type: 'clear',
+          });
+          break;
       }
     }
 

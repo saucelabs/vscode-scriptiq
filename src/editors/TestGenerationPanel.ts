@@ -85,12 +85,13 @@ export class TestGenerationPanel {
         storage,
       );
     }
-    if (testID) {
+
+    if (typeof testID === 'string') {
       TestGenerationPanel.currentPanel.showTestRecord(testID);
       return;
     }
 
-    TestGenerationPanel.currentPanel._panel.webview.postMessage({
+    TestGenerationPanel.currentPanel._msgQueue.enqueue({
       action: 'clear',
     });
   }

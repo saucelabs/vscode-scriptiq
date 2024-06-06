@@ -6,4 +6,5 @@ export type PostedMessage =
   | {
       action: 'show-test-record';
       data: { testRecord: TestRecord; votes: Vote[] };
-    };
+    }
+  | { action: 'clear' };

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { TestRecord, TestStep } from '../../../src/types';
+import { Credentials, TestRecord, TestStep } from '../../../src/types';
 
 export interface Assertion {
   value: string;
@@ -25,6 +25,9 @@ export interface State {
     width: number;
     height: number;
   };
+
+  sessionId?: string;
+  credentials?: Credentials;
 }
 
 export const initialState: State = {
@@ -60,7 +63,15 @@ export type Action =
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
   | { type: 'startGeneration' }
-  | { type: 'stopGeneration' };
+  | { type: 'stopGeneration' }
+  | {
+      type: 'showVideo';
+      value: {
+        sessionId: State['sessionId'];
+        status: State['status'];
+        credentials: State['credentials'];
+      };
+    };
 
 export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
@@ -200,6 +211,14 @@ export const reducer = (current: State, action: Action): State => {
           value,
         })),
         screen,
+      };
+    }
+    case 'showVideo': {
+      return {
+        ...current,
+        sessionId: action.value.sessionId,
+        status: action.value.status,
+        credentials: action.value.credentials,
       };
     }
     default:

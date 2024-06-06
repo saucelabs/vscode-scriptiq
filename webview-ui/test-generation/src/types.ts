@@ -1,4 +1,4 @@
-import { TestRecord, Vote } from './../../../src/types';
+import type { Credentials, TestRecord, Vote } from './../../../src/types';
 
 export type PostedMessage =
   | { action: 'update-test-progress'; data: { status_message: string } }
@@ -7,4 +7,12 @@ export type PostedMessage =
       action: 'show-test-record';
       data: { testRecord: TestRecord; votes: Vote[] };
     }
-  | { action: 'clear' };
+  | { action: 'clear' }
+  | {
+      action: 'show-video';
+      data: {
+        status_message: string;
+        session_id: string;
+      };
+      credentials: Credentials;
+    };

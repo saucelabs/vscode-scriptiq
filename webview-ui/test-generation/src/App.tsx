@@ -12,6 +12,7 @@ import { vscode } from './utilities/vscode';
 import { TestStep } from './TestStep';
 import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
+import { Preview } from './Preview';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -28,17 +29,17 @@ function App() {
             value: message.data.status_message,
           });
           break;
-        // case 'show-video': {
-        //   // setStatus(message.data.status_message);
-        //   // const { username, accessKey, region } = message.credentials;
-        //   // startDeviceWebsocket(
-        //   //   username,
-        //   //   accessKey,
-        //   //   region,
-        //   //   message.data.session_id,
-        //   // );
-        //   break;
-        // }
+        case 'show-video': {
+          dispatch({
+            type: 'showVideo',
+            value: {
+              sessionId: message.data.session_id,
+              status: message.data.status_message,
+              credentials: message.credentials,
+            },
+          });
+          break;
+        }
         case 'show-test-record':
           //   // Append answer.
           //   // testHeader.style.display = 'block';
@@ -309,7 +310,15 @@ function App() {
         </section>
       </section>
       {state.generationState === 'generating' ? (
-        <section className="status">{status}</section>
+        <section className="updates">
+          <div className="status">{status}</div>
+          {state.credentials && state.sessionId && (
+            <Preview
+              credentials={state.credentials}
+              sessionId={state.sessionId}
+            />
+          )}
+        </section>
       ) : (
         steps && (
           <>

@@ -203,6 +203,14 @@ export class TestGenerationPanel {
     `;
   }
 
+  private stopTestGeneration() {
+    this._socket?.send(
+      JSON.stringify({
+        method: 'testgen.stop',
+      }),
+    );
+  }
+
   /**
    * Sets up an event listener to listen for messages passed from the webview context and
    * executes code based on the message that is recieved.
@@ -215,8 +223,6 @@ export class TestGenerationPanel {
       async (message: any) => {
         switch (message.action) {
           case 'ready':
-            console.log('webview ready');
-
             this._msgQueue.ready();
             break;
           case 'generate-test':
@@ -237,6 +243,9 @@ export class TestGenerationPanel {
               });
               toast.showError(errMsg(e));
             }
+            return;
+          case 'stop-generation':
+            this.stopTestGeneration();
             return;
           case 'save-steps': {
             await this.addRecordToHistory(message.data.test_id);

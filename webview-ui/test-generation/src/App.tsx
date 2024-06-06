@@ -258,7 +258,11 @@ function App() {
         </section>
         <section className="buttons">
           <VSCodeButton
+            disabled={state.generationState === 'generating'}
             onClick={() => {
+              dispatch({
+                type: 'startGeneration',
+              });
               vscode.postMessage({
                 action: 'generate-test',
                 data: {
@@ -277,6 +281,21 @@ function App() {
           </VSCodeButton>
           <VSCodeButton
             appearance="secondary"
+            disabled={state.generationState !== 'generating'}
+            onClick={() => {
+              dispatch({
+                type: 'stopGeneration',
+              });
+              vscode.postMessage({
+                action: 'stop-generation',
+                data: {},
+              });
+            }}
+          >
+            Cancel
+          </VSCodeButton>
+          <VSCodeButton
+            appearance="secondary"
             onClick={() => {
               dispatch({
                 type: 'clear',
@@ -287,21 +306,26 @@ function App() {
           </VSCodeButton>
         </section>
       </section>
-      <section className="status">{status}</section>
-      {steps && (
-        <section className="steps">
-          <h5>Test Steps</h5>
-          {steps.map((step) => (
-            <TestStep step={step} assertions={assertions} />
-          ))}
-        </section>
+      {state.generationState === 'generating' ? (
+        <section className="status">{status}</section>
+      ) : (
+        steps && (
+          <>
+            <section className="steps">
+              <h3>Test Steps</h3>
+              {steps.map((step) => (
+                <TestStep step={step} assertions={assertions} />
+              ))}
+            </section>
+            <footer>
+              <section className="controls">
+                <button>View Test on Sauce</button>
+                <button>Download Test Script</button>
+              </section>
+            </footer>
+          </>
+        )
       )}
-      <footer>
-        <section className="controls">
-          <button>View Test on Sauce</button>
-          <button>Download Test Script</button>
-        </section>
-      </footer>
     </main>
   );
 }

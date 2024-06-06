@@ -43,6 +43,9 @@ export function AssertionInput(props: AssertionInputProps) {
         appearance="icon"
         aria-label="Delete"
         disabled={!assertion.value}
+        onClick={() => {
+          dispatch({ type: 'removeAssertion', value: { key: assertion.key } });
+        }}
       >
         <img
           style={{

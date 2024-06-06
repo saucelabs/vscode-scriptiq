@@ -53,6 +53,7 @@ export type Action =
   | { type: 'toggleDevice'; value: string }
   | { type: 'showTestRecord'; value: TestRecord }
   | { type: 'addAssertion'; value: { key: string } }
+  | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
   | { type: 'startGeneration' }
   | { type: 'stopGeneration' };
@@ -108,6 +109,14 @@ export const reducer = (current: State, action: Action): State => {
           },
           ...current.assertions.slice(i + 1),
         ],
+      };
+    }
+    case 'removeAssertion': {
+      return {
+        ...current,
+        assertions: current.assertions.filter(
+          (a) => a.key !== action.value.key,
+        ),
       };
     }
     case 'setAppName':

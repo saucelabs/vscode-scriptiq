@@ -240,7 +240,7 @@ export class TestGenerationPanel {
                 '',
               );
             } catch (e) {
-              TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+              this._msgQueue.enqueue({
                 action: 'recover-from-error',
               });
               toast.showError(errMsg(e));
@@ -404,7 +404,7 @@ export class TestGenerationPanel {
             action = 'finalize';
         }
 
-        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+        this._msgQueue.enqueue({
           action: action,
           credentials: creds,
           data: data.result,
@@ -413,7 +413,7 @@ export class TestGenerationPanel {
       error: (err: Error) => {
         console.error(`Test generation failed: ${err}`);
 
-        TestGenerationPanel.currentPanel?._panel.webview.postMessage({
+        this._msgQueue.enqueue({
           action: 'recover-from-error',
         });
         toast.showError(err.message);

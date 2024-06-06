@@ -21,6 +21,10 @@ export interface State {
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
   status: string;
   steps?: TestStep[];
+  screen?: {
+    width: number;
+    height: number;
+  };
 }
 
 export const initialState: State = {
@@ -170,6 +174,14 @@ export const reducer = (current: State, action: Action): State => {
       if (user_screen_descs.length === 0) {
         user_screen_descs = [''];
       }
+      let screen;
+      if (action.value.screen_width && action.value.screen_height) {
+        screen = {
+          width: action.value.screen_width,
+          height: action.value.screen_height,
+        };
+      }
+
       return {
         ...current,
         appName: action.value.app_name,
@@ -187,6 +199,7 @@ export const reducer = (current: State, action: Action): State => {
           key: uuidv4(),
           value,
         })),
+        screen,
       };
     }
     default:

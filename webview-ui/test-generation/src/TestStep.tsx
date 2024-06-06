@@ -5,13 +5,16 @@ import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import { Assertion } from './state';
+import { Screenshot } from './Screenshot';
 
 export function TestStep({
   step,
   assertions,
+  screen,
 }: {
   step: TestStepRecord;
   assertions: Assertion[];
+  screen?: { width: number; height: number };
 }) {
   const codeGenerator = new AppiumPython();
 
@@ -27,9 +30,15 @@ export function TestStep({
         </div>
       </header>
       <div className="body">
-        <section className="screenshot">
-          <img src={step.img_path} />
-        </section>
+        {step.img_path && screen && (
+          <section className="screenshot">
+            <Screenshot
+              src={step.img_path}
+              width={screen.width}
+              height={screen.height}
+            />
+          </section>
+        )}
         <section className="description">
           <section className="reasoning">
             <header>

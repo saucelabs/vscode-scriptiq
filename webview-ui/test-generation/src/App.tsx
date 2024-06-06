@@ -314,7 +314,11 @@ function App() {
             <section className="steps">
               <h3>Test Steps</h3>
               {steps.map((step) => (
-                <TestStep step={step} assertions={assertions} />
+                <TestStep
+                  step={step}
+                  assertions={assertions}
+                  screen={state.screen}
+                />
               ))}
             </section>
             <footer>

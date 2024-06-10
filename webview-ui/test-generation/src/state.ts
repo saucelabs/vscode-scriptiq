@@ -19,16 +19,19 @@ export interface State {
   platform: Platform;
   devices: string[];
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
-  status: string;
+
+  // TestRecord
   steps?: TestStep[];
   screen?: {
     width: number;
     height: number;
   };
-
-  sessionId?: string;
-  credentials?: Credentials;
   testId?: string;
+
+  // Session
+  sessionId?: string;
+  status: string;
+  credentials?: Credentials;
 }
 
 export const initialState: State = {

@@ -73,7 +73,8 @@ export type Action =
         status: State['status'];
         credentials: State['credentials'];
       };
-    };
+    }
+  | { type: 'finish' };
 
 export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
@@ -93,6 +94,13 @@ export const reducer = (current: State, action: Action): State => {
         devices,
       };
     }
+    case 'finish':
+      return {
+        ...current,
+        generationState: 'succeeded',
+        status: '',
+        sessionId: '',
+      };
     case 'setGenerationState':
       return {
         ...current,

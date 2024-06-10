@@ -71,17 +71,15 @@ function App() {
             action: 'enable-test-record-navigation',
           });
           break;
-        // case 'finalize':
-        //   // testGallery.innerHTML = '';
-        //   // generateButton?.removeAttribute('disabled');
-        //   // stopButton?.setAttribute('disabled', '');
-        //   // vscode.postMessage({
-        //   //   action: 'enable-test-record-navigation',
-        //   // });
-        //   // if (ws !== undefined) {
-        //   //   ws.close();
-        //   // }
-        //   break;
+        case 'finalize':
+          dispatch({
+            type: 'setGenerationState',
+            value: 'succeeded',
+          });
+          vscode.postMessage({
+            action: 'enable-test-record-navigation',
+          });
+          break;
         case 'clear':
           dispatch({
             type: 'clear',

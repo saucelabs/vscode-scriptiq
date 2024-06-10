@@ -28,6 +28,7 @@ export class TestGenerationPanel {
   private _disposables: Disposable[] = [];
 
   private _msgQueue: MessageQueue;
+  private _testRecordNavigation: boolean;
 
   private constructor(
     panel: WebviewPanel,
@@ -38,6 +39,7 @@ export class TestGenerationPanel {
     this._panel = panel;
     this._memento = memento;
     this._storage = storage;
+    this._testRecordNavigation = false;
 
     // Set an event listener to listen for when the panel is disposed (i.e. when the user closes
     // the panel or when the panel is closed programmatically)
@@ -84,6 +86,12 @@ export class TestGenerationPanel {
         memento,
         storage,
       );
+      TestGenerationPanel.currentPanel._testRecordNavigation = true;
+    }
+
+    if (!TestGenerationPanel.currentPanel._testRecordNavigation) {
+      toast.showError('Cannot open other panels while running tests.');
+      return;
     }
 
     if (typeof testID === 'string') {
@@ -253,6 +261,9 @@ export class TestGenerationPanel {
             await this.addRecordToHistory(message.data.test_id);
             return;
           }
+          case 'enable-test-record-navigation':
+            this._testRecordNavigation = true;
+            return;
         }
       },
       undefined,
@@ -361,7 +372,7 @@ export class TestGenerationPanel {
       );
     }
 
-    // this.testRecordNavigation = false;
+    this._testRecordNavigation = false;
 
     const [ws, observable] = generateTest(
       this._storage,

@@ -16,4 +16,5 @@ export type PostedMessage =
       };
       credentials: Credentials;
     }
-  | { action: 'recover-from-error' };
+  | { action: 'recover-from-error' }
+  | { action: 'finalize' };

@@ -58,6 +58,7 @@ export type Action =
   | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
+  | { type: 'setGenerationState'; value: State['generationState'] }
   | { type: 'toggleDevice'; value: string }
   | { type: 'showTestRecord'; value: TestRecord }
   | { type: 'addAssertion'; value: { key: string } }
@@ -92,6 +93,11 @@ export const reducer = (current: State, action: Action): State => {
         devices,
       };
     }
+    case 'setGenerationState':
+      return {
+        ...current,
+        generationState: action.value,
+      };
     case 'setAssertionValue': {
       const { key, value } = action.value;
       return {

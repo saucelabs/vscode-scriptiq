@@ -15,4 +15,5 @@ export type PostedMessage =
         session_id: string;
       };
       credentials: Credentials;
-    };
+    }
+  | { action: 'recover-from-error' };

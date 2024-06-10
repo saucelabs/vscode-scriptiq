@@ -18,7 +18,6 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    console.log('attaching message listener');
     function handler(event: any) {
       const message = event.data as PostedMessage; // The json data that the extension sent
       console.log(message);
@@ -61,18 +60,17 @@ function App() {
             value: message.data,
           });
           break;
-        // case 'recover-from-error':
-        //   // generateButton?.removeAttribute('disabled');
-        //   // stopButton?.setAttribute('disabled', '');
-        //   // // Retain the previous state, which may contain a useful error message
-        //   // // or snapshot of the video.
-        //   // vscode.postMessage({
-        //   //   action: 'enable-test-record-navigation',
-        //   // });
-        //   // if (ws !== undefined) {
-        //   //   ws.close();
-        //   // }
-        //   break;
+        case 'recover-from-error':
+          dispatch({
+            type: 'setGenerationState',
+            value: 'errored',
+          });
+          // Retain the previous state, which may contain a useful error message
+          // or snapshot of the video.
+          vscode.postMessage({
+            action: 'enable-test-record-navigation',
+          });
+          break;
         // case 'finalize':
         //   // testGallery.innerHTML = '';
         //   // generateButton?.removeAttribute('disabled');
@@ -295,12 +293,14 @@ function App() {
           </VSCodeButton>
         </section>
       </section>
-      {state.generationState === 'generating' ? (
+      {state.generationState === 'generating' ||
+      state.generationState === 'errored' ? (
         <section className="updates">
           <div className="status">{status}</div>
           {state.credentials && state.sessionId && (
             <Preview
               credentials={state.credentials}
+              isLive={state.generationState === 'generating'}
               sessionId={state.sessionId}
             />
           )}

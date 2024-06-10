@@ -2,16 +2,23 @@ import { useEffect, useRef } from 'react';
 
 interface PreviewProps {
   credentials: { username: string; accessKey: string; region: string };
-
   sessionId: string;
+  isLive?: boolean;
 }
 
-export function Preview(props: PreviewProps) {
-  const { credentials, sessionId } = props;
+export function Preview({
+  credentials,
+  sessionId,
+  isLive = true,
+}: PreviewProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const ws = useRef<WebSocket>();
 
   useEffect(() => {
+    if (!isLive) {
+      return;
+    }
+
     ws.current = new WebSocket(
       `wss://${credentials.username}:${credentials.accessKey}@api.${credentials.region}.saucelabs.com/v1/rdc/socket/alternativeIo/${sessionId}`,
     );
@@ -46,6 +53,6 @@ export function Preview(props: PreviewProps) {
     return () => {
       ws.current?.close();
     };
-  }, [canvas, ws, credentials, sessionId]);
+  }, [canvas, ws, credentials, sessionId, isLive]);
   return <canvas ref={canvas} />;
 }

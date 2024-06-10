@@ -1,4 +1,5 @@
 import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
+import classNames from 'classnames';
 
 import type { TestStep as TestStepRecord } from './../../../src/types';
 import { AppiumPython } from './codeGen/python';
@@ -10,6 +11,8 @@ import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Assertion } from './state';
 import { Screenshot } from './Screenshot';
+
+import classes from './TestStep.module.css';
 
 export function TestStep({
   step,
@@ -62,25 +65,19 @@ export function TestStep({
                   columnGap: '2px',
                 }}
               >
-                <VSCodeButton appearance="icon" aria-label="thumbsUp">
+                <VSCodeButton appearance="icon" aria-label="like">
                   <img
-                    style={{
-                      padding: '4px',
-                      width: '16px',
-                      filter:
-                        'invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%)',
-                    }}
+                    className={classNames(classes.rating, {
+                      [classes.selected]: true,
+                    })}
                     src={thumbsUpIcon}
                   />
                 </VSCodeButton>
-                <VSCodeButton appearance="icon" aria-label="thumbsDown">
+                <VSCodeButton appearance="icon" aria-label="dislike">
                   <img
-                    style={{
-                      padding: '4px',
-                      width: '16px',
-                      filter:
-                        'invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%)',
-                    }}
+                    className={classNames(classes.rating, {
+                      [classes.selected]: true,
+                    })}
                     src={thumbsDownIcon}
                   />
                 </VSCodeButton>

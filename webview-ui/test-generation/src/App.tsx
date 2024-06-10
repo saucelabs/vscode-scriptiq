@@ -41,16 +41,6 @@ function App() {
           break;
         }
         case 'show-test-record':
-          //   // Append answer.
-          //   // testHeader.style.display = 'block';
-          //   // console.log('Reading in history');
-          //   // console.log(message.data);
-
-          //   // const testRecord = message.data?.testRecord ?? {};
-          //   // const votes = message.data?.votes ?? [];
-          //   // updateStepDataState(testRecord);
-          //   // updateState('votes', votes);
-          //   // generateFullTestDisplay();
           dispatch({
             type: 'showTestRecord',
             value: message.data.testRecord,
@@ -62,8 +52,6 @@ function App() {
           // when loading the test record from the history.
           // While `show-new-test-record` is the finished record that comes fresh
           // from the test generation process.
-          // testGallery.innerHTML = '';
-          // outputScript.innerHTML = '';
           vscode.postMessage({
             action: 'save-steps',
             data: message.data,
@@ -72,8 +60,6 @@ function App() {
             type: 'showTestRecord',
             value: message.data,
           });
-          // updateStepDataState(message.data);
-          // generateFullTestDisplay();
           break;
         // case 'recover-from-error':
         //   // generateButton?.removeAttribute('disabled');

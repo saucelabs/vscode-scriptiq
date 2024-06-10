@@ -42,7 +42,10 @@ function App() {
         case 'show-test-record':
           dispatch({
             type: 'showTestRecord',
-            value: message.data.testRecord,
+            value: {
+              testRecord: message.data.testRecord,
+              votes: message.data.votes,
+            },
           });
           break;
         case 'show-new-test-record':
@@ -57,7 +60,10 @@ function App() {
           });
           dispatch({
             type: 'showTestRecord',
-            value: message.data,
+            value: {
+              testRecord: message.data,
+              votes: [],
+            },
           });
           break;
         case 'recover-from-error':

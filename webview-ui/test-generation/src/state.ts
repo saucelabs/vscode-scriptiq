@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Credentials, TestRecord, TestStep } from '../../../src/types';
+import { Credentials, TestRecord, TestStep, Vote } from '../../../src/types';
 
 export interface Assertion {
   value: string;
@@ -63,7 +63,7 @@ export type Action =
   | { type: 'setStatus'; value: State['status'] }
   | { type: 'setGenerationState'; value: State['generationState'] }
   | { type: 'toggleDevice'; value: string }
-  | { type: 'showTestRecord'; value: TestRecord }
+  | { type: 'showTestRecord'; value: { testRecord: TestRecord; votes: Vote[] } }
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
@@ -199,37 +199,38 @@ export const reducer = (current: State, action: Action): State => {
         status: action.value,
       };
     case 'showTestRecord': {
-      let { user_screen_descs = [''] } = action.value;
+      const { testRecord } = action.value;
+      let { user_screen_descs = [''] } = testRecord;
       if (user_screen_descs.length === 0) {
         user_screen_descs = [''];
       }
       let screen;
-      if (action.value.screen_width && action.value.screen_height) {
+      if (testRecord.screen_width && testRecord.screen_height) {
         screen = {
-          width: action.value.screen_width,
-          height: action.value.screen_height,
+          width: testRecord.screen_width,
+          height: testRecord.screen_height,
         };
       }
 
       return {
         ...current,
-        appName: action.value.app_name,
-        testGoal: action.value.goal,
+        appName: testRecord.app_name,
+        testGoal: testRecord.goal,
         platform: {
-          name: action.value.platform,
-          version: action.value.platform_version,
+          name: testRecord.platform,
+          version: testRecord.platform_version,
         },
-        maxSteps: action.value.max_test_steps,
+        maxSteps: testRecord.max_test_steps,
         status: '',
         generationState: 'idle',
-        steps: action.value.all_steps,
-        devices: action.value.devices ?? [],
+        steps: testRecord.all_steps,
+        devices: testRecord.devices ?? [],
         assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,
         })),
         screen,
-        testId: action.value.test_id,
+        testId: testRecord.test_id,
       };
     }
     case 'showVideo': {

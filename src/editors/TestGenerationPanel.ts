@@ -15,6 +15,7 @@ import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
 import { Credentials, Platform } from '../types';
 import { generateTest } from '../api/llm/ws';
+import { sendUserRating } from '../api/llm/http';
 import { executeUpdateHistoryLinksCommand } from '../commands';
 
 const MAX_HISTORY_LEN = 100;
@@ -264,6 +265,14 @@ export class TestGenerationPanel {
           case 'enable-test-record-navigation':
             this._testRecordNavigation = true;
             return;
+          case 'send-user-rating': {
+            await this.sendUserRating(
+              message.data.test_id,
+              message.data.step,
+              message.data.rating,
+            );
+            return;
+          }
         }
       },
       undefined,
@@ -315,6 +324,59 @@ export class TestGenerationPanel {
     }
 
     return creds;
+  }
+
+  public async sendUserRating(
+    testID: string,
+    stepNumber: number,
+    rating: string,
+  ) {
+    console.log(testID, stepNumber, rating);
+    const testRecord = this._storage.getTestRecord(testID);
+    const creds = this.getCredentials();
+    if (!creds) {
+      toast.showError('Failed to submit rating: No credentials.');
+      return;
+    }
+
+    // Abort if the rated step is missing, indicating possible data corruption or incorrect operation.
+    if (!Array.isArray(testRecord.all_steps)) {
+      toast.showError(
+        'Failed to submit rating: Test record lacks any test steps.',
+      );
+      return;
+    }
+
+    const step = testRecord.all_steps.find(
+      (step) => step.step_num === stepNumber,
+    );
+    if (!step) {
+      toast.showError(
+        'Failed to submit rating: Step not found in test record.',
+      );
+      return;
+    }
+
+    const votes = this._storage.getVotes(testID);
+    const vote = votes.find((f) => f.step_num === stepNumber);
+    // Append the record if it is missing, then sort by step_num.
+    // If the vote exists, locate and update it.
+    if (!vote) {
+      votes.push({
+        rating: rating,
+        step_num: stepNumber,
+      });
+      votes.sort((a, b) => a.step_num - b.step_num);
+    } else {
+      vote.rating = rating;
+    }
+
+    try {
+      await sendUserRating(votes, testRecord.test_id, creds);
+      this._storage.saveVotes(testID, votes);
+    } catch (e) {
+      toast.showError(`Failed to submit rating: ${errMsg(e)}.`);
+    }
   }
 
   /**

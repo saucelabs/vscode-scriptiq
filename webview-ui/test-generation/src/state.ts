@@ -98,7 +98,11 @@ export type Action =
         credentials: State['credentials'];
       };
     }
-  | { type: 'finish' };
+  | { type: 'finish' }
+  | {
+      type: 'vote';
+      value: { index: number; value: 'like' | 'dislike' | 'norating' };
+    };
 
 export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
@@ -124,6 +128,19 @@ export const reducer = (current: State, action: Action): State => {
         generationState: 'succeeded',
         status: '',
         sessionId: '',
+      };
+    case 'vote':
+      return {
+        ...current,
+        steps: current.steps?.map((step) => {
+          if (action.value.index === step.index) {
+            return {
+              ...step,
+              vote: action.value.value,
+            };
+          }
+          return step;
+        }),
       };
     case 'setGenerationState':
       return {

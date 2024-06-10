@@ -1,6 +1,7 @@
 import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
 import classNames from 'classnames';
 
+import { vscode } from './utilities/vscode';
 import { AppiumPython } from './codeGen/python';
 import './TestStep.css';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
@@ -8,13 +9,14 @@ import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
-import { Assertion } from './state';
+import { Action, Assertion } from './state';
 import { Screenshot } from './Screenshot';
 
 import classes from './TestStep.module.css';
 
 export function TestStep(props: {
   assertions: Assertion[];
+  dispatch: React.Dispatch<Action>;
   step: {
     index: number;
     testRecordId: string;
@@ -44,7 +46,7 @@ export function TestStep(props: {
     vote?: string;
   };
 }) {
-  const { assertions, step } = props;
+  const { assertions, dispatch, step } = props;
   const {
     testRecordId,
     screenshot,
@@ -103,6 +105,24 @@ export function TestStep(props: {
                     className={classNames(classes.rating, {
                       [classes.selected]: vote === 'like',
                     })}
+                    onClick={() => {
+                      const newRating = vote === 'like' ? 'norating' : 'like';
+                      dispatch({
+                        type: 'vote',
+                        value: {
+                          index: step.index,
+                          value: newRating,
+                        },
+                      });
+                      vscode.postMessage({
+                        action: 'send-user-rating',
+                        data: {
+                          rating: newRating,
+                          step: index,
+                          test_id: testRecordId,
+                        },
+                      });
+                    }}
                     src={thumbsUpIcon}
                   />
                 </VSCodeButton>
@@ -111,6 +131,25 @@ export function TestStep(props: {
                     className={classNames(classes.rating, {
                       [classes.selected]: vote === 'dislike',
                     })}
+                    onClick={() => {
+                      const newRating =
+                        vote === 'dislike' ? 'norating' : 'dislike';
+                      dispatch({
+                        type: 'vote',
+                        value: {
+                          index: index,
+                          value: newRating,
+                        },
+                      });
+                      vscode.postMessage({
+                        action: 'send-user-rating',
+                        data: {
+                          rating: newRating,
+                          step: index,
+                          test_id: testRecordId,
+                        },
+                      });
+                    }}
                     src={thumbsDownIcon}
                   />
                 </VSCodeButton>

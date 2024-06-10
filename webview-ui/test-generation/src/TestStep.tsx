@@ -41,6 +41,7 @@ export function TestStep(props: {
     // TODO: Normalize assertions
     screen_descs: string[];
     sd_asserts: string[];
+    vote?: string;
   };
 }) {
   const { assertions, step } = props;
@@ -53,6 +54,7 @@ export function TestStep(props: {
     screen_descs,
     potential_identifiers,
     action,
+    vote,
   } = step;
   const codeGenerator = new AppiumPython();
 
@@ -99,7 +101,7 @@ export function TestStep(props: {
                 <VSCodeButton appearance="icon" aria-label="like">
                   <img
                     className={classNames(classes.rating, {
-                      [classes.selected]: true,
+                      [classes.selected]: vote === 'like',
                     })}
                     src={thumbsUpIcon}
                   />
@@ -107,7 +109,7 @@ export function TestStep(props: {
                 <VSCodeButton appearance="icon" aria-label="dislike">
                   <img
                     className={classNames(classes.rating, {
-                      [classes.selected]: true,
+                      [classes.selected]: vote === 'dislike',
                     })}
                     src={thumbsDownIcon}
                   />

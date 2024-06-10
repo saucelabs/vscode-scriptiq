@@ -46,6 +46,7 @@ export interface State {
     // TODO: Normalize assertions
     screen_descs: string[];
     sd_asserts: string[];
+    vote?: string;
   }[];
 
   // Session
@@ -219,7 +220,7 @@ export const reducer = (current: State, action: Action): State => {
         status: action.value,
       };
     case 'showTestRecord': {
-      const { testRecord } = action.value;
+      const { testRecord, votes } = action.value;
       let { user_screen_descs = [''] } = testRecord;
       if (user_screen_descs.length === 0) {
         user_screen_descs = [''];
@@ -251,6 +252,7 @@ export const reducer = (current: State, action: Action): State => {
               event_reason: step.event_reason,
               screen_descs: step.screen_descs,
               sd_asserts: step.sd_asserts,
+              vote: votes.find((v) => v.step_num === step.step_num)?.rating,
             };
           }) ?? [],
         devices: testRecord.devices ?? [],

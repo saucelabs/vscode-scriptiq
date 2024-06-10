@@ -1,9 +1,13 @@
+import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
+
 import type { TestStep as TestStepRecord } from './../../../src/types';
 import { AppiumPython } from './codeGen/python';
 import './TestStep.css';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
+import thumbsUpIcon from './icons/icn-thumbs-up.svg';
+import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Assertion } from './state';
 import { Screenshot } from './Screenshot';
 
@@ -51,6 +55,36 @@ export function TestStep({
                 <img className="icon" src={botIcon} />
               </div>
               <div>ScriptIQ Reasoning</div>
+              <div
+                style={{
+                  marginLeft: 'auto',
+                  display: 'flex',
+                  columnGap: '2px',
+                }}
+              >
+                <VSCodeButton appearance="icon" aria-label="thumbsUp">
+                  <img
+                    style={{
+                      padding: '4px',
+                      width: '16px',
+                      filter:
+                        'invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%)',
+                    }}
+                    src={thumbsUpIcon}
+                  />
+                </VSCodeButton>
+                <VSCodeButton appearance="icon" aria-label="thumbsDown">
+                  <img
+                    style={{
+                      padding: '4px',
+                      width: '16px',
+                      filter:
+                        'invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg) brightness(104%) contrast(101%)',
+                    }}
+                    src={thumbsDownIcon}
+                  />
+                </VSCodeButton>
+              </div>
             </header>
             <div className="goal">{step.event_reason}</div>
             <ul className="screen-descriptions">

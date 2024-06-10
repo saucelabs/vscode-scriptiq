@@ -259,7 +259,9 @@ function App() {
                 data: {
                   goal: testGoal,
                   app_name: appName,
-                  assertions: [],
+                  assertions: assertions
+                    .filter((a) => !!a.value)
+                    .map((a) => a.value),
                   max_test_steps: maxSteps,
                   devices: devices,
                   platform: platform.name,
@@ -315,11 +317,7 @@ function App() {
             <section className="steps">
               <h3>Test Steps</h3>
               {steps.map((step) => (
-                <TestStep
-                  assertions={assertions}
-                  dispatch={dispatch}
-                  step={step}
-                />
+                <TestStep dispatch={dispatch} step={step} />
               ))}
             </section>
             <footer>

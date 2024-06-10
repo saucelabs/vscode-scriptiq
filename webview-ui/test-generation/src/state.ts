@@ -43,10 +43,12 @@ export interface State {
       depth: number;
     }[];
     event_reason: string;
-    // TODO: Normalize assertions
-    screen_descs: string[];
-    sd_asserts: string[];
     vote?: string;
+    assertions: {
+      description: string;
+      value: 'true' | 'false';
+    }[];
+    screen_descs: string[];
   }[];
 
   // Session
@@ -242,6 +244,12 @@ export const reducer = (current: State, action: Action): State => {
       if (user_screen_descs.length === 0) {
         user_screen_descs = [''];
       }
+
+      const assertions =
+        testRecord.user_screen_descs?.map((value) => ({
+          key: uuidv4(),
+          value,
+        })) ?? [];
       return {
         ...current,
         appName: testRecord.app_name,
@@ -263,13 +271,17 @@ export const reducer = (current: State, action: Action): State => {
                 name: step.img_name,
                 width: testRecord.screen_width ?? 0,
                 height: testRecord.screen_height ?? 0,
-                annotation: step.location,
+                annotation: { ...step.location },
               },
-              potential_identifiers: step.potential_identifiers,
+              potential_identifiers: { ...step.potential_identifiers },
               event_reason: step.event_reason,
               screen_descs: step.screen_descs,
               sd_asserts: step.sd_asserts,
               vote: votes.find((v) => v.step_num === step.step_num)?.rating,
+              assertions: assertions?.map((a, i) => ({
+                description: a.value,
+                value: step.sd_asserts[i] ? 'true' : 'false',
+              })),
             };
           }) ?? [],
         devices: testRecord.devices ?? [],

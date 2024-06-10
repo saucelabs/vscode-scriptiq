@@ -9,13 +9,12 @@ import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
-import { Action, Assertion } from './state';
+import { Action } from './state';
 import { Screenshot } from './Screenshot';
 
 import classes from './TestStep.module.css';
 
 export function TestStep(props: {
-  assertions: Assertion[];
   dispatch: React.Dispatch<Action>;
   step: {
     index: number;
@@ -40,19 +39,21 @@ export function TestStep(props: {
       depth: number;
     }[];
     event_reason: string;
-    // TODO: Normalize assertions
+    assertions: {
+      description: string;
+      value: 'true' | 'false';
+    }[];
     screen_descs: string[];
-    sd_asserts: string[];
     vote?: string;
   };
 }) {
-  const { assertions, dispatch, step } = props;
+  const { dispatch, step } = props;
   const {
     testRecordId,
     screenshot,
     index,
     event_reason,
-    sd_asserts,
+    assertions,
     screen_descs,
     potential_identifiers,
     action,
@@ -162,18 +163,18 @@ export function TestStep(props: {
               ))}
             </ul>
           </section>
-          {sd_asserts.length > 0 && assertions && (
+          {assertions.length > 0 && (
             <section className="assertions">
               <header>Assertions</header>
               <ul>
-                {assertions.map((assertion, i) => {
+                {assertions.map((assertion) => {
                   return (
                     <li>
                       <div>
-                        <div className="description">{assertion.value}</div>
-                        <div className="value">
-                          {sd_asserts[i] ? 'true' : 'false'}
+                        <div className="description">
+                          {assertion.description}
                         </div>
+                        <div className="value">{assertion.value}</div>
                       </div>
                     </li>
                   );

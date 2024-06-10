@@ -13,7 +13,6 @@ interface ScreenshotProps {
 }
 
 export function Screenshot(props: ScreenshotProps) {
-  console.log(props);
   const { annotation, src, width, height } = props;
   const ref = useRef<HTMLCanvasElement>(null);
 

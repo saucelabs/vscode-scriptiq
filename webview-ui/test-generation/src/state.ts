@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Credentials, TestRecord, TestStep, Vote } from '../../../src/types';
+import { Credentials, TestRecord, Vote } from '../../../src/types';
 
 export interface Assertion {
   value: string;
@@ -20,13 +20,33 @@ export interface State {
   devices: string[];
   generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
 
-  // TestRecord
-  steps?: TestStep[];
-  screen?: {
-    width: number;
-    height: number;
-  };
-  testId?: string;
+  steps?: {
+    index: number;
+    testRecordId: string;
+    action: string;
+    screenshot: {
+      name: string;
+      width: number;
+      height: number;
+      annotation: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      };
+    };
+    potential_identifiers: {
+      type: string;
+      value: string;
+      index: number;
+      checked: boolean;
+      depth: number;
+    }[];
+    event_reason: string;
+    // TODO: Normalize assertions
+    screen_descs: string[];
+    sd_asserts: string[];
+  }[];
 
   // Session
   sessionId?: string;
@@ -204,14 +224,6 @@ export const reducer = (current: State, action: Action): State => {
       if (user_screen_descs.length === 0) {
         user_screen_descs = [''];
       }
-      let screen;
-      if (testRecord.screen_width && testRecord.screen_height) {
-        screen = {
-          width: testRecord.screen_width,
-          height: testRecord.screen_height,
-        };
-      }
-
       return {
         ...current,
         appName: testRecord.app_name,
@@ -223,14 +235,29 @@ export const reducer = (current: State, action: Action): State => {
         maxSteps: testRecord.max_test_steps,
         status: '',
         generationState: 'idle',
-        steps: testRecord.all_steps,
+        steps:
+          testRecord.all_steps?.map((step) => {
+            return {
+              index: step.step_num,
+              testRecordId: testRecord.test_id,
+              action: step.action,
+              screenshot: {
+                name: step.img_name,
+                width: testRecord.screen_width ?? 0,
+                height: testRecord.screen_height ?? 0,
+                annotation: step.location,
+              },
+              potential_identifiers: step.potential_identifiers,
+              event_reason: step.event_reason,
+              screen_descs: step.screen_descs,
+              sd_asserts: step.sd_asserts,
+            };
+          }) ?? [],
         devices: testRecord.devices ?? [],
         assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,
         })),
-        screen,
-        testId: testRecord.test_id,
       };
     }
     case 'showVideo': {

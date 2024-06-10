@@ -1,7 +1,6 @@
 import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
 import classNames from 'classnames';
 
-import type { TestStep as TestStepRecord } from './../../../src/types';
 import { AppiumPython } from './codeGen/python';
 import './TestStep.css';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
@@ -14,20 +13,50 @@ import { Screenshot } from './Screenshot';
 
 import classes from './TestStep.module.css';
 
-export function TestStep({
-  step,
-  assertions,
-  recordId,
-  screen,
-}: {
-  step: TestStepRecord;
+export function TestStep(props: {
   assertions: Assertion[];
-  recordId: string;
-  screen?: { width: number; height: number };
+  step: {
+    index: number;
+    testRecordId: string;
+    action: string;
+    screenshot: {
+      name: string;
+      width: number;
+      height: number;
+      annotation: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      };
+    };
+    potential_identifiers: {
+      type: string;
+      value: string;
+      index: number;
+      checked: boolean;
+      depth: number;
+    }[];
+    event_reason: string;
+    // TODO: Normalize assertions
+    screen_descs: string[];
+    sd_asserts: string[];
+  };
 }) {
+  const { assertions, step } = props;
+  const {
+    testRecordId,
+    screenshot,
+    index,
+    event_reason,
+    sd_asserts,
+    screen_descs,
+    potential_identifiers,
+    action,
+  } = step;
   const codeGenerator = new AppiumPython();
 
-  const imgSrc = `${window.historyPath}/${recordId}/${step.img_name}`;
+  const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
 
   return (
     <section className="test-step">
@@ -35,22 +64,24 @@ export function TestStep({
         <div className="action-icon">
           <img className="icon" src={tapIconUrl} />
         </div>
-        <div className="title">Step {step.step_num + 1}</div>
+        <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
           <img className="icon" src={fullScreenIcon} />
         </div>
       </header>
       <div className="body">
-        {step.img_name && screen && (
-          <section className="screenshot">
-            <Screenshot
-              src={imgSrc}
-              width={screen.width}
-              height={screen.height}
-              annotation={step.location}
-            />
-          </section>
-        )}
+        {screenshot.name &&
+          screenshot.width !== 0 &&
+          screenshot.height !== 0 && (
+            <section className="screenshot">
+              <Screenshot
+                src={imgSrc}
+                width={screenshot.width}
+                height={screenshot.height}
+                annotation={screenshot.annotation}
+              />
+            </section>
+          )}
         <section className="description">
           <section className="reasoning">
             <header>
@@ -83,14 +114,14 @@ export function TestStep({
                 </VSCodeButton>
               </div>
             </header>
-            <div className="goal">{step.event_reason}</div>
+            <div className="goal">{event_reason}</div>
             <ul className="screen-descriptions">
-              {step.screen_descs.map((decs) => (
+              {screen_descs.map((decs) => (
                 <li>{decs}</li>
               ))}
             </ul>
           </section>
-          {step.sd_asserts.length > 0 && assertions && (
+          {sd_asserts.length > 0 && assertions && (
             <section className="assertions">
               <header>Assertions</header>
               <ul>
@@ -100,7 +131,7 @@ export function TestStep({
                       <div>
                         <div className="description">{assertion.value}</div>
                         <div className="value">
-                          {step.sd_asserts[i] ? 'true' : 'false'}
+                          {sd_asserts[i] ? 'true' : 'false'}
                         </div>
                       </div>
                     </li>
@@ -109,14 +140,14 @@ export function TestStep({
               </ul>
             </section>
           )}
-          {step.potential_identifiers.length > 0 && (
+          {potential_identifiers.length > 0 && (
             <section className="command">
               <header>Command</header>
               <pre
                 dangerouslySetInnerHTML={{
                   __html: codeGenerator.genCodeLine(
-                    step.potential_identifiers[0],
-                    step.action,
+                    potential_identifiers[0],
+                    action,
                   ),
                 }}
                 className="appium-command"

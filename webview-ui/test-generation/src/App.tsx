@@ -116,7 +116,7 @@ function App() {
   return (
     <main>
       <section className="inputs">
-        <p>What do you want to test?</p>
+        <h2>What do you want to test?</h2>
         <VSCodeTextField
           value={appName}
           onInput={(e) => {

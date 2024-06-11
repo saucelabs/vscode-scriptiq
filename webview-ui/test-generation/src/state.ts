@@ -18,7 +18,7 @@ export interface State {
   maxSteps?: number;
   platform: Platform;
   devices: string[];
-  generationState: 'idle' | 'generating' | 'errored' | 'succeeded';
+  generationState: 'idle' | 'generating' | 'errored' | 'finishing';
 
   steps?: {
     index: number;
@@ -87,6 +87,7 @@ export type Action =
   | { type: 'setGenerationState'; value: State['generationState'] }
   | { type: 'toggleDevice'; value: string }
   | { type: 'showTestRecord'; value: { testRecord: TestRecord; votes: Vote[] } }
+  | { type: 'loadNewRecord'; value: TestRecord }
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
@@ -127,7 +128,7 @@ export const reducer = (current: State, action: Action): State => {
     case 'finish':
       return {
         ...current,
-        generationState: 'succeeded',
+        generationState: 'idle',
         status: '',
         sessionId: '',
       };
@@ -238,6 +239,58 @@ export const reducer = (current: State, action: Action): State => {
         ...current,
         status: action.value,
       };
+    case 'loadNewRecord': {
+      const testRecord = action.value;
+      let { user_screen_descs = [''] } = testRecord;
+      if (user_screen_descs.length === 0) {
+        user_screen_descs = [''];
+      }
+
+      const assertions =
+        testRecord.user_screen_descs?.map((value) => ({
+          key: uuidv4(),
+          value,
+        })) ?? [];
+      return {
+        ...current,
+        generationState: 'finishing',
+        appName: testRecord.app_name,
+        testGoal: testRecord.goal,
+        platform: {
+          name: testRecord.platform,
+          version: testRecord.platform_version,
+        },
+        maxSteps: testRecord.max_test_steps,
+        status: '',
+        steps:
+          testRecord.all_steps?.map((step) => {
+            return {
+              index: step.step_num,
+              testRecordId: testRecord.test_id,
+              action: step.action,
+              screenshot: {
+                name: step.img_name,
+                width: testRecord.screen_width ?? 0,
+                height: testRecord.screen_height ?? 0,
+                annotation: { ...step.location },
+              },
+              potential_identifiers: { ...step.potential_identifiers },
+              event_reason: step.event_reason,
+              screen_descs: step.screen_descs,
+              sd_asserts: step.sd_asserts,
+              assertions: assertions?.map((a, i) => ({
+                description: a.value,
+                value: step.sd_asserts[i] ? 'true' : 'false',
+              })),
+            };
+          }) ?? [],
+        devices: testRecord.devices ?? [],
+        assertions: user_screen_descs.map((value) => ({
+          key: uuidv4(),
+          value,
+        })),
+      };
+    }
     case 'showTestRecord': {
       const { testRecord, votes } = action.value;
       let { user_screen_descs = [''] } = testRecord;

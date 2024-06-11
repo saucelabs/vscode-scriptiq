@@ -49,21 +49,13 @@ function App() {
           });
           break;
         case 'show-new-test-record':
-          // FIXME The difference between this and 'show-test-record' is confusing.
-          // `show-test-record` is used to display the test record in the panel
-          // when loading the test record from the history.
-          // While `show-new-test-record` is the finished record that comes fresh
-          // from the test generation process.
           vscode.postMessage({
             action: 'save-steps',
             data: message.data,
           });
           dispatch({
-            type: 'showTestRecord',
-            value: {
-              testRecord: message.data,
-              votes: [],
-            },
+            type: 'loadNewRecord',
+            value: message.data,
           });
           break;
         case 'recover-from-error':
@@ -79,8 +71,7 @@ function App() {
           break;
         case 'finalize':
           dispatch({
-            type: 'setGenerationState',
-            value: 'succeeded',
+            type: 'finish',
           });
           vscode.postMessage({
             action: 'enable-test-record-navigation',
@@ -300,7 +291,8 @@ function App() {
         </section>
       </section>
       {state.generationState === 'generating' ||
-      state.generationState === 'errored' ? (
+      state.generationState === 'errored' ||
+      state.generationState === 'finishing' ? (
         <section className="updates">
           <div className="status">{status}</div>
           {state.credentials && state.sessionId && (

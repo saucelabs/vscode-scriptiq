@@ -12,8 +12,6 @@ import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Action } from './state';
 import { Screenshot } from './Screenshot';
 
-import classes from './TestStep.module.css';
-
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;
   step: {
@@ -103,8 +101,8 @@ export function TestStep(props: {
               >
                 <VSCodeButton appearance="icon" aria-label="like">
                   <img
-                    className={classNames(classes.rating, {
-                      [classes.selected]: vote === 'like',
+                    className={classNames('rating', {
+                      selected: vote === 'like',
                     })}
                     onClick={() => {
                       const newRating = vote === 'like' ? 'norating' : 'like';
@@ -129,8 +127,8 @@ export function TestStep(props: {
                 </VSCodeButton>
                 <VSCodeButton appearance="icon" aria-label="dislike">
                   <img
-                    className={classNames(classes.rating, {
-                      [classes.selected]: vote === 'dislike',
+                    className={classNames('rating', {
+                      selected: vote === 'dislike',
                     })}
                     onClick={() => {
                       const newRating =

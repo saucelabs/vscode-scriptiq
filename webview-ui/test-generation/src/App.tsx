@@ -17,6 +17,9 @@ import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
+import { AppiumPython } from './codeGen/python';
+
+const codeGenerator = new AppiumPython();
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -336,10 +339,20 @@ function App() {
                 <VSCodeButton
                   appearance="secondary"
                   onClick={() => {
+                    const code = codeGenerator.generateFullScript(
+                      state.testGoal,
+                      state.appName,
+                      state.devices[0],
+                      state.platform.version ?? '',
+                      state.credentials?.region ?? '',
+                      state.platform.name,
+                      steps,
+                    );
+
                     vscode.postMessage({
                       action: 'show-test-code',
                       data: {
-                        content: 'import os',
+                        content: code,
                         language: 'python',
                       },
                     });

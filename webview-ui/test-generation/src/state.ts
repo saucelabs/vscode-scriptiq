@@ -55,6 +55,7 @@ export interface State {
   // Session
   sessionId?: string;
   status: string;
+  // TODO: Should come from the connect webview somehow?
   credentials?: Credentials;
 }
 

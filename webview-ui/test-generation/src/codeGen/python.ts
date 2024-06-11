@@ -19,9 +19,9 @@ export class AppiumPython extends AbstractBaseGenerator {
     }
 
     if (id_index == 0) {
-      return `driver.find_element(<span ${this.code_parameter_class}>by</span>=<span ${this.code_class_class}>AppiumBy</span>.${by_choice}, <span ${this.code_parameter_class}>value</span>=<span ${this.code_string_class}>"${value}"</span>)`;
+      return `driver.find_element(by=AppiumBy.${by_choice}, value="${value}")`;
     } else {
-      return `driver.find_elements(<span ${this.code_parameter_class}>by</span>=<span ${this.code_class_class}>AppiumBy</span>.${by_choice}, <span ${this.code_parameter_class}>value</span>=<span ${this.code_string_class}>"${value}"</span>)[<span ${this.code_number_class}>${id_index}</span>]`;
+      return `driver.find_elements(by=AppiumBy.${by_choice}, value="${value}")[${id_index}]`;
     }
   }
 
@@ -48,9 +48,7 @@ export class AppiumPython extends AbstractBaseGenerator {
    * @returns the original element, now with the skip step option added
    */
   noOptionComment() {
-    return (
-      `<span ${this.code_comment_class}> # SKIP STEP</span>` + this.preNewLine
-    );
+    return ` # SKIP STEP` + this.preNewLine;
   }
 
   swipeCodeComment(direction: string, is_for_script = false) {
@@ -61,20 +59,20 @@ export class AppiumPython extends AbstractBaseGenerator {
 
     let text = '';
     if (!is_for_script) {
-      text += `${this.preNewLine}<span ${this.code_comment_class}># SWIPE CODE:</span>${this.preNewLine}`;
+      text += `${this.preNewLine}# SWIPE CODE:${this.preNewLine}`;
     }
     if (direction === 'down') {
-      text += `${frontLine}width_midpoint = location[<span ${this.code_string_class}>"x"</span>] + location[<span ${this.code_string_class}>"width"</span>]/<span ${this.code_number_class}>2</span>${this.preNewLine}`;
-      text += `${frontLine}driver.swipe(start_x=width_midpoint, start_y=location[<span ${this.code_string_class}>"y"</span>] + location[<span ${this.code_string_class}>"height"</span>] - <span ${this.code_number_class}>5</span>, end_x=width_midpoint, end_y=location[<span ${this.code_string_class}>"y"</span>] + <span ${this.code_number_class}>5</span>, duration=<span ${this.code_number_class}>800</span>)${this.preNewLine}`;
+      text += `${frontLine}width_midpoint = location["x"] + location["width"]/2${this.preNewLine}`;
+      text += `${frontLine}driver.swipe(start_x=width_midpoint, start_y=location["y"] + location["height"] - 5, end_x=width_midpoint, end_y=location["y"] + 5, duration=800)${this.preNewLine}`;
     } else if (direction === 'up') {
-      text += `${frontLine}width_midpoint = location[<span ${this.code_string_class}>"x"</span>] + location[<span ${this.code_string_class}>"width"</span>]/<span ${this.code_number_class}>2</span>${this.preNewLine}`;
-      text += `${frontLine}driver.swipe(start_x=width_midpoint, start_y=location[<span ${this.code_string_class}>"y"</span>] + <span ${this.code_number_class}>5</span>, end_x=width_midpoint, end_y=location[<span ${this.code_string_class}>"y"</span>] + location[<span ${this.code_string_class}>"height"</span>] - <span ${this.code_number_class}>5</span>, duration=<span ${this.code_number_class}>800</span>)${this.preNewLine}`;
+      text += `${frontLine}width_midpoint = location["x"] + location["width"]/2${this.preNewLine}`;
+      text += `${frontLine}driver.swipe(start_x=width_midpoint, start_y=location["y"] + 5, end_x=width_midpoint, end_y=location["y"] + location["height"] - 5, duration=800)${this.preNewLine}`;
     } else if (direction === 'left') {
-      text += `${frontLine}height_midpoint = location[<span ${this.code_string_class}>"y"</span>] + location[<span ${this.code_string_class}>"height"</span>]/<span ${this.code_number_class}>2</span>${this.preNewLine}`;
-      text += `${frontLine}driver.swipe(start_x=location[<span ${this.code_string_class}>"x"</span>] + location[<span ${this.code_string_class}>"width"</span>] - <span ${this.code_number_class}>5</span>, start_y=height_midpoint, end_x=location[<span ${this.code_string_class}>"x"</span>] + <span ${this.code_number_class}>5</span>, end_y=height_midpoint, duration=<span ${this.code_number_class}>800</span>)${this.preNewLine}`;
+      text += `${frontLine}height_midpoint = location["y"] + location["height"]/2${this.preNewLine}`;
+      text += `${frontLine}driver.swipe(start_x=location["x"] + location["width"] - 5, start_y=height_midpoint, end_x=location["x"] + 5, end_y=height_midpoint, duration=800)${this.preNewLine}`;
     } else if (direction === 'right') {
-      text += `${frontLine}height_midpoint = location[<span ${this.code_string_class}>"y"</span>] + location[<span ${this.code_string_class}>"height"</span>]/<span ${this.code_number_class}>2</span>${this.preNewLine}`;
-      text += `${frontLine}driver.swipe(start_x=location[<span ${this.code_string_class}>"x"</span>] + <span ${this.code_number_class}>5</span>, start_y=height_midpoint, end_x=location[<span ${this.code_string_class}>"x"</span>] + location[<span ${this.code_string_class}>"width"</span>] - <span ${this.code_number_class}>5</span>, end_y=height_midpoint, duration=<span ${this.code_number_class}>800</span>)${this.preNewLine}`;
+      text += `${frontLine}height_midpoint = location["y"] + location["height"]/2${this.preNewLine}`;
+      text += `${frontLine}driver.swipe(start_x=location["x"] + 5, start_y=height_midpoint, end_x=location["x"] + location["width"] - 5, end_y=height_midpoint, duration=800)${this.preNewLine}`;
     }
     return text;
   }
@@ -87,12 +85,12 @@ export class AppiumPython extends AbstractBaseGenerator {
 
     let text = ``;
     if (!is_for_script) {
-      text += `${this.preNewLine}<span ${this.code_comment_class}># RETURN TEXT CODE:</span>${this.preNewLine}`;
+      text += `${this.preNewLine}# RETURN TEXT CODE:${this.preNewLine}`;
     }
     text += `${frontLine}element.click()${this.preNewLine}`;
-    text += `${frontLine}element.send_keys(<span ${this.code_string_class}>"${set_text}"</span>)${this.preNewLine}`;
-    text += `${frontLine}driver.execute_script(<span ${this.code_string_class}>'mobile: performEditorAction'</span>, {<span ${this.code_string_class}>'action'</span>: <span ${this.code_string_class}>'Go'</span>})${this.preNewLine}`;
-    text += `${frontLine}driver.execute_script(<span ${this.code_string_class}>'mobile: performEditorAction'</span>, {<span ${this.code_string_class}>'action'</span>: <span ${this.code_string_class}>'Search'</span>})${this.preNewLine}`;
+    text += `${frontLine}element.send_keys("${set_text}")${this.preNewLine}`;
+    text += `${frontLine}driver.execute_script('mobile: performEditorAction', {'action': 'Go'})${this.preNewLine}`;
+    text += `${frontLine}driver.execute_script('mobile: performEditorAction', {'action': 'Search'})${this.preNewLine}`;
     return text;
   }
 
@@ -105,42 +103,42 @@ export class AppiumPython extends AbstractBaseGenerator {
     platform: string,
   ) {
     const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
-    return `<span ${this.code_parameter_class}>import</span> os
+    return `import os
 
-<span ${this.code_parameter_class}>from</span> appium <span ${this.code_parameter_class}>import</span> webdriver
-<span ${this.code_parameter_class}>from</span> appium.options.android <span ${this.code_parameter_class}>import</span> UiAutomator2Options
-<span ${this.code_parameter_class}>from</span> appium.webdriver.common.appiumby <span ${this.code_parameter_class}>import</span> AppiumBy
+from appium import webdriver
+from appium.options.android import UiAutomator2Options
+from appium.webdriver.common.appiumby import AppiumBy
 
-<span ${this.code_comment_class}># Installations:</span>
-<span ${this.code_comment_class}># pip install Appium-Python-Client==3.1.0</span>
-<span ${this.code_comment_class}># pip install selenium==4.15.2</span>
+# Installations:
+# pip install Appium-Python-Client==3.1.0
+# pip install selenium==4.15.2
 
 ${this.splitComments(goal, false, `Goal: `)}
 
-app = <span ${this.code_string_class}>"${appName}"</span>
+app = "${appName}"
 
-dc = {<span ${this.code_string_class}>'platformName'</span>: <span ${this.code_string_class}>'${platform}'</span>}
-dc[<span ${this.code_string_class}>'appium:app'</span>] = <span ${this.code_string_class}>"storage:filename="</span> + app
-dc[<span ${this.code_string_class}>'appium:autoGrantPermissions'</span>] = <span ${this.code_parameter_class}>True</span>
-dc[<span ${this.code_string_class}>'appium:automationName'</span>] = <span ${this.code_string_class}>"${automationName}"</span>
+dc = {'platformName': '${platform}'}
+dc['appium:app'] = "storage:filename=" + app
+dc['appium:autoGrantPermissions'] = True
+dc['appium:automationName'] = "${automationName}"
 
-dc[<span ${this.code_string_class}>'appium:deviceName'</span>] = <span ${this.code_string_class}>"${device_name}"</span>
-dc[<span ${this.code_string_class}>'appium:platformVersion'</span>] = <span ${this.code_string_class}>"${platform_version}"</span>
+dc['appium:deviceName'] = "${device_name}"
+dc['appium:platformVersion'] = "${platform_version}"
 
-dc[<span ${this.code_string_class}>'sauce:options'</span>] = {<span ${this.code_string_class}>"name"</span>: <span ${this.code_string_class}>"ScriptIQ test: ${goal}"</span>}
+dc['sauce:options'] = {"name": "ScriptIQ test: ${goal}"}
 
-<span ${this.code_comment_class}># Set Sauce Credentials in Path</span>
-dc[<span ${this.code_string_class}>'sauce:options'</span>][<span ${this.code_string_class}>"username"</span>] = os.environ[<span ${this.code_string_class}>"SAUCE_USERNAME"</span>]
-dc[<span ${this.code_string_class}>'sauce:options'</span>][<span ${this.code_string_class}>"accessKey"</span>] = os.environ[<span ${this.code_string_class}>"SAUCE_ACCESS_KEY"</span>]
+# Set Sauce Credentials in Path
+dc['sauce:options']["username"] = os.environ["SAUCE_USERNAME"]
+dc['sauce:options']["accessKey"] = os.environ["SAUCE_ACCESS_KEY"]
 
-options = <span ${this.code_class_class}>UiAutomator2Options</span>().load_capabilities(dc)
-url = <span ${this.code_string_class}>'https://ondemand.${region}.saucelabs.com/wd/hub'</span> 
+options = UiAutomator2Options().load_capabilities(dc)
+url = 'https://ondemand.${region}.saucelabs.com/wd/hub' 
 
-driver = webdriver.<span ${this.code_class_class}>Remote</span>(url, <span ${this.code_parameter_class}}>options</span>=options)
-driver.implicitly_wait(<span ${this.code_number_class}>60</span>)
+driver = webdriver.Remote(url, options=options)
+driver.implicitly_wait(60)
 
-<span ${this.code_comment_class}>## Test Code</span>
-<span ${this.code_parameter_class}>try:</span>${this.preNewLine}`;
+## Test Code
+try:${this.preNewLine}`;
   }
 
   /**
@@ -148,8 +146,8 @@ driver.implicitly_wait(<span ${this.code_number_class}>60</span>)
    * @returns string of html of code to end test script
    */
   endScriptCode() {
-    return `<span ${this.code_parameter_class}}>except</span> <span ${this.code_class_class}>Exception</span> <span ${this.code_parameter_class}>as</span> e:
-${this.preTab}<span ${this.code_parameter_class}>print</span>(e)
+    return `except Exception as e:
+${this.preTab}print(e)
         
 driver.quit()`;
   }
@@ -174,6 +172,79 @@ driver.quit()`;
     if (curr_word.length !== `${startTab}# `.length) {
       lines.push(curr_word);
     }
-    return `<span class="code-comment">${lines.join('<br>')}</span>${this.preNewLine}`;
+    return `${lines.join('\n')}${this.preNewLine}`;
+  }
+
+  generateFullScript(
+    goal: string,
+    appName: string,
+    device_name: string,
+    platform_version: string,
+    region: string,
+    platform: string,
+    steps: any[],
+  ) {
+    const headerText = this.scriptHeaderCode(
+      goal,
+      appName,
+      device_name,
+      platform_version,
+      region,
+      platform,
+    );
+
+    let codeStepText = '';
+    for (let x = 0; x < steps.length; x++) {
+      // const index_element = document.querySelector(
+      //   `input[name="script_choice_${x}"]:checked`,
+      // );
+      // let index = -1;
+      // if (index_element !== null) {
+      //   index = document.querySelector(
+      //     `input[name="script_choice_${x}"]:checked`,
+      //   ).value;
+      // }
+
+      // if (index > -1) {
+      if (steps[x].potential_identifiers.length > 0) {
+        codeStepText += this.splitComments(
+          steps[x].event_reason,
+          true,
+          `ScriptIQ Reason: `,
+        );
+
+        codeStepText +=
+          `${this.preTab}` +
+          this.genCodeLine(
+            steps[x].potential_identifiers[0],
+            steps[x].action,
+            // x,
+          );
+
+        if ('direction' in steps[x] && steps[x].direction !== '') {
+          codeStepText += this.swipeCodeComment(
+            steps[x].direction,
+            true,
+            // x,
+          );
+        }
+        if ('text' in steps[x] && steps[x].text !== '') {
+          codeStepText += this.sendTextCodeComment(
+            steps[x].text,
+            true,
+            // x,
+          );
+        }
+        codeStepText += `${this.preNewLine}`;
+      }
+    }
+    const closeStepText = this.endScriptCode();
+
+    return `${headerText}${codeStepText}${closeStepText}`;
+    // scriptContainer.innerHTML = headerText + codeStepText + closeStepText;
+    // codeContainer.appendChild(scriptContainer);
+    // if (firstGen) {
+    //   window.scrollBy(0, 200);
+    // }
   }
 }

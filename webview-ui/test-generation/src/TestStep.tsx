@@ -92,13 +92,7 @@ export function TestStep(props: {
                 <img className="icon" src={botIcon} />
               </div>
               <div>ScriptIQ Reasoning</div>
-              <div
-                style={{
-                  marginLeft: 'auto',
-                  display: 'flex',
-                  columnGap: '2px',
-                }}
-              >
+              <div className="ratings">
                 <VSCodeButton appearance="icon" aria-label="like">
                   <img
                     className={classNames('rating', {

@@ -109,6 +109,12 @@ footer .controls {
   color: rgb(255, 132, 24); /*rgb(62, 4, 62)*/
 }
 
+.ratings {
+  margin-left: auto;
+  display: flex;
+  column-gap: 2px;
+}
+
 .rating {
   padding: 4px;
   width: 16px;

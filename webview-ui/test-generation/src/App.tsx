@@ -2,6 +2,7 @@ import { useEffect, useReducer } from 'react';
 import {
   VSCodeButton,
   VSCodeDropdown,
+  VSCodeLink,
   VSCodeOption,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
@@ -155,89 +156,97 @@ function App() {
             ))}
           </div>
         </section>
-        <section className="inputs">
-          <VSCodeTextField
-            value={maxSteps?.toString() ?? '10'}
-            onInput={(e) => {
-              if (e.target && 'value' in e.target) {
-                // TODO: Value needs to be validated
-                dispatch({
-                  type: 'setMaxSteps',
-                  value: parseInt(e.target.value as string),
-                });
-              }
-            }}
-          >
-            Cut off steps at
-          </VSCodeTextField>
-          <section className="with-label">
-            <label style={{ marginBottom: '2px' }}>Platform</label>
-            <VSCodeDropdown
+        <VSCodeLink
+          onClick={() => dispatch({ type: 'toggleAdditionalSettings' })}
+        >
+          Additional Settings
+        </VSCodeLink>
+        {state.showAdditionalSettings && (
+          <section className="inputs">
+            <VSCodeTextField
+              value={maxSteps?.toString() ?? '10'}
               onInput={(e) => {
                 if (e.target && 'value' in e.target) {
+                  // TODO: Value needs to be validated
                   dispatch({
-                    type: 'setPlatformName',
-                    value: e.target.value as 'iOS' | 'Android',
+                    type: 'setMaxSteps',
+                    value: parseInt(e.target.value as string),
                   });
                 }
               }}
-              value={platform.name}
             >
-              <VSCodeOption>Android</VSCodeOption>
-              <VSCodeOption>iOS</VSCodeOption>
-            </VSCodeDropdown>
-          </section>
-          <VSCodeTextField
-            onInput={(e) => {
-              if (e.target && 'value' in e.target) {
-                dispatch({
-                  type: 'setPlatformVersion',
-                  value: e.target.value as string,
-                });
-              }
-            }}
-            value={platform.version}
-          >
-            Platform Version (optional)
-          </VSCodeTextField>
-          <section className="with-label">
-            <label style={{ marginBottom: '2px' }}>
-              Device Name (optional)
-            </label>
-            <div style={{ display: 'flex', columnGap: '10px' }}>
-              <input
-                type="checkbox"
-                checked={devices.includes('Google.*')}
-                onChange={(e) => {
+              Cut off steps at
+            </VSCodeTextField>
+            <section className="with-label">
+              <label style={{ marginBottom: '2px' }}>Platform</label>
+              <VSCodeDropdown
+                onInput={(e) => {
                   if (e.target && 'value' in e.target) {
                     dispatch({
-                      type: 'toggleDevice',
-                      value: e.target.value as string,
+                      type: 'setPlatformName',
+                      value: e.target.value as 'iOS' | 'Android',
                     });
                   }
                 }}
-                value="Google.*"
-              />
-              <label>Google (any)</label>
-            </div>
-            <div style={{ display: 'flex', columnGap: '10px' }}>
-              <input
-                type="checkbox"
-                checked={devices.includes('Samsung.*')}
-                onChange={(e) => {
-                  if (e.target && 'value' in e.target) {
-                    dispatch({
-                      type: 'toggleDevice',
-                      value: e.target.value as string,
-                    });
-                  }
-                }}
-                value="Samsung.*"
-              />
-              <label>Samsung (any)</label>
-            </div>
+                value={platform.name}
+              >
+                <VSCodeOption>Android</VSCodeOption>
+                <VSCodeOption>iOS</VSCodeOption>
+              </VSCodeDropdown>
+            </section>
+            <VSCodeTextField
+              onInput={(e) => {
+                if (e.target && 'value' in e.target) {
+                  dispatch({
+                    type: 'setPlatformVersion',
+                    value: e.target.value as string,
+                  });
+                }
+              }}
+              value={platform.version}
+            >
+              Platform Version (optional)
+            </VSCodeTextField>
+            <section className="with-label">
+              <label style={{ marginBottom: '2px' }}>
+                Device Name (optional)
+              </label>
+              <div style={{ display: 'flex', columnGap: '10px' }}>
+                <input
+                  type="checkbox"
+                  checked={devices.includes('Google.*')}
+                  onChange={(e) => {
+                    if (e.target && 'value' in e.target) {
+                      dispatch({
+                        type: 'toggleDevice',
+                        value: e.target.value as string,
+                      });
+                    }
+                  }}
+                  value="Google.*"
+                />
+                <label>Google (any)</label>
+              </div>
+              <div style={{ display: 'flex', columnGap: '10px' }}>
+                <input
+                  type="checkbox"
+                  checked={devices.includes('Samsung.*')}
+                  onChange={(e) => {
+                    if (e.target && 'value' in e.target) {
+                      dispatch({
+                        type: 'toggleDevice',
+                        value: e.target.value as string,
+                      });
+                    }
+                  }}
+                  value="Samsung.*"
+                />
+                <label>Samsung (any)</label>
+              </div>
+            </section>
           </section>
-        </section>
+        )}
+
         <section className="buttons">
           <VSCodeButton
             disabled={state.generationState === 'generating'}

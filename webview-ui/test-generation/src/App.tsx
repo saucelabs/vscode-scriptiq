@@ -330,8 +330,12 @@ function App() {
             </section>
             <footer>
               <section className="controls">
-                <button>View Test on Sauce</button>
-                <button>Download Test Script</button>
+                <VSCodeButton appearance="primary">
+                  View Test on Sauce
+                </VSCodeButton>
+                <VSCodeButton appearance="secondary">
+                  Download Test Script
+                </VSCodeButton>
               </section>
             </footer>
           </>

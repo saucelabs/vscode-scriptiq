@@ -58,3 +58,12 @@
   flex-direction: column;
   row-gap: 8px;
 }
+
+footer {
+  margin-top: 8px;
+  .controls {
+    display: flex;
+    column-gap: 8px;
+    align-items: center;
+  }
+}

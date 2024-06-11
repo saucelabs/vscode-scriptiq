@@ -154,8 +154,12 @@ function App() {
               rowGap: '8px',
             }}
           >
-            {assertions.map((assertion) => (
-              <AssertionInput assertion={assertion} dispatch={dispatch} />
+            {assertions.map((assertion, i) => (
+              <AssertionInput
+                assertion={assertion}
+                dispatch={dispatch}
+                removable={i !== 0}
+              />
             ))}
           </div>
         </section>

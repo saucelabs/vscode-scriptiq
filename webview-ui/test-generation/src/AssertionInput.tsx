@@ -9,10 +9,11 @@ import plusIcon from './icons/icn-plus-fill.svg';
 interface AssertionInputProps {
   dispatch: React.Dispatch<Action>;
   assertion: Assertion;
+  removable: boolean;
 }
 
 export function AssertionInput(props: AssertionInputProps) {
-  const { dispatch, assertion } = props;
+  const { dispatch, assertion, removable } = props;
   return (
     <div
       style={{
@@ -42,9 +43,18 @@ export function AssertionInput(props: AssertionInputProps) {
       <VSCodeButton
         appearance="icon"
         aria-label="Delete"
-        disabled={!assertion.value}
         onClick={() => {
-          dispatch({ type: 'removeAssertion', value: { key: assertion.key } });
+          if (removable) {
+            dispatch({
+              type: 'removeAssertion',
+              value: { key: assertion.key },
+            });
+            return;
+          }
+          dispatch({
+            type: 'setAssertionValue',
+            value: { key: assertion.key, value: '' },
+          });
         }}
       >
         <img

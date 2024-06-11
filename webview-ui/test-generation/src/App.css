@@ -10,6 +10,10 @@
   flex-direction: column;
 }
 
+.with-label label {
+  margin-bottom: 2px;
+}
+
 .buttons {
   display: flex;
   column-gap: 8px;
@@ -18,6 +22,9 @@
 
 .updates .status {
   font-size: 1.6em;
+  display: flex;
+  column-gap: 16px;
+  align-items: center;
 }
 
 .updates {
@@ -25,5 +32,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  row-gap: 8px;
+}
+
+.additional-settings {
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+  line-height: 24px;
+}
+
+.additional-settings .icon {
+  width: 12px;
+  filter: invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg)
+    brightness(101%) contrast(101%);
+}
+
+.checkbox {
+  display: flex;
+  column-gap: 10px;
+}
+
+.assertions {
+  display: flex;
+  flex-direction: column;
   row-gap: 8px;
 }

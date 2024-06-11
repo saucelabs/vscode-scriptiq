@@ -144,16 +144,8 @@ function App() {
           Test Goal
         </VSCodeTextField>
         <section className="with-label">
-          <label style={{ marginBottom: '2px' }}>
-            Assert Inputs (optional)
-          </label>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              rowGap: '8px',
-            }}
-          >
+          <label>Assert Inputs (optional)</label>
+          <div className="assertions">
             {assertions.map((assertion, i) => (
               <AssertionInput
                 assertion={assertion}
@@ -163,26 +155,15 @@ function App() {
             ))}
           </div>
         </section>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            columnGap: '6px',
-            lineHeight: '24px',
-          }}
-        >
+        <div className="additional-settings">
           <VSCodeLink
             onClick={() => dispatch({ type: 'toggleAdditionalSettings' })}
           >
             Additional Settings
           </VSCodeLink>
           <img
+            className="icon"
             src={state.showAdditionalSettings ? chevronDownIcon : chevronUpIcon}
-            style={{
-              width: '12px',
-              filter:
-                'invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg) brightness(101%) contrast(101%)',
-            }}
           />
         </div>
 
@@ -203,7 +184,7 @@ function App() {
               Cut off steps at
             </VSCodeTextField>
             <section className="with-label">
-              <label style={{ marginBottom: '2px' }}>Platform</label>
+              <label>Platform</label>
               <VSCodeDropdown
                 onInput={(e) => {
                   if (e.target && 'value' in e.target) {
@@ -233,10 +214,8 @@ function App() {
               Platform Version (optional)
             </VSCodeTextField>
             <section className="with-label">
-              <label style={{ marginBottom: '2px' }}>
-                Device Name (optional)
-              </label>
-              <div style={{ display: 'flex', columnGap: '10px' }}>
+              <label>Device Name (optional)</label>
+              <div className="checkbox">
                 <input
                   type="checkbox"
                   checked={devices.includes('Google.*')}
@@ -252,7 +231,7 @@ function App() {
                 />
                 <label>Google (any)</label>
               </div>
-              <div style={{ display: 'flex', columnGap: '10px' }}>
+              <div className="checkbox">
                 <input
                   type="checkbox"
                   checked={devices.includes('Samsung.*')}
@@ -328,10 +307,7 @@ function App() {
       state.generationState === 'errored' ||
       state.generationState === 'finishing' ? (
         <section className="updates">
-          <div
-            className="status"
-            style={{ display: 'flex', columnGap: '16px', alignItems: 'center' }}
-          >
+          <div className="status">
             {status}
             <VSCodeProgressRing />
           </div>

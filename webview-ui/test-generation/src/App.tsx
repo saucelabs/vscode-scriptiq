@@ -4,6 +4,7 @@ import {
   VSCodeDropdown,
   VSCodeLink,
   VSCodeOption,
+  VSCodeProgressRing,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
 
@@ -323,7 +324,13 @@ function App() {
       state.generationState === 'errored' ||
       state.generationState === 'finishing' ? (
         <section className="updates">
-          <div className="status">{status}</div>
+          <div
+            className="status"
+            style={{ display: 'flex', columnGap: '16px', alignItems: 'center' }}
+          >
+            {status}
+            <VSCodeProgressRing />
+          </div>
           {state.credentials && state.sessionId && (
             <Preview
               credentials={state.credentials}

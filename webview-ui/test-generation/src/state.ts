@@ -334,7 +334,7 @@ export const reducer = (current: State, action: Action): State => {
                 height: testRecord.screen_height ?? 0,
                 annotation: { ...step.location },
               },
-              potential_identifiers: { ...step.potential_identifiers },
+              potential_identifiers: [...step.potential_identifiers],
               event_reason: step.event_reason,
               screen_descs: step.screen_descs,
               sd_asserts: step.sd_asserts,

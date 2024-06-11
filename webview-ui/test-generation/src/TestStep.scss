@@ -10,10 +10,7 @@ section.test-step {
     flex-direction: row;
     column-gap: 8px;
     align-items: center;
-
-    .title {
-      text-transform: uppercase;
-    }
+    text-transform: uppercase;
 
     .icon {
       width: 16px;

@@ -20,6 +20,7 @@
     "@types/uuid": "9.0.8",
     "@types/vscode-webview": "1.57.5",
     "@vitejs/plugin-react": "4.3.0",
+    "sass": "1.77.4",
     "typescript": "5.4.5",
     "vite": "5.2.11"
   }

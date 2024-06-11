@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import { vscode } from './utilities/vscode';
 import { AppiumPython } from './codeGen/python';
-import './TestStep.css';
+import './TestStep.scss';
 import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';

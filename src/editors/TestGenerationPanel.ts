@@ -275,10 +275,11 @@ export class TestGenerationPanel {
             return;
           }
           case 'show-test-code': {
-            workspace.openTextDocument({
+            const doc = await workspace.openTextDocument({
               content: message.data.content,
               language: message.data.language,
             });
+            await window.showTextDocument(doc);
           }
         }
       },

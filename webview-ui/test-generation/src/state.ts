@@ -54,6 +54,7 @@ export interface State {
 
   // Session
   sessionId?: string;
+  jobId?: string;
   status: string;
   // TODO: Should come from the connect webview somehow?
   credentials?: Credentials;
@@ -262,6 +263,7 @@ export const reducer = (current: State, action: Action): State => {
         })) ?? [];
       return {
         ...current,
+        jobId: testRecord.test_id,
         generationState: 'finishing',
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
@@ -314,6 +316,7 @@ export const reducer = (current: State, action: Action): State => {
         })) ?? [];
       return {
         ...current,
+        jobId: testRecord.test_id,
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {

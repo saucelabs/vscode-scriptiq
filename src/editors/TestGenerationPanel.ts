@@ -5,6 +5,7 @@ import {
   ViewColumn,
   Webview,
   WebviewPanel,
+  env,
   window,
   workspace,
 } from 'vscode';
@@ -280,12 +281,31 @@ export class TestGenerationPanel {
               language: message.data.language,
             });
             await window.showTextDocument(doc);
+            return;
           }
+          case 'open-job-url':
+            await env.openExternal(Uri.parse(this.jobUrl(message.data.jobId)));
+            return;
         }
       },
       undefined,
       this._disposables,
     );
+  }
+
+  jobUrl(jobId: string) {
+    const creds = this.getCredentials();
+    if (!creds) {
+      return '';
+    }
+
+    const { region } = creds;
+    switch (region) {
+      case 'eu-central-1':
+        return `https://app.eu-central-1.saucelabs.com/tests/${jobId}`;
+      default:
+        return `https://app.saucelabs.com/tests/${jobId}`;
+    }
   }
 
   public async addRecordToHistory(testID: string) {

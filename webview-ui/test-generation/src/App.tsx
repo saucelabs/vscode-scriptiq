@@ -333,9 +333,21 @@ function App() {
             </section>
             <footer>
               <section className="controls">
-                <VSCodeButton appearance="primary">
-                  View Test on Sauce
-                </VSCodeButton>
+                {state.jobId && (
+                  <VSCodeButton
+                    appearance="primary"
+                    onClick={() => {
+                      vscode.postMessage({
+                        action: 'open-job-url',
+                        data: {
+                          jobId: state.jobId,
+                        },
+                      });
+                    }}
+                  >
+                    View Test on Sauce
+                  </VSCodeButton>
+                )}
                 <VSCodeButton
                   appearance="secondary"
                   onClick={() => {

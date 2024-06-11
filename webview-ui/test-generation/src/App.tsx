@@ -14,6 +14,8 @@ import { TestStep } from './TestStep';
 import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
+import chevronUpIcon from './icons/icn-chevron-up.svg';
+import chevronDownIcon from './icons/icn-chevron-down.svg';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -156,11 +158,29 @@ function App() {
             ))}
           </div>
         </section>
-        <VSCodeLink
-          onClick={() => dispatch({ type: 'toggleAdditionalSettings' })}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            columnGap: '6px',
+            lineHeight: '24px',
+          }}
         >
-          Additional Settings
-        </VSCodeLink>
+          <VSCodeLink
+            onClick={() => dispatch({ type: 'toggleAdditionalSettings' })}
+          >
+            Additional Settings
+          </VSCodeLink>
+          <img
+            src={state.showAdditionalSettings ? chevronDownIcon : chevronUpIcon}
+            style={{
+              width: '12px',
+              filter:
+                'invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg) brightness(101%) contrast(101%)',
+            }}
+          />
+        </div>
+
         {state.showAdditionalSettings && (
           <section className="inputs">
             <VSCodeTextField

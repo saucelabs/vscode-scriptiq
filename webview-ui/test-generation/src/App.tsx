@@ -8,7 +8,7 @@ import {
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
 
-import './App.css';
+import './App.scss';
 import { initialState, reducer } from './state';
 import { vscode } from './utilities/vscode';
 import { TestStep } from './TestStep';

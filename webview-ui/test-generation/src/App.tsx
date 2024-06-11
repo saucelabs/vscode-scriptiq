@@ -333,7 +333,18 @@ function App() {
                 <VSCodeButton appearance="primary">
                   View Test on Sauce
                 </VSCodeButton>
-                <VSCodeButton appearance="secondary">
+                <VSCodeButton
+                  appearance="secondary"
+                  onClick={() => {
+                    vscode.postMessage({
+                      action: 'show-test-code',
+                      data: {
+                        content: 'import os',
+                        language: 'python',
+                      },
+                    });
+                  }}
+                >
                   Download Test Script
                 </VSCodeButton>
               </section>

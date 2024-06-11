@@ -6,6 +6,7 @@ import {
   Webview,
   WebviewPanel,
   window,
+  workspace,
 } from 'vscode';
 import { WebSocket } from 'undici';
 import * as toast from '../toast';
@@ -272,6 +273,12 @@ export class TestGenerationPanel {
               message.data.rating,
             );
             return;
+          }
+          case 'show-test-code': {
+            workspace.openTextDocument({
+              content: message.data.content,
+              language: message.data.language,
+            });
           }
         }
       },

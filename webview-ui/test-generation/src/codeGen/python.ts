@@ -62,7 +62,9 @@ export class AppiumPython extends AbstractBaseGenerator {
    * @returns the original element, now with the skip step option added
    */
   noOptionComment() {
-    return ` # SKIP STEP` + this.preNewLine;
+    return (
+      `<span ${this.code_comment_class}> # SKIP STEP</span>` + this.preNewLine
+    );
   }
 
   swipeCodeComment(direction: string, is_for_script = false) {

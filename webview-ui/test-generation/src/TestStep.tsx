@@ -193,6 +193,13 @@ export function TestStep(props: {
                   checked={selected === 0}
                   onClick={() => {
                     setSelected(0);
+                    dispatch({
+                      type: 'selectStepIdentifier',
+                      value: {
+                        stepIndex: step.index,
+                        selectedIdentifier: 0,
+                      },
+                    });
                   }}
                 >
                   <div
@@ -231,6 +238,13 @@ export function TestStep(props: {
                               checked={selected === i + 1}
                               onClick={() => {
                                 setSelected(i + 1);
+                                dispatch({
+                                  type: 'selectStepIdentifier',
+                                  value: {
+                                    stepIndex: step.index,
+                                    selectedIdentifier: i + 1,
+                                  },
+                                });
                               }}
                             >
                               <div

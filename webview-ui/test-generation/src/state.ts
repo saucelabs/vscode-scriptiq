@@ -43,6 +43,7 @@ export interface State {
       checked: boolean;
       depth: number;
     }[];
+    selectedIdentifier: number | 'skip';
     event_reason: string;
     vote?: string;
     assertions: {
@@ -100,6 +101,10 @@ export type Action =
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
+  | {
+      type: 'selectStepIdentifier';
+      value: { stepIndex: number; selectedIdentifier: number | 'skip' };
+    }
   | { type: 'startGeneration' }
   | { type: 'stopGeneration' }
   | {
@@ -120,6 +125,19 @@ export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
     case 'clear':
       return initialState;
+    case 'selectStepIdentifier':
+      return {
+        ...current,
+        steps: current.steps?.map((step) => {
+          if (step.index !== action.value.stepIndex) {
+            return step;
+          }
+          return {
+            ...step,
+            selectedIdentifier: action.value.selectedIdentifier,
+          };
+        }),
+      };
     case 'toggleAdditionalSettings':
       return {
         ...current,
@@ -297,6 +315,7 @@ export const reducer = (current: State, action: Action): State => {
                 annotation: { ...step.location },
               },
               potential_identifiers: { ...step.potential_identifiers },
+              selectedIdentifier: 0,
               event_reason: step.event_reason,
               screen_descs: step.screen_descs,
               sd_asserts: step.sd_asserts,
@@ -357,6 +376,7 @@ export const reducer = (current: State, action: Action): State => {
                 annotation: { ...step.location },
               },
               potential_identifiers: [...step.potential_identifiers],
+              selectedIdentifier: 0,
               event_reason: step.event_reason,
               screen_descs: step.screen_descs,
               sd_asserts: step.sd_asserts,

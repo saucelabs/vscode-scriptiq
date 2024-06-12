@@ -209,18 +209,10 @@ driver.quit()`;
 
     let codeStepText = '';
     for (let x = 0; x < steps.length; x++) {
-      // const index_element = document.querySelector(
-      //   `input[name="script_choice_${x}"]:checked`,
-      // );
-      // let index = -1;
-      // if (index_element !== null) {
-      //   index = document.querySelector(
-      //     `input[name="script_choice_${x}"]:checked`,
-      //   ).value;
-      // }
-
-      // if (index > -1) {
-      if (steps[x].potential_identifiers.length > 0) {
+      if (
+        steps[x].potential_identifiers.length > 0 &&
+        steps[x].selectedIdentifier !== 'skip'
+      ) {
         codeStepText += this.splitComments(
           steps[x].event_reason,
           true,
@@ -230,7 +222,7 @@ driver.quit()`;
         codeStepText +=
           `${this.preTab}` +
           this.genCodeLine(
-            steps[x].potential_identifiers[0],
+            steps[x].potential_identifiers[steps[x].selectedIdentifier],
             steps[x].action,
             // x,
           );
@@ -255,10 +247,5 @@ driver.quit()`;
     const closeStepText = this.endScriptCode();
 
     return `${headerText}${codeStepText}${closeStepText}`;
-    // scriptContainer.innerHTML = headerText + codeStepText + closeStepText;
-    // codeContainer.appendChild(scriptContainer);
-    // if (firstGen) {
-    //   window.scrollBy(0, 200);
-    // }
   }
 }

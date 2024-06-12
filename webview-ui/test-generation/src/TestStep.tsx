@@ -1,4 +1,8 @@
-import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
+import {
+  VSCodeButton,
+  VSCodeLink,
+  VSCodeRadio,
+} from '@vscode/webview-ui-toolkit/react';
 import classNames from 'classnames';
 
 import { vscode } from './utilities/vscode';
@@ -11,6 +15,10 @@ import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Action } from './state';
 import { Screenshot } from './Screenshot';
+import { useState } from 'react';
+
+import chevronUpIcon from './icons/icn-chevron-up.svg';
+import chevronDownIcon from './icons/icn-chevron-down.svg';
 
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;
@@ -57,6 +65,9 @@ export function TestStep(props: {
     action,
     vote,
   } = step;
+  const [showAlternatives, setShowAlternatives] = useState<boolean>(false);
+  const [selected, setSelected] = useState<number>(0);
+
   const codeGenerator = new AppiumPython();
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
@@ -175,20 +186,71 @@ export function TestStep(props: {
             </section>
           )}
           {potential_identifiers.length > 0 && (
-            <section className="command">
+            <section className="commands">
               <header>Command</header>
-              <pre
-                dangerouslySetInnerHTML={{
-                  __html: codeGenerator.genCodeLine(
-                    potential_identifiers[0],
-                    action,
-                    true,
-                  ),
-                }}
-                className="appium-command"
-              />
+              <div className="command">
+                <VSCodeRadio
+                  checked={selected === 0}
+                  onClick={() => {
+                    setSelected(0);
+                  }}
+                >
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: codeGenerator.genCodeLine(
+                        potential_identifiers[0],
+                        action,
+                        true,
+                      ),
+                    }}
+                  />
+                </VSCodeRadio>
+              </div>
               <section className="alternatives">
-                <a>View Step Alternatives</a>
+                <div className="toggle">
+                  <VSCodeLink
+                    onClick={() => {
+                      setShowAlternatives(!showAlternatives);
+                    }}
+                  >
+                    View Step Alternatives
+                  </VSCodeLink>
+                  <img
+                    className="icon"
+                    src={showAlternatives ? chevronDownIcon : chevronUpIcon}
+                  />
+                </div>
+                {showAlternatives && (
+                  <div className="options">
+                    {potential_identifiers.map((item) => (
+                      <div>{item.checked ? 'checked' : 'unchecked'}</div>
+                    ))}
+                    {potential_identifiers
+                      .filter((_item, i) => i !== 0)
+                      .map((item, i) => {
+                        return (
+                          <div className="command">
+                            <VSCodeRadio
+                              checked={selected === i + 1}
+                              onClick={() => {
+                                setSelected(i + 1);
+                              }}
+                            >
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: codeGenerator.genCodeLine(
+                                    item,
+                                    action,
+                                    true,
+                                  ),
+                                }}
+                              />
+                            </VSCodeRadio>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
               </section>
             </section>
           )}

@@ -328,7 +328,11 @@ function App() {
             <section className="steps">
               <h3>Test Steps</h3>
               {steps.map((step) => (
-                <TestStep dispatch={dispatch} step={step} />
+                <TestStep
+                  key={`${step.testRecordId}-${step.index}`}
+                  dispatch={dispatch}
+                  step={step}
+                />
               ))}
             </section>
             <footer>

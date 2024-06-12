@@ -100,6 +100,25 @@ section.test-step {
   color: rgb(255, 132, 24); /*rgb(62, 4, 62)*/
 }
 
+.commands {
+  .command {
+    margin: 4px;
+  }
+  .alternatives {
+    .toggle {
+      display: flex;
+      align-items: center;
+      column-gap: 4px;
+    }
+
+    .icon {
+      width: 12px;
+      filter: invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg)
+        brightness(101%) contrast(101%);
+    }
+  }
+}
+
 .ratings {
   margin-left: auto;
   display: flex;

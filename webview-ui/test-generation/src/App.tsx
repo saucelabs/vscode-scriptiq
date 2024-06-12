@@ -5,6 +5,7 @@ import {
   VSCodeLink,
   VSCodeOption,
   VSCodeProgressRing,
+  VSCodeRadio,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
 
@@ -327,6 +328,24 @@ function App() {
           <>
             <section className="steps">
               <h3>Test Steps</h3>
+              <div>
+                <VSCodeRadio
+                  checked={state.language === 'python'}
+                  onClick={() =>
+                    dispatch({ type: 'setLanguage', value: 'python' })
+                  }
+                >
+                  Python
+                </VSCodeRadio>
+                <VSCodeRadio
+                  checked={state.language === 'java'}
+                  onClick={() =>
+                    dispatch({ type: 'setLanguage', value: 'java' })
+                  }
+                >
+                  Java
+                </VSCodeRadio>
+              </div>
               {steps.map((step) => (
                 <TestStep
                   key={`${step.testRecordId}-${step.index}`}

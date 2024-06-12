@@ -63,6 +63,8 @@ export interface State {
   status: string;
   // TODO: Should come from the connect webview somehow?
   credentials?: Credentials;
+
+  language: 'python' | 'java';
 }
 
 export const initialState: State = {
@@ -83,6 +85,7 @@ export const initialState: State = {
   generationState: 'idle',
   status: '',
   devices: [],
+  language: 'python',
 };
 
 export type Action =
@@ -101,6 +104,7 @@ export type Action =
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
+  | { type: 'setLanguage'; value: State['language'] }
   | {
       type: 'selectStepIdentifier';
       value: { stepIndex: number; selectedIdentifier: number | 'skip' };
@@ -125,6 +129,11 @@ export const reducer = (current: State, action: Action): State => {
   switch (action.type) {
     case 'clear':
       return initialState;
+    case 'setLanguage':
+      return {
+        ...current,
+        language: action.value,
+      };
     case 'selectStepIdentifier':
       return {
         ...current,

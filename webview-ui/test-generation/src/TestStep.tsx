@@ -66,7 +66,7 @@ export function TestStep(props: {
     vote,
   } = step;
   const [showAlternatives, setShowAlternatives] = useState<boolean>(false);
-  const [selected, setSelected] = useState<number>(0);
+  const [selected, setSelected] = useState<number | 'skip'>(0);
 
   const codeGenerator = new AppiumPython();
 
@@ -229,6 +229,27 @@ export function TestStep(props: {
                 </div>
                 {showAlternatives && (
                   <div className="options">
+                    <div className="command">
+                      <VSCodeRadio
+                        checked={selected === 'skip'}
+                        onClick={() => {
+                          setSelected('skip');
+                          dispatch({
+                            type: 'selectStepIdentifier',
+                            value: {
+                              stepIndex: step.index,
+                              selectedIdentifier: 'skip',
+                            },
+                          });
+                        }}
+                      >
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: codeGenerator.noOptionComment(),
+                          }}
+                        />
+                      </VSCodeRadio>
+                    </div>
                     {potential_identifiers
                       .filter((_item, i) => i !== 0)
                       .map((item, i) => {

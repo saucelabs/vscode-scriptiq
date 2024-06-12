@@ -377,7 +377,7 @@ function App() {
                         });
                       }}
                     >
-                      Download Test Script
+                      Open Test Script
                     </VSCodeButton>
                   )}
               </section>

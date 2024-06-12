@@ -52,9 +52,13 @@ export interface State {
     screen_descs: string[];
   }[];
 
+  job?: {
+    id: string;
+    device?: string;
+    platform: Platform;
+  };
   // Session
   sessionId?: string;
-  jobId?: string;
   status: string;
   // TODO: Should come from the connect webview somehow?
   credentials?: Credentials;
@@ -263,7 +267,6 @@ export const reducer = (current: State, action: Action): State => {
         })) ?? [];
       return {
         ...current,
-        jobId: testRecord.test_id,
         generationState: 'finishing',
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
@@ -273,6 +276,14 @@ export const reducer = (current: State, action: Action): State => {
         },
         maxSteps: testRecord.max_test_steps,
         status: '',
+        job: {
+          id: testRecord.test_id,
+          device: testRecord.selected_device_name,
+          platform: {
+            name: testRecord.platform,
+            version: testRecord.selected_platform_version,
+          },
+        },
         steps:
           testRecord.all_steps?.map((step) => {
             return {
@@ -316,7 +327,6 @@ export const reducer = (current: State, action: Action): State => {
         })) ?? [];
       return {
         ...current,
-        jobId: testRecord.test_id,
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {
@@ -326,6 +336,14 @@ export const reducer = (current: State, action: Action): State => {
         maxSteps: testRecord.max_test_steps,
         status: '',
         generationState: 'idle',
+        job: {
+          id: testRecord.test_id,
+          device: testRecord.selected_device_name,
+          platform: {
+            name: testRecord.platform,
+            version: testRecord.selected_platform_version,
+          },
+        },
         steps:
           testRecord.all_steps?.map((step) => {
             return {

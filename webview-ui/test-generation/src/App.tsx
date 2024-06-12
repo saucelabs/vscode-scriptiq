@@ -333,14 +333,14 @@ function App() {
             </section>
             <footer>
               <section className="controls">
-                {state.jobId && (
+                {state.job?.id && (
                   <VSCodeButton
                     appearance="primary"
                     onClick={() => {
                       vscode.postMessage({
                         action: 'open-job-url',
                         data: {
-                          jobId: state.jobId,
+                          jobId: state.job?.id,
                         },
                       });
                     }}
@@ -348,30 +348,34 @@ function App() {
                     View Test on Sauce
                   </VSCodeButton>
                 )}
-                <VSCodeButton
-                  appearance="secondary"
-                  onClick={() => {
-                    const code = codeGenerator.generateFullScript(
-                      state.testGoal,
-                      state.appName,
-                      state.devices[0],
-                      state.platform.version ?? '',
-                      state.credentials?.region ?? '',
-                      state.platform.name,
-                      steps,
-                    );
+                {state.job &&
+                  state.job.device &&
+                  state.job.platform.version && (
+                    <VSCodeButton
+                      appearance="secondary"
+                      onClick={() => {
+                        const code = codeGenerator.generateFullScript(
+                          state.testGoal,
+                          state.appName,
+                          state.job?.device ?? '',
+                          state.job?.platform.version ?? '',
+                          state.credentials?.region ?? '',
+                          state.platform.name,
+                          steps,
+                        );
 
-                    vscode.postMessage({
-                      action: 'show-test-code',
-                      data: {
-                        content: code,
-                        language: 'python',
-                      },
-                    });
-                  }}
-                >
-                  Download Test Script
-                </VSCodeButton>
+                        vscode.postMessage({
+                          action: 'show-test-code',
+                          data: {
+                            content: code,
+                            language: 'python',
+                          },
+                        });
+                      }}
+                    >
+                      Download Test Script
+                    </VSCodeButton>
+                  )}
               </section>
             </footer>
           </>

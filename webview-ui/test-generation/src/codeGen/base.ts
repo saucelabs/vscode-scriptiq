@@ -31,6 +31,7 @@ export abstract class AbstractBaseGenerator {
     id_type: string,
     id_value: string,
     id_num: number,
+    highlight: boolean,
   ): string;
 
   /**
@@ -39,7 +40,11 @@ export abstract class AbstractBaseGenerator {
    * @param action (click, scroll, set_text)
    * @returns the line of code
    */
-  abstract genCodeLine(bestIdentifier: any, action: string): string;
+  abstract genCodeLine(
+    bestIdentifier: any,
+    action: string,
+    highlight: boolean,
+  ): string;
 
   /**
    * Lines of code to swipe given a location of a element

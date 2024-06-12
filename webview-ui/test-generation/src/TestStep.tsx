@@ -182,6 +182,7 @@ export function TestStep(props: {
                   __html: codeGenerator.genCodeLine(
                     potential_identifiers[0],
                     action,
+                    true,
                   ),
                 }}
                 className="appium-command"

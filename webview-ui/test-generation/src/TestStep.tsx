@@ -222,9 +222,6 @@ export function TestStep(props: {
                 </div>
                 {showAlternatives && (
                   <div className="options">
-                    {potential_identifiers.map((item) => (
-                      <div>{item.checked ? 'checked' : 'unchecked'}</div>
-                    ))}
                     {potential_identifiers
                       .filter((_item, i) => i !== 0)
                       .map((item, i) => {

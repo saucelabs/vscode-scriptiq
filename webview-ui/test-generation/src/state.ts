@@ -15,7 +15,7 @@ export interface State {
   appName: string;
   testGoal: string;
   assertions: Assertion[];
-  maxSteps?: number;
+  maxSteps: number | '';
   platform: Platform;
   devices: string[];
   generationState: 'idle' | 'generating' | 'errored' | 'finishing';
@@ -90,7 +90,7 @@ export type Action =
   | { type: 'clear' }
   | { type: 'setAppName'; value: State['appName'] }
   | { type: 'setTestGoal'; value: State['testGoal'] }
-  | { type: 'setMaxSteps'; value: State['maxSteps'] }
+  | { type: 'setMaxSteps'; value: string }
   | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
@@ -236,11 +236,15 @@ export const reducer = (current: State, action: Action): State => {
         ...current,
         testGoal: action.value,
       };
-    case 'setMaxSteps':
+    case 'setMaxSteps': {
+      let { value } = action;
+      value = value.replaceAll(/\D/g, '');
+      const maxSteps = value === '' ? value : parseInt(value);
       return {
         ...current,
-        maxSteps: action.value,
+        maxSteps,
       };
+    }
     case 'setPlatformName':
       return {
         ...current,
@@ -293,7 +297,7 @@ export const reducer = (current: State, action: Action): State => {
           name: testRecord.platform,
           version: testRecord.platform_version,
         },
-        maxSteps: testRecord.max_test_steps,
+        maxSteps: testRecord.max_test_steps ?? '',
         status: '',
         job: {
           id: testRecord.test_id,
@@ -353,7 +357,7 @@ export const reducer = (current: State, action: Action): State => {
           name: testRecord.platform,
           version: testRecord.platform_version,
         },
-        maxSteps: testRecord.max_test_steps,
+        maxSteps: testRecord.max_test_steps ?? '',
         status: '',
         generationState: 'idle',
         job: {

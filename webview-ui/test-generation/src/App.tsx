@@ -174,13 +174,12 @@ function App() {
         {showAdditionalSettings && (
           <section className="inputs">
             <VSCodeTextField
-              value={maxSteps?.toString() ?? '10'}
+              value={maxSteps.toString()}
               onInput={(e) => {
                 if (e.target && 'value' in e.target) {
-                  // TODO: Value needs to be validated
                   dispatch({
                     type: 'setMaxSteps',
-                    value: parseInt(e.target.value as string),
+                    value: e.target.value as string,
                   });
                 }
               }}

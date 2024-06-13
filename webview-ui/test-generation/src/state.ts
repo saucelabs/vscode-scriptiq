@@ -78,7 +78,7 @@ export const initialState: State = {
   maxSteps: 10,
   platform: {
     name: 'Android',
-    version: '10',
+    version: '',
   },
   generationState: 'idle',
   status: '',

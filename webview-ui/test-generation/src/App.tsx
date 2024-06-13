@@ -28,7 +28,7 @@ function App() {
   useEffect(() => {
     function handler(event: any) {
       const message = event.data as PostedMessage; // The json data that the extension sent
-      console.log(message);
+
       switch (message.action) {
         case 'update-test-progress':
           dispatch({
@@ -106,16 +106,8 @@ function App() {
     });
   }, []);
 
-  const {
-    appName,
-    assertions,
-    devices,
-    testGoal,
-    maxSteps,
-    platform,
-    status,
-    steps,
-  } = state;
+  const { appName, assertions, testGoal, maxSteps, platform, status, steps } =
+    state;
 
   return (
     <main>
@@ -226,41 +218,26 @@ function App() {
             >
               Platform Version (optional)
             </VSCodeTextField>
-            <section className="with-label">
-              <label>Device Name (optional)</label>
-              <div className="checkbox">
-                <input
-                  type="checkbox"
-                  checked={devices.includes('Google.*')}
-                  onChange={(e) => {
-                    if (e.target && 'value' in e.target) {
-                      dispatch({
-                        type: 'toggleDevice',
-                        value: e.target.value as string,
-                      });
-                    }
-                  }}
-                  value="Google.*"
-                />
-                <label>Google (any)</label>
-              </div>
-              <div className="checkbox">
-                <input
-                  type="checkbox"
-                  checked={devices.includes('Samsung.*')}
-                  onChange={(e) => {
-                    if (e.target && 'value' in e.target) {
-                      dispatch({
-                        type: 'toggleDevice',
-                        value: e.target.value as string,
-                      });
-                    }
-                  }}
-                  value="Samsung.*"
-                />
-                <label>Samsung (any)</label>
-              </div>
-            </section>
+            <VSCodeTextField
+              placeholder="e.g. Google.*, iPhone.*"
+              onInput={(e) => {
+                if (e.target && 'value' in e.target) {
+                  dispatch({
+                    type: 'setDevice',
+                    value: e.target.value as string,
+                  });
+                }
+              }}
+              value={state.device ?? ''}
+            >
+              Device Name (optional)
+            </VSCodeTextField>
+            <div>
+              <VSCodeLink href="https://docs.saucelabs.com/mobile-apps/supported-devices/#dynamic-device-allocation">
+                Check the docs
+              </VSCodeLink>{' '}
+              to learn about device selection
+            </div>
           </section>
         )}
 
@@ -271,6 +248,7 @@ function App() {
               dispatch({
                 type: 'startGeneration',
               });
+
               vscode.postMessage({
                 action: 'generate-test',
                 data: {
@@ -280,7 +258,7 @@ function App() {
                     .filter((a) => !!a.value)
                     .map((a) => a.value),
                   max_test_steps: maxSteps,
-                  devices: devices,
+                  devices: state.device ? [state.device] : [],
                   platform: platform.name,
                   platform_version: platform.version,
                 },

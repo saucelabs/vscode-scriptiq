@@ -17,7 +17,7 @@ export interface State {
   assertions: Assertion[];
   maxSteps: number | '';
   platform: Platform;
-  devices: string[];
+  device?: string;
   generationState: 'idle' | 'generating' | 'errored' | 'finishing';
 
   steps?: {
@@ -82,7 +82,6 @@ export const initialState: State = {
   },
   generationState: 'idle',
   status: '',
-  devices: [],
   language: 'python',
 };
 
@@ -95,7 +94,7 @@ export type Action =
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
   | { type: 'setGenerationState'; value: State['generationState'] }
-  | { type: 'toggleDevice'; value: string }
+  | { type: 'setDevice'; value: string }
   | { type: 'showTestRecord'; value: { testRecord: TestRecord; votes: Vote[] } }
   | { type: 'loadNewRecord'; value: TestRecord }
   | { type: 'addAssertion'; value: { key: string } }
@@ -144,20 +143,11 @@ export const reducer = (current: State, action: Action): State => {
           };
         }),
       };
-    case 'toggleDevice': {
-      const { value: device } = action;
-      let devices = current.devices;
-      if (devices.includes(device)) {
-        devices = devices.filter((d) => d !== device);
-      } else {
-        devices = [...devices, device];
-      }
-
+    case 'setDevice':
       return {
         ...current,
-        devices,
+        device: action.value,
       };
-    }
     case 'finish':
       return {
         ...current,
@@ -330,7 +320,7 @@ export const reducer = (current: State, action: Action): State => {
               })),
             };
           }) ?? [],
-        devices: testRecord.devices ?? [],
+        device: testRecord.devices?.join(',') ?? '',
         assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,
@@ -392,7 +382,7 @@ export const reducer = (current: State, action: Action): State => {
               })),
             };
           }) ?? [],
-        devices: testRecord.devices ?? [],
+        device: testRecord.devices?.join(',') ?? '',
         assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,

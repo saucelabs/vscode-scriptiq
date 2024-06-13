@@ -286,6 +286,17 @@ export class TestGenerationPanel {
           case 'open-job-url':
             await env.openExternal(Uri.parse(this.jobUrl(message.data.jobId)));
             return;
+          case 'open-screenshot':
+            await env.openExternal(
+              Uri.file(
+                Uri.joinPath(
+                  this._storage.getHistoryUri(),
+                  message.data.testRecordId,
+                  message.data.filename,
+                ).path,
+              ),
+            );
+            return;
         }
       },
       undefined,

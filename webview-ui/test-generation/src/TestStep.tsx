@@ -9,7 +9,7 @@ import Prism from 'prismjs';
 import { vscode } from './utilities/vscode';
 import { AppiumPython } from './codeGen/python';
 import './TestStep.scss';
-import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
+// import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import thumbsUpIcon from './icons/icn-thumbs-up.svg';
@@ -85,12 +85,26 @@ export function TestStep(props: {
   return (
     <section className="test-step">
       <header>
-        <div className="action-icon">
+        {/* <div className="action-icon">
           <img className="icon" src={tapIconUrl} />
-        </div>
+        </div> */}
         <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
-          <img className="icon" src={fullScreenIcon} />
+          <VSCodeButton
+            appearance="icon"
+            aria-label="fullscreen"
+            onClick={() => {
+              vscode.postMessage({
+                action: 'open-screenshot',
+                data: {
+                  testRecordId,
+                  filename: screenshot.name,
+                },
+              });
+            }}
+          >
+            <img className="icon button" src={fullScreenIcon} />
+          </VSCodeButton>
         </div>
       </header>
       <div className="body">

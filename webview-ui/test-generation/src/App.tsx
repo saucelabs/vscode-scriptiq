@@ -16,11 +16,9 @@ import { TestStep } from './TestStep';
 import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
+import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codeGen';
 import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
-import { AppiumPython } from './codeGen/python';
-
-const codeGenerator = new AppiumPython();
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -377,7 +375,13 @@ function App() {
                     <VSCodeButton
                       appearance="secondary"
                       onClick={() => {
-                        const code = codeGenerator.generateFullScript(
+                        let generator: AbstractBaseGenerator;
+                        if (state.language === 'python') {
+                          generator = new AppiumPython();
+                        } else {
+                          generator = new AppiumJava();
+                        }
+                        const code = generator.generateFullScript(
                           state.testGoal,
                           state.appName,
                           state.job?.device ?? '',
@@ -391,7 +395,7 @@ function App() {
                           action: 'show-test-code',
                           data: {
                             content: code,
-                            language: 'python',
+                            language: state.language,
                           },
                         });
                       }}

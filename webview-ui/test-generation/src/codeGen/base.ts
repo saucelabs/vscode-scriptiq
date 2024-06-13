@@ -43,7 +43,11 @@ export abstract class AbstractBaseGenerator {
   abstract genCodeLine(
     bestIdentifier: any,
     action: string,
-    highlight: boolean,
+    opts: {
+      highlight?: boolean;
+      // No idea what this is
+      number?: string;
+    },
   ): string;
 
   /**
@@ -95,5 +99,15 @@ export abstract class AbstractBaseGenerator {
     comment: string,
     has_start_tab: boolean,
     starting_value: string,
+  ): string;
+
+  abstract generateFullScript(
+    goal: string,
+    appName: string,
+    device_name: string,
+    platform_version: string,
+    region: string,
+    platform: string,
+    steps: any[],
   ): string;
 }

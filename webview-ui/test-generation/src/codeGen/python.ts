@@ -38,12 +38,19 @@ export class AppiumPython extends AbstractBaseGenerator {
     }
   }
 
-  genCodeLine(bestIdentifier: any, action: string, highlight = false) {
+  genCodeLine(
+    bestIdentifier: any,
+    action: string,
+    opts: {
+      highlight?: boolean;
+      number?: string;
+    } = { number: '', highlight: false },
+  ) {
     const findElement = this.findElementCode(
       bestIdentifier.type,
       bestIdentifier.value,
       bestIdentifier.index,
-      highlight,
+      opts?.highlight,
     );
 
     let codeStepText = ``;

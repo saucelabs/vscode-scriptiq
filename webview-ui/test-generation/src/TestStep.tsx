@@ -207,7 +207,7 @@ export function TestStep(props: {
                       __html: codeGenerator.genCodeLine(
                         potential_identifiers[0],
                         action,
-                        true,
+                        { highlight: true },
                       ),
                     }}
                   />
@@ -273,7 +273,9 @@ export function TestStep(props: {
                                   __html: codeGenerator.genCodeLine(
                                     item,
                                     action,
-                                    true,
+                                    {
+                                      highlight: true,
+                                    },
                                   ),
                                 }}
                               />

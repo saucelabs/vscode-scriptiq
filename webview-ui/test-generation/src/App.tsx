@@ -183,6 +183,14 @@ function App() {
                   });
                 }
               }}
+              onChange={(e) => {
+                if (e.target && 'value' in e.target && e.target.value === '') {
+                  dispatch({
+                    type: 'setMaxSteps',
+                    value: '10',
+                  });
+                }
+              }}
             >
               Cut off steps at
             </VSCodeTextField>

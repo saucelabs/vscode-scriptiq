@@ -5,6 +5,7 @@ import {
   ViewColumn,
   Webview,
   WebviewPanel,
+  commands,
   env,
   window,
   workspace,
@@ -287,7 +288,8 @@ export class TestGenerationPanel {
             await env.openExternal(Uri.parse(this.jobUrl(message.data.jobId)));
             return;
           case 'open-screenshot':
-            await env.openExternal(
+            await commands.executeCommand(
+              'vscode.open',
               Uri.file(
                 Uri.joinPath(
                   this._storage.getHistoryUri(),

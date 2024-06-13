@@ -81,6 +81,7 @@ export class TestGenerationPanel {
           enableScripts: true,
           // Restrict the webview to only load resources from the `out` and `webview-ui/build` directories
           localResourceRoots: [context.extensionUri, storage.getHistoryUri()],
+          retainContextWhenHidden: true,
         },
       );
 

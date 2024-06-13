@@ -4,6 +4,7 @@ import {
   VSCodeRadio,
 } from '@vscode/webview-ui-toolkit/react';
 import classNames from 'classnames';
+import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import { AppiumPython } from './codeGen/python';
@@ -15,7 +16,7 @@ import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Action } from './state';
 import { Screenshot } from './Screenshot';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
@@ -76,6 +77,10 @@ export function TestStep(props: {
   }
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
+
+  useEffect(() => {
+    Prism.highlightAll();
+  }, [language, showAlternatives]);
 
   return (
     <section className="test-step">
@@ -207,15 +212,12 @@ export function TestStep(props: {
                     });
                   }}
                 >
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: codeGenerator.genCodeLine(
-                        potential_identifiers[0],
-                        action,
-                        { highlight: true },
-                      ),
-                    }}
-                  />
+                  <code className={`language-${language}`}>
+                    {codeGenerator.genCodeLine(
+                      potential_identifiers[0],
+                      action,
+                    )}
+                  </code>
                 </VSCodeRadio>
               </div>
               <section className="alternatives">
@@ -248,11 +250,9 @@ export function TestStep(props: {
                           });
                         }}
                       >
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: codeGenerator.noOptionComment(),
-                          }}
-                        />
+                        <code className={`language-${language}`}>
+                          {codeGenerator.noOptionComment()}
+                        </code>
                       </VSCodeRadio>
                     </div>
                     {potential_identifiers
@@ -273,17 +273,9 @@ export function TestStep(props: {
                                 });
                               }}
                             >
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: codeGenerator.genCodeLine(
-                                    item,
-                                    action,
-                                    {
-                                      highlight: true,
-                                    },
-                                  ),
-                                }}
-                              />
+                              <code className={`language-${language}`}>
+                                {codeGenerator.genCodeLine(item, action)}
+                              </code>
                             </VSCodeRadio>
                           </div>
                         );

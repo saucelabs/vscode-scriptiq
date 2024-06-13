@@ -8,12 +8,7 @@ export class AppiumJava extends AbstractBaseGenerator {
     this.preTab = `            `;
   }
 
-  findElementCode(
-    id_type: string,
-    id_value: string,
-    id_index = 0,
-    _highlight = false,
-  ) {
+  findElementCode(id_type: string, id_value: string, id_index = 0) {
     let by_choice = 'xpath';
     if (id_type == 'resource-id') {
       by_choice = 'id';
@@ -36,16 +31,14 @@ export class AppiumJava extends AbstractBaseGenerator {
   genCodeLine(
     bestIdentifier: any,
     action: string,
-    opts: { number?: string; highlight?: boolean } = {
+    opts: { number?: string } = {
       number: '',
-      highlight: false,
     },
   ) {
     const findElement = this.findElementCode(
       bestIdentifier.type,
       bestIdentifier.value,
       bestIdentifier.index,
-      opts?.highlight,
     );
 
     let codeStepText = ``;

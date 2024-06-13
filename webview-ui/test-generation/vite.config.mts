@@ -1,9 +1,17 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import prism from 'vite-plugin-prismjs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    prism({
+      languages: ['java', 'python'],
+      theme: 'tomorrow',
+      css: true,
+    }),
+  ],
   mode: 'development',
   build: {
     outDir: 'build',

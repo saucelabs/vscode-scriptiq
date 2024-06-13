@@ -3,12 +3,7 @@ import { AbstractBaseGenerator } from './base';
 export class AppiumPython extends AbstractBaseGenerator {
   name = 'appium_python';
 
-  findElementCode(
-    id_type: string,
-    id_value: string,
-    id_index = 0,
-    highlight = false,
-  ) {
+  findElementCode(id_type: string, id_value: string, id_index = 0) {
     let by_choice = 'XPATH';
     if (id_type == 'resource-id') {
       by_choice = 'ID';
@@ -23,34 +18,24 @@ export class AppiumPython extends AbstractBaseGenerator {
       value = `//*[@${id_type}='${id_value}']`;
     }
 
-    if (highlight) {
-      if (id_index == 0) {
-        return `driver.find_element(<span ${this.code_parameter_class}>by</span>=<span ${this.code_class_class}>AppiumBy</span>.${by_choice}, <span ${this.code_parameter_class}>value</span>=<span ${this.code_string_class}>"${value}"</span>)`;
-      } else {
-        return `driver.find_elements(<span ${this.code_parameter_class}>by</span>=<span ${this.code_class_class}>AppiumBy</span>.${by_choice}, <span ${this.code_parameter_class}>value</span>=<span ${this.code_string_class}>"${value}"</span>)[<span ${this.code_number_class}>${id_index}</span>]`;
-      }
+    if (id_index == 0) {
+      return `driver.find_element(by=AppiumBy.${by_choice}, value="${value}")`;
     } else {
-      if (id_index == 0) {
-        return `driver.find_element(by=AppiumBy.${by_choice}, value="${value}")`;
-      } else {
-        return `driver.find_elements(by=AppiumBy.${by_choice}, value="${value}")[${id_index}]`;
-      }
+      return `driver.find_elements(by=AppiumBy.${by_choice}, value="${value}")[${id_index}]`;
     }
   }
 
   genCodeLine(
     bestIdentifier: any,
     action: string,
-    opts: {
-      highlight?: boolean;
+    _opts: {
       number?: string;
-    } = { number: '', highlight: false },
+    } = { number: '' },
   ) {
     const findElement = this.findElementCode(
       bestIdentifier.type,
       bestIdentifier.value,
       bestIdentifier.index,
-      opts?.highlight,
     );
 
     let codeStepText = ``;
@@ -69,9 +54,7 @@ export class AppiumPython extends AbstractBaseGenerator {
    * @returns the original element, now with the skip step option added
    */
   noOptionComment() {
-    return (
-      `<span ${this.code_comment_class}> # SKIP STEP</span>` + this.preNewLine
-    );
+    return `# SKIP STEP${this.preNewLine}`;
   }
 
   swipeCodeComment(direction: string, is_for_script = false) {

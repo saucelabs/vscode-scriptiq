@@ -1,23 +1,11 @@
 export abstract class AbstractBaseGenerator {
   protected preNewLine: string;
   protected preTab: string;
-  protected code_comment_class: string;
-  protected code_string_class: string;
-  protected code_parameter_class: string;
-  protected code_class_class: string;
-  protected code_created_classes_class: string;
-  protected code_number_class: string;
 
   constructor() {
     this.preNewLine = `
     `;
     this.preTab = `    `;
-    this.code_comment_class = `class="code-comment"`;
-    this.code_string_class = `class="code-string"`;
-    this.code_parameter_class = `class="code-parameter"`;
-    this.code_class_class = `class="code-class"`;
-    this.code_created_classes_class = `class="code-created-class"`;
-    this.code_number_class = `class="code-number"`;
   }
 
   /**
@@ -31,7 +19,6 @@ export abstract class AbstractBaseGenerator {
     id_type: string,
     id_value: string,
     id_num: number,
-    highlight: boolean,
   ): string;
 
   /**
@@ -43,8 +30,7 @@ export abstract class AbstractBaseGenerator {
   abstract genCodeLine(
     bestIdentifier: any,
     action: string,
-    opts: {
-      highlight?: boolean;
+    opts?: {
       // No idea what this is
       number?: string;
     },

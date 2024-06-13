@@ -123,6 +123,7 @@ function App() {
         <h2>What do you want to test?</h2>
         <VSCodeTextField
           value={appName}
+          placeholder="e.g. test.apk"
           onInput={(e) => {
             if (e.target && 'value' in e.target) {
               dispatch({
@@ -136,6 +137,7 @@ function App() {
         </VSCodeTextField>
         <VSCodeTextField
           value={testGoal}
+          placeholder="e.g. skip login and add an item into shopping cart"
           onInput={(e) => {
             if (e.target && 'value' in e.target) {
               dispatch({

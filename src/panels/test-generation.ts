@@ -6,10 +6,7 @@ import { generateTest } from '../api/llm/ws';
 import * as toast from '../toast';
 import { GlobalStorage } from '../storage';
 import { errMsg } from '../error';
-import {
-  executeClearHistoryLinkSelectionCommand,
-  executeUpdateHistoryLinksCommand,
-} from '../commands';
+import { executeUpdateHistoryLinksCommand } from '../commands';
 import { randomBytes } from 'node:crypto';
 import { WebSocket } from 'undici';
 import { Credentials, Platform } from '../types';
@@ -314,7 +311,6 @@ export class TestGenerationPanel {
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
-    executeClearHistoryLinkSelectionCommand();
     goal = goal.trim();
     appName = appName.trim();
 
@@ -421,8 +417,6 @@ export class TestGenerationPanel {
       toast.showError('Please add your credentials!');
       return creds;
     }
-
-    executeClearHistoryLinkSelectionCommand();
 
     if (!creds.username) {
       toast.showError('Please add your Username!');

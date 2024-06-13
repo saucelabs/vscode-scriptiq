@@ -93,6 +93,10 @@ section.test-step {
       width: 12px;
       filter: invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg)
         brightness(101%) contrast(101%);
+
+      &.up {
+        transform: rotate(-90deg);
+      }
     }
   }
 }

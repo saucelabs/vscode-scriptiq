@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useState } from 'react';
+import classNames from 'classnames';
 import {
   VSCodeButton,
   VSCodeDropdown,
@@ -17,7 +18,6 @@ import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
-import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
 
 function App() {
@@ -160,8 +160,10 @@ function App() {
             Additional Settings
           </VSCodeLink>
           <img
-            className="icon"
-            src={showAdditionalSettings ? chevronDownIcon : chevronUpIcon}
+            className={classNames('icon', {
+              up: !showAdditionalSettings,
+            })}
+            src={chevronDownIcon}
           />
         </div>
 

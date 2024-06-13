@@ -17,7 +17,6 @@ import { Action } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
 
-import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
 import { AbstractBaseGenerator, AppiumJava, AppiumPython } from './codegen';
 
@@ -243,8 +242,10 @@ export function TestStep(props: {
                     View Step Alternatives
                   </VSCodeLink>
                   <img
-                    className="icon"
-                    src={showAlternatives ? chevronDownIcon : chevronUpIcon}
+                    className={classNames('icon', {
+                      up: !showAlternatives,
+                    })}
+                    src={chevronDownIcon}
                   />
                 </div>
                 {showAlternatives && (

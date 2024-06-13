@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
-import { AppiumPython } from './codeGen/python';
 import './TestStep.scss';
 // import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
@@ -20,7 +19,7 @@ import { useEffect, useState } from 'react';
 
 import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
-import { AbstractBaseGenerator, AppiumJava } from './codeGen';
+import { AbstractBaseGenerator, AppiumJava, AppiumPython } from './codegen';
 
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;

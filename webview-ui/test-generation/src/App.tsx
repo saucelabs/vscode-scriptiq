@@ -16,7 +16,7 @@ import { TestStep } from './TestStep';
 import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
-import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codeGen';
+import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
 import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
 

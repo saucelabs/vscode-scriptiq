@@ -348,6 +348,7 @@ function App() {
                 <TestStep
                   key={`${step.testRecordId}-${step.index}`}
                   dispatch={dispatch}
+                  language={state.language}
                   step={step}
                 />
               ))}

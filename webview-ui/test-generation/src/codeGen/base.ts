@@ -110,4 +110,6 @@ export abstract class AbstractBaseGenerator {
     platform: string,
     steps: any[],
   ): string;
+
+  abstract noOptionComment(): string;
 }

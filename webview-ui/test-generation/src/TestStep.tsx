@@ -19,9 +19,11 @@ import { useState } from 'react';
 
 import chevronUpIcon from './icons/icn-chevron-up.svg';
 import chevronDownIcon from './icons/icn-chevron-down.svg';
+import { AbstractBaseGenerator, AppiumJava } from './codeGen';
 
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;
+  language: 'python' | 'java';
   step: {
     index: number;
     testRecordId: string;
@@ -53,7 +55,7 @@ export function TestStep(props: {
     vote?: string;
   };
 }) {
-  const { dispatch, step } = props;
+  const { dispatch, language, step } = props;
   const {
     testRecordId,
     screenshot,
@@ -68,7 +70,10 @@ export function TestStep(props: {
   const [showAlternatives, setShowAlternatives] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | 'skip'>(0);
 
-  const codeGenerator = new AppiumPython();
+  let codeGenerator: AbstractBaseGenerator = new AppiumJava();
+  if (language === 'python') {
+    codeGenerator = new AppiumPython();
+  }
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
 

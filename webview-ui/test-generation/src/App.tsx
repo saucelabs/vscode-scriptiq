@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import {
   VSCodeButton,
   VSCodeDropdown,
@@ -22,6 +22,8 @@ import chevronDownIcon from './icons/icn-chevron-down.svg';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const [showAdditionalSettings, setShowAdditionalSettings] = useState(false);
 
   useEffect(() => {
     function handler(event: any) {
@@ -159,17 +161,17 @@ function App() {
         </section>
         <div className="additional-settings">
           <VSCodeLink
-            onClick={() => dispatch({ type: 'toggleAdditionalSettings' })}
+            onClick={() => setShowAdditionalSettings(!showAdditionalSettings)}
           >
             Additional Settings
           </VSCodeLink>
           <img
             className="icon"
-            src={state.showAdditionalSettings ? chevronDownIcon : chevronUpIcon}
+            src={showAdditionalSettings ? chevronDownIcon : chevronUpIcon}
           />
         </div>
 
-        {state.showAdditionalSettings && (
+        {showAdditionalSettings && (
           <section className="inputs">
             <VSCodeTextField
               value={maxSteps?.toString() ?? '10'}

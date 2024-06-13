@@ -18,7 +18,6 @@ export interface State {
   maxSteps?: number;
   platform: Platform;
   devices: string[];
-  showAdditionalSettings: boolean;
   generationState: 'idle' | 'generating' | 'errored' | 'finishing';
 
   steps?: {
@@ -76,7 +75,6 @@ export const initialState: State = {
       key: uuidv4(),
     },
   ],
-  showAdditionalSettings: false,
   maxSteps: 10,
   platform: {
     name: 'Android',
@@ -92,7 +90,6 @@ export type Action =
   | { type: 'clear' }
   | { type: 'setAppName'; value: State['appName'] }
   | { type: 'setTestGoal'; value: State['testGoal'] }
-  | { type: 'toggleAdditionalSettings' }
   | { type: 'setMaxSteps'; value: State['maxSteps'] }
   | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
@@ -146,11 +143,6 @@ export const reducer = (current: State, action: Action): State => {
             selectedIdentifier: action.value.selectedIdentifier,
           };
         }),
-      };
-    case 'toggleAdditionalSettings':
-      return {
-        ...current,
-        showAdditionalSettings: !current.showAdditionalSettings,
       };
     case 'toggleDevice': {
       const { value: device } = action;

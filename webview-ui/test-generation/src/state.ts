@@ -268,6 +268,11 @@ export const reducer = (current: State, action: Action): State => {
       };
     case 'loadNewRecord': {
       const testRecord = action.value;
+
+      let { user_screen_descs = [''] } = testRecord;
+      if (user_screen_descs.length === 0) {
+        user_screen_descs = [''];
+      }
       return {
         ...current,
         generationState: 'finishing',
@@ -312,7 +317,7 @@ export const reducer = (current: State, action: Action): State => {
             };
           }) ?? [],
         device: testRecord.devices?.join(',') ?? '',
-        assertions: (testRecord.user_screen_descs ?? ['']).map((value) => ({
+        assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,
         })),
@@ -320,6 +325,10 @@ export const reducer = (current: State, action: Action): State => {
     }
     case 'showTestRecord': {
       const { testRecord, votes } = action.value;
+      let { user_screen_descs = [''] } = testRecord;
+      if (user_screen_descs.length === 0) {
+        user_screen_descs = [''];
+      }
       return {
         ...current,
         appName: testRecord.app_name,
@@ -365,7 +374,7 @@ export const reducer = (current: State, action: Action): State => {
             };
           }) ?? [],
         device: testRecord.devices?.join(',') ?? '',
-        assertions: (testRecord.user_screen_descs ?? ['']).map((value) => ({
+        assertions: user_screen_descs.map((value) => ({
           key: uuidv4(),
           value,
         })),

@@ -46,7 +46,7 @@ export function TestStep(props: {
       depth: number;
     }[];
     event_reason: string;
-    assertions: {
+    assertionMatches: {
       description: string;
       value: 'true' | 'false';
     }[];
@@ -60,7 +60,7 @@ export function TestStep(props: {
     screenshot,
     index,
     event_reason,
-    assertions,
+    assertionMatches,
     screen_descs,
     potential_identifiers,
     action,
@@ -188,25 +188,24 @@ export function TestStep(props: {
               ))}
             </ul>
           </section>
-          {assertions.length > 0 && (
-            <section className="assertions">
-              <header>Assertions</header>
-              <ul>
-                {assertions.map((assertion) => {
-                  return (
-                    <li>
-                      <div>
-                        <div className="description">
-                          {assertion.description}
+          {assertionMatches.length > 0 &&
+            assertionMatches.every((item) => !!item.description) && (
+              <section className="assertions">
+                <header>Assertions</header>
+                <ul>
+                  {assertionMatches.map((match) => {
+                    return (
+                      <li>
+                        <div>
+                          <div className="description">{match.description}</div>
+                          <div className="value">{match.value}</div>
                         </div>
-                        <div className="value">{assertion.value}</div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            )}
           {potential_identifiers.length > 0 && (
             <section className="commands">
               <header>Command</header>

@@ -45,7 +45,7 @@ export interface State {
     selectedIdentifier: number | 'skip';
     event_reason: string;
     vote?: string;
-    assertions: {
+    assertionMatches: {
       description: string;
       value: 'true' | 'false';
     }[];
@@ -268,16 +268,6 @@ export const reducer = (current: State, action: Action): State => {
       };
     case 'loadNewRecord': {
       const testRecord = action.value;
-      let { user_screen_descs = [''] } = testRecord;
-      if (user_screen_descs.length === 0) {
-        user_screen_descs = [''];
-      }
-
-      const assertions =
-        testRecord.user_screen_descs?.map((value) => ({
-          key: uuidv4(),
-          value,
-        })) ?? [];
       return {
         ...current,
         generationState: 'finishing',
@@ -309,19 +299,20 @@ export const reducer = (current: State, action: Action): State => {
                 height: testRecord.screen_height ?? 0,
                 annotation: { ...step.location },
               },
-              potential_identifiers: step.potential_identifiers,
+              potential_identifiers: step.potential_identifiers.map((item) => ({
+                ...item,
+              })),
               selectedIdentifier: 0,
               event_reason: step.event_reason,
-              screen_descs: step.screen_descs,
-              sd_asserts: step.sd_asserts,
-              assertions: assertions?.map((a, i) => ({
-                description: a.value,
-                value: step.sd_asserts[i] ? 'true' : 'false',
+              screen_descs: [...step.screen_descs],
+              assertionMatches: step.sd_asserts.map((a, i) => ({
+                description: testRecord.user_screen_descs?.[i] ?? '',
+                value: a ? 'true' : 'false',
               })),
             };
           }) ?? [],
         device: testRecord.devices?.join(',') ?? '',
-        assertions: user_screen_descs.map((value) => ({
+        assertions: (testRecord.user_screen_descs ?? ['']).map((value) => ({
           key: uuidv4(),
           value,
         })),
@@ -329,16 +320,6 @@ export const reducer = (current: State, action: Action): State => {
     }
     case 'showTestRecord': {
       const { testRecord, votes } = action.value;
-      let { user_screen_descs = [''] } = testRecord;
-      if (user_screen_descs.length === 0) {
-        user_screen_descs = [''];
-      }
-
-      const assertions =
-        testRecord.user_screen_descs?.map((value) => ({
-          key: uuidv4(),
-          value,
-        })) ?? [];
       return {
         ...current,
         appName: testRecord.app_name,
@@ -370,20 +351,21 @@ export const reducer = (current: State, action: Action): State => {
                 height: testRecord.screen_height ?? 0,
                 annotation: { ...step.location },
               },
-              potential_identifiers: step.potential_identifiers,
+              potential_identifiers: step.potential_identifiers.map((item) => ({
+                ...item,
+              })),
               selectedIdentifier: 0,
               event_reason: step.event_reason,
-              screen_descs: step.screen_descs,
-              sd_asserts: step.sd_asserts,
+              screen_descs: [...step.screen_descs],
               vote: votes.find((v) => v.step_num === step.step_num)?.rating,
-              assertions: assertions?.map((a, i) => ({
-                description: a.value,
-                value: step.sd_asserts[i] ? 'true' : 'false',
+              assertionMatches: step.sd_asserts.map((a, i) => ({
+                description: testRecord.user_screen_descs?.[i] ?? '',
+                value: a ? 'true' : 'false',
               })),
             };
           }) ?? [],
         device: testRecord.devices?.join(',') ?? '',
-        assertions: user_screen_descs.map((value) => ({
+        assertions: (testRecord.user_screen_descs ?? ['']).map((value) => ({
           key: uuidv4(),
           value,
         })),

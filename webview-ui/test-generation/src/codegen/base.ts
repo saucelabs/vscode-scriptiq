@@ -3,8 +3,7 @@ export abstract class AbstractBaseGenerator {
   protected preTab: string;
 
   constructor() {
-    this.preNewLine = `
-    `;
+    this.preNewLine = `\n`;
     this.preTab = `    `;
   }
 

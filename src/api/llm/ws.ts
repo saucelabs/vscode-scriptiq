@@ -110,9 +110,12 @@ export function generateTest(
         return;
       }
 
-      observer.next({
-        type: 'com.saucelabs.scriptiq.done',
-      });
+      // The done type is used when the test generation has fully and successfully completed.
+      // Sending a done event here puts the UI in an ambiguous state if the socket was closed
+      // before the generation has completed.
+      // observer.next({
+      //   type: 'com.saucelabs.scriptiq.done',
+      // });
     };
 
     ws.onerror = (ev) => {

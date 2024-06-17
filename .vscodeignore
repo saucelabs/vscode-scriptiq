@@ -1,6 +1,7 @@
 **/*
 !media/**
 !webview-ui/connect/build/assets/**
+!webview-ui/test-generation/build/assets/**
 !dist/**
 !package.json
 !README.md

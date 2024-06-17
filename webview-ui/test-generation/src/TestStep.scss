@@ -1,0 +1,120 @@
+section.test-step {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  row-gap: 4px;
+  color: rgb(204, 204, 204);
+
+  header {
+    display: flex;
+    flex-direction: row;
+    column-gap: 8px;
+    align-items: center;
+    text-transform: uppercase;
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      &.button {
+        filter: invert(92%) sepia(1%) saturate(103%) hue-rotate(314deg)
+          brightness(88%) contrast(98%);
+      }
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: row;
+    column-gap: 16px;
+    flex-grow: 1;
+
+    .description {
+      display: flex;
+      flex-direction: column;
+      row-gap: 4px;
+      flex-grow: 1;
+
+      > section {
+        background: var(--Sidebar-bg, rgba(120, 132, 131, 0.08));
+        border-radius: 2px;
+        padding: 4px;
+      }
+    }
+  }
+}
+
+.assertions {
+  header {
+    text-transform: uppercase;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin-left: 0;
+      padding-left: 0;
+
+      > div {
+        display: flex;
+        background: rgba(234, 234, 234, 0.1);
+        padding: 4px 8px;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  .value {
+    text-transform: uppercase;
+  }
+}
+
+.reasoning {
+  .screen-descriptions {
+    margin: 4px 0;
+    padding: 0 0 0 32px;
+  }
+}
+
+.commands {
+  .command {
+    margin: 4px;
+  }
+  .alternatives {
+    .toggle {
+      display: flex;
+      align-items: center;
+      column-gap: 4px;
+    }
+
+    .icon {
+      width: 12px;
+      filter: invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg)
+        brightness(101%) contrast(101%);
+
+      &.up {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+}
+
+.ratings {
+  margin-left: auto;
+  display: flex;
+  column-gap: 2px;
+
+  .rating {
+    padding: 4px;
+    width: 16px;
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg)
+      brightness(104%) contrast(101%);
+
+    &.selected {
+      filter: invert(85%) sepia(41%) saturate(7496%) hue-rotate(325deg)
+        brightness(104%) contrast(87%);
+    }
+  }
+}

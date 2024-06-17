@@ -40,9 +40,9 @@ function App() {
       vscode.postMessage({
         action: 'save-credentials',
         data: {
-          username: username,
-          accessKey: accessKey,
-          region: region,
+          username,
+          accessKey,
+          region,
         },
       });
     },

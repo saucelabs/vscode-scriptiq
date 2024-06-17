@@ -1,0 +1,30 @@
+{
+  "name": "test-generation-webview",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/prismjs": "1.26.4",
+    "@vscode/webview-ui-toolkit": "1.4.0",
+    "classnames": "2.5.1",
+    "prismjs": "1.29.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "uuid": "9.0.1",
+    "vite-plugin-prismjs": "0.0.11"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@types/uuid": "9.0.8",
+    "@types/vscode-webview": "1.57.5",
+    "@vitejs/plugin-react": "4.3.0",
+    "sass": "1.77.4",
+    "typescript": "5.4.5",
+    "vite": "5.2.11"
+  }
+}

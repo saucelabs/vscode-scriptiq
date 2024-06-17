@@ -107,11 +107,11 @@
   "scripts": {
     "build": "npm run build:web && npm run build:root",
     "build:root": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
-    "build:web": "npm --prefix webview-ui/connect run build --",
+    "build:web": "npm --prefix webview-ui/connect run build -- && npm --prefix webview-ui/test-generation run build --",
     "build-tests": "tsc -p . --outDir out",
     "build-watch": "npm run build:root -- --sourcemap --watch",
     "fmt": "prettier --write '**/*.{js,ts,mjs,cjs,jsx,tsx}'",
-    "preinstall": "npm --prefix webview-ui/connect install",
+    "preinstall": "npm --prefix webview-ui/connect install && npm --prefix webview-ui/test-generation install",
     "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",
     "pretest": "npm run build && npm run build-tests",
     "package": "npm run build:web -- --mode production && npm run build:root -- --minify",

@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { TestGenerationPanel } from './panels/test-generation';
+import { TestGenerationPanel } from './editors/TestGenerationPanel';
 import { ConnectViewProvider } from './sidebars/connect';
 import { HistoryProvider } from './sidebars/history';
 import { GlobalStorage } from './storage';

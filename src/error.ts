@@ -10,7 +10,8 @@ export function errMsg(obj: unknown): string {
       msg += `: ${errMsg(obj.cause)}`;
     }
 
-    if (obj instanceof AggregateError && obj.errors.length > 0) {
+    // Checking if AggregateError.
+    if ('errors' in obj && Array.isArray(obj.errors) && obj.errors.length > 0) {
       // Show only the first error, because retries can cause repeated errors.
       msg += `: ${errMsg(obj.errors[0])}`;
     }

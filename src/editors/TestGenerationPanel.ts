@@ -531,7 +531,7 @@ export class TestGenerationPanel {
         this._msgQueue.enqueue({
           action: 'recover-from-error',
         });
-        toast.showError(err.message);
+        toast.showError(errMsg(err));
       },
     });
   }

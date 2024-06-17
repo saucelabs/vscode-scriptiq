@@ -115,7 +115,7 @@ function App() {
         <h2>What do you want to test?</h2>
         <VSCodeTextField
           value={appName}
-          placeholder="e.g. test.apk"
+          placeholder="From Sauce Labs App Storage, e.g. test.apk"
           onInput={(e) => {
             if (e.target && 'value' in e.target) {
               dispatch({

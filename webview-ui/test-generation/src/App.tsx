@@ -298,7 +298,7 @@ function App() {
         <section className="updates">
           <div className="status">
             {status}
-            <VSCodeProgressRing />
+            {state.generationState === 'generating' && <VSCodeProgressRing />}
           </div>
           {state.credentials && state.sessionId && (
             <Preview

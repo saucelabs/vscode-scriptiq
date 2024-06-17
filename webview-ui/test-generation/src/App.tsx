@@ -253,7 +253,7 @@ function App() {
                   goal: testGoal,
                   app_name: appName,
                   assertions: assertions
-                    .filter((a) => !!a.value)
+                    .filter((a) => a.value.replaceAll(/\s/g, '') !== '')
                     .map((a) => a.value),
                   max_test_steps: maxSteps,
                   devices: state.device ? [state.device] : [],

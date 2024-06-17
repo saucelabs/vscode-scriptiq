@@ -9,11 +9,10 @@ import plusIcon from './icons/icn-plus-fill.svg';
 interface AssertionInputProps {
   dispatch: React.Dispatch<Action>;
   assertion: Assertion;
-  removable: boolean;
 }
 
 export function AssertionInput(props: AssertionInputProps) {
-  const { dispatch, assertion, removable } = props;
+  const { dispatch, assertion } = props;
   return (
     <div
       style={{
@@ -44,16 +43,9 @@ export function AssertionInput(props: AssertionInputProps) {
         appearance="icon"
         aria-label="Delete"
         onClick={() => {
-          if (removable) {
-            dispatch({
-              type: 'removeAssertion',
-              value: { key: assertion.key },
-            });
-            return;
-          }
           dispatch({
-            type: 'setAssertionValue',
-            value: { key: assertion.key, value: '' },
+            type: 'removeAssertion',
+            value: { key: assertion.key },
           });
         }}
       >

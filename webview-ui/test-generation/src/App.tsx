@@ -144,12 +144,8 @@ function App() {
         <section className="with-label">
           <label>Assert Inputs (optional)</label>
           <div className="assertions">
-            {assertions.map((assertion, i) => (
-              <AssertionInput
-                assertion={assertion}
-                dispatch={dispatch}
-                removable={i !== 0}
-              />
+            {assertions.map((assertion) => (
+              <AssertionInput assertion={assertion} dispatch={dispatch} />
             ))}
           </div>
         </section>

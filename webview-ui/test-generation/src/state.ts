@@ -209,11 +209,18 @@ export const reducer = (current: State, action: Action): State => {
       };
     }
     case 'removeAssertion': {
+      const updated = current.assertions.filter(
+        (a) => a.key !== action.value.key,
+      );
+      if (updated.length === 0) {
+        updated.push({
+          key: uuidv4(),
+          value: '',
+        });
+      }
       return {
         ...current,
-        assertions: current.assertions.filter(
-          (a) => a.key !== action.value.key,
-        ),
+        assertions: updated,
       };
     }
     case 'setAppName':

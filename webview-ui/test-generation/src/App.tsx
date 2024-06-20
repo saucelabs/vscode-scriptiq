@@ -7,6 +7,7 @@ import {
   VSCodeOption,
   VSCodeProgressRing,
   VSCodeRadio,
+  VSCodeTextArea,
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
 
@@ -127,7 +128,8 @@ function App() {
         >
           Application Name
         </VSCodeTextField>
-        <VSCodeTextField
+        <VSCodeTextArea
+          resize="both"
           value={testGoal}
           placeholder="e.g. skip login and add an item into shopping cart"
           onInput={(e) => {
@@ -140,7 +142,7 @@ function App() {
           }}
         >
           Test Goal
-        </VSCodeTextField>
+        </VSCodeTextArea>
         <section className="with-label">
           <label>Assert Inputs (optional)</label>
           <div className="assertions">

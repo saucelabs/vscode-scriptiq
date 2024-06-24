@@ -5,7 +5,7 @@
   "tasks": [
     {
       "type": "npm",
-      "script": "build",
+      "script": "nx:build",
       "problemMatcher": "$tsc-watch",
       "isBackground": false,
       "presentation": {

@@ -104,17 +104,24 @@
       }
     ]
   },
+  "nx": {
+    "implicitDependencies": [
+      "connect-webview",
+      "test-generation-webview"
+    ]
+  },
   "scripts": {
-    "build": "npm run build:web && npm run build:root",
-    "build:root": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "nx:build": "nx build",
+    "build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "build:prod": "npm run build -- --minify",
     "build:web": "npm --prefix webview-ui/connect run build -- && npm --prefix webview-ui/test-generation run build --",
     "build-tests": "tsc -p . --outDir out",
-    "build-watch": "npm run build:root -- --sourcemap --watch",
+    "build-watch": "npm run build -- --sourcemap --watch",
     "fmt": "prettier --write '**/*.{js,ts,mjs,cjs,jsx,tsx}'",
     "preinstall": "npm --prefix webview-ui/connect install && npm --prefix webview-ui/test-generation install",
     "lint": "prettier --check '**/*.{js,ts,mjs,cjs,jsx,tsx}' && eslint .",
     "pretest": "npm run build && npm run build-tests",
-    "package": "npm run build:web -- --mode production && npm run build:root -- --minify",
+    "package": "nx build:prod",
     "prepare": "husky",
     "test": "vscode-test",
     "vscode:prepublish": "npm run package",
@@ -126,11 +133,15 @@
   },
   "devDependencies": {
     "@eslint/js": "8.57.0",
+    "@nx/eslint": "19.3.1",
+    "@nx/vite": "19.3.1",
+    "@nx/web": "19.3.1",
     "@types/mocha": "10.0.6",
     "@types/node": "20.11.20",
     "@types/vscode": "1.86.0",
     "@typescript-eslint/eslint-plugin": "7.0.2",
     "@typescript-eslint/parser": "7.0.2",
+    "@vitest/ui": "^1.3.1",
     "@vscode/test-cli": "0.0.6",
     "@vscode/test-electron": "2.3.9",
     "esbuild": "0.21.3",
@@ -139,12 +150,15 @@
     "glob": "10.3.10",
     "husky": "9.0.11",
     "mocha": "10.3.0",
+    "nx": "19.3.1",
     "prettier": "3.2.5",
     "pretty-quick": "4.0.0",
     "release-it": "17.3.0",
     "ts-loader": "9.5.1",
     "typescript": "5.3.3",
-    "typescript-eslint": "7.1.0"
+    "typescript-eslint": "7.1.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.3.1"
   },
   "dependencies": {
     "@fontsource/dm-mono": "5.0.18",

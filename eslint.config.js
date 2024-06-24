@@ -10,6 +10,7 @@ module.exports = ts.config(
   prettier,
   {
     ignores: [
+      '.nx/**',
       'out/**',
       'dist/**',
       'media/**',

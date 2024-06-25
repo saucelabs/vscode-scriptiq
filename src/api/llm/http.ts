@@ -19,7 +19,7 @@ export async function downloadImage(
   for (let attempt = 0; attempt < 10; attempt++) {
     if (attempt > 0) {
       console.log('Retrying image download...');
-      await new Promise((f) => setTimeout(f, 1000));
+      await new Promise((f) => setTimeout(f, 3000));
     }
     try {
       const response = await fetch(imgURL, {

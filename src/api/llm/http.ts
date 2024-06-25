@@ -16,7 +16,7 @@ export async function downloadImage(
   accessKey: string,
   storage: GlobalStorage,
 ) {
-  for (let attempt = 0; attempt < 10; attempt++) {
+  for (let attempt = 0; attempt < 15; attempt++) {
     if (attempt > 0) {
       console.log('Retrying image download...');
       await new Promise((f) => setTimeout(f, 3000));

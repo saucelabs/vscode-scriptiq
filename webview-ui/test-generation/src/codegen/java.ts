@@ -118,9 +118,7 @@ public class TestGenerationAssistantTest {
         capabilities = new MutableCapabilities();
         MutableCapabilities sauceOptions = new MutableCapabilities();
 
-        url = new URL("https://" + System.getenv("SAUCE_USERNAME") + ":" +
-                       System.getenv("SAUCE_ACCESS_KEY") +
-                       "@ondemand.${region}.saucelabs.com/wd/hub");
+        url = new URL("https://ondemand.${region}.saucelabs.com/wd/hub");
 
         // For all capabilities please check
         // http://appium.io/docs/en/writing-running-appium/caps/#general-capabilities

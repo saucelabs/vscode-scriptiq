@@ -1,12 +1,4 @@
 export abstract class AbstractBaseGenerator {
-  protected preNewLine: string;
-  protected preTab: string;
-
-  constructor() {
-    this.preNewLine = `\n`;
-    this.preTab = `    `;
-  }
-
   /**
    * Code to find element
    * @param id_type identifier type (resource-id, text, content-desc, class)
@@ -36,23 +28,20 @@ export abstract class AbstractBaseGenerator {
   ): string;
 
   /**
-   * Lines of code to swipe given a location of a element
-   * @param direction
-   * @param is_for_script is this in the full code output?
+   * Lines of code to scroll given an element
+   * @param direction the element will be scrolled (down, up, left, right)
+   * @param platform the test was run on (Android, iOS)
    * @returns string with html of code
    */
-  abstract swipeCodeComment(direction: string, is_for_script: boolean): string;
+  abstract scrollCode(direction: string, platform: string): string;
 
   /**
    * Lines of code to send text given an element
-   * @param set_text that is being sent
-   * @param is_for_script is this in the full code output?
+   * @param text that is being sent
+   * @param platform the test was run on (Android, iOS)
    * @returns string with html of code
    */
-  abstract sendTextCodeComment(
-    set_text: string,
-    is_for_script: boolean,
-  ): string;
+  abstract sendTextCode(text: string, platform: string): string;
 
   /**
    * Header for output script.

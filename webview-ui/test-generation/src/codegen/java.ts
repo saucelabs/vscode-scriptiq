@@ -3,11 +3,6 @@ import { AbstractBaseGenerator } from './base';
 export class AppiumJava extends AbstractBaseGenerator {
   name = 'appium_java';
 
-  constructor() {
-    super();
-    this.preTab = `            `;
-  }
-
   findElementCode(id_type: string, id_value: string, id_index = 0) {
     let by_choice = 'xpath';
     if (id_type == 'resource-id') {
@@ -41,66 +36,35 @@ export class AppiumJava extends AbstractBaseGenerator {
       bestIdentifier.index,
     );
 
-    let codeStepText = ``;
-    if (action == 'set_text') {
-      codeStepText += `WebElement element${opts.number} = ${findElement};${this.preNewLine}`;
-    } else if (action == 'click') {
-      codeStepText += `${findElement}.click();${this.preNewLine}`;
-    } else if (action == 'scroll') {
-      codeStepText += `String elementId${opts.number} = ((RemoteWebElement) driver.findElement(By.id("com.wayfair.wayfair:id/nested_scroll_view"))).getId();${this.preNewLine}`;
+    if (action == 'click') {
+      return `${findElement}.click();\n`;
+    } else {
+      return `WebElement element${opts.number} = ${findElement};\n`;
     }
-    return codeStepText;
   }
 
   noOptionComment() {
-    return ` // SKIP STEP` + this.preNewLine;
+    return ` // SKIP STEP\n`;
   }
 
-  swipeCodeComment(direction: string, is_for_script = false, number = '') {
-    let frontLine;
-    if (is_for_script) {
-      frontLine = this.preTab;
-    } else {
-      frontLine = ``;
-    }
-    let text = ``;
-    if (!is_for_script) {
-      text += `${this.preNewLine}// SWIPE CODE:${this.preNewLine}`;
-    }
-    let swipe_dir;
-    if (direction === 'down') {
-      swipe_dir = 'up';
-    } else if (direction === 'up') {
-      swipe_dir = 'down';
-    } else if (direction === 'left') {
-      swipe_dir = 'right';
-    } else if (direction === 'right') {
-      swipe_dir = 'left';
-    }
-    text += `${frontLine}driver.executeScript("mobile: swipeGesture", ImmutableMap.of(${this.preNewLine}`;
-    text += `${frontLine}${this.preTab}"elementId", elementId${number},${this.preNewLine}`;
-    text += `${frontLine}${this.preTab}"direction", "${swipe_dir}",${this.preNewLine}`;
-    text += `${frontLine}${this.preTab}"percent", 1.00${this.preNewLine}`;
-    text += `${frontLine}));${this.preNewLine}`;
-    return text;
+  scrollCode(direction: string, platform: string, number = '') {
+    const commandName = platform == 'Android' ? 'scrollGesture' : 'scroll';
+    return `            driver.executeScript("mobile: ${commandName}", ImmutableMap.of(
+                "elementId", element${number},
+                "direction", "${direction}",
+                "percent", 1.00
+           ));\n`;
   }
 
-  sendTextCodeComment(set_text: string, is_for_script = false, number = '') {
-    let frontLine;
-    if (is_for_script) {
-      frontLine = this.preTab;
+  sendTextCode(text: string, platform: string, number = '', findElement = '') {
+    if (platform == 'Android') {
+      return `            element${number}.click();
+            element${number}.sendKeys("${text}");
+            ((PressesKey) driver).pressKey(new KeyEvent(AndroidKey.ENTER));\n`;
     } else {
-      frontLine = ``;
+      return `            element${number}.click();
+            ${findElement.replace('WebElement ', '')}            element${number}.sendKeys("${text}\\n");`;
     }
-
-    let text = ``;
-    if (!is_for_script) {
-      text += `${this.preNewLine}// RETURN TEXT CODE:${this.preNewLine}`;
-    }
-    text += `${frontLine}element${number}.click();${this.preNewLine}`;
-    text += `${frontLine}element${number}.sendKeys("${set_text}");${this.preNewLine}`;
-    text += `${frontLine}((PressesKey) driver).pressKey(new KeyEvent(AndroidKey.ENTER));${this.preNewLine}`;
-    return text;
   }
 
   scriptHeaderCode(
@@ -112,7 +76,9 @@ export class AppiumJava extends AbstractBaseGenerator {
     platform: string,
   ) {
     const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
-    return `
+    const split_goal = this.splitComments(goal, false, `Goal: `);
+    return `package com.example;
+    
 import com.google.common.collect.ImmutableMap;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
@@ -125,9 +91,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.RemoteWebElement;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -176,6 +140,7 @@ public class TestGenerationAssistantTest {
 
     @Test
     public void runTest(){
+        ${split_goal}
         capabilities.setCapability("appium:app", "storage:filename=${appName}");
         capabilities.setCapability("appium:deviceName", "${device_name}");
         capabilities.setCapability("appium:platformVersion", "${platform_version}");
@@ -199,7 +164,7 @@ public class TestGenerationAssistantTest {
   splitComments(comment: string, has_start_tab = false, starting_value = ``) {
     let startTab = ``;
     if (has_start_tab) {
-      startTab = this.preTab;
+      startTab = `            `;
     }
 
     const cutoff_line_len = 125;
@@ -216,7 +181,7 @@ public class TestGenerationAssistantTest {
     if (curr_word.length !== `${startTab}// `.length) {
       lines.push(curr_word);
     }
-    return `${lines.join('<br>')}${this.preNewLine}`;
+    return `${lines.join('\n')}`;
   }
 
   generateFullScript(
@@ -243,35 +208,34 @@ public class TestGenerationAssistantTest {
         steps[x].potential_identifiers.length > 0 &&
         steps[x].selectedIdentifier !== 'skip'
       ) {
-        codeStepText += this.splitComments(
-          steps[x].event_reason,
-          true,
-          `ScriptIQ Reason: `,
+        codeStepText +=
+          this.splitComments(steps[x].event_reason, true, `ScriptIQ Reason: `) +
+          '\n';
+
+        const findElement = this.genCodeLine(
+          steps[x].potential_identifiers[steps[x].selectedIdentifier],
+          steps[x].action,
+          { number: x.toString() },
         );
 
-        codeStepText +=
-          `${this.preTab}` +
-          this.genCodeLine(
-            steps[x].potential_identifiers[steps[x].selectedIdentifier],
-            steps[x].action,
-            { number: x.toString() },
-          );
+        codeStepText += `            ` + findElement;
 
-        if ('direction' in steps[x] && steps[x].direction !== '') {
-          codeStepText += this.swipeCodeComment(
-            steps[x].direction,
-            true,
+        if (steps[x].action == 'scroll') {
+          codeStepText += this.scrollCode(
+            steps[x].actionMetadata.direction,
+            platform,
             x.toString(),
           );
         }
-        if ('text' in steps[x] && steps[x].text !== '') {
-          codeStepText += this.sendTextCodeComment(
-            steps[x].text,
-            true,
+        if (steps[x].action == 'set_text') {
+          codeStepText += this.sendTextCode(
+            steps[x].actionMetadata.text,
+            platform,
             x.toString(),
+            findElement,
           );
         }
-        codeStepText += `${this.preNewLine}`;
+        codeStepText += `\n`;
       }
     }
     const closeStepText = this.endScriptCode();

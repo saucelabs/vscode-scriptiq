@@ -376,7 +376,7 @@ function App() {
                           state.appName,
                           state.job?.device ?? '',
                           state.job?.platform.version ?? '',
-                          state.credentials?.region ?? '',
+                          state.region ?? '',
                           state.platform.name,
                           steps,
                         );

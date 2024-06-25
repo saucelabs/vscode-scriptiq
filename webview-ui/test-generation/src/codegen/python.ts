@@ -83,7 +83,6 @@ from appium.webdriver.common.appiumby import AppiumBy
 
 # Installations:
 # pip install Appium-Python-Client==4.0.0
-# pip install selenium==4.20.0
 
 ${this.splitComments(goal, false, `Goal: `)}
 

@@ -138,3 +138,8 @@ media/data/
 
 # VSCode Extension Package
 *.vsix
+
+
+
+.nx/cache
+.nx/workspace-data

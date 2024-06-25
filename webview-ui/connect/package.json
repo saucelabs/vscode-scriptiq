@@ -5,6 +5,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
+    "build:prod": "npm run build -- --mode production",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -18,7 +18,7 @@ $ npm i install
 To build the extension, run:
 
 ```sh
-$ npm run build
+$ npx nx build
 ```
 
 ## Run

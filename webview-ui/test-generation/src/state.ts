@@ -16,6 +16,7 @@ export interface State {
   testGoal: string;
   assertions: Assertion[];
   maxSteps: number | '';
+  region?: string;
   platform: Platform;
   device?: string;
   generationState: 'idle' | 'generating' | 'errored' | 'finishing';
@@ -24,6 +25,10 @@ export interface State {
     index: number;
     testRecordId: string;
     action: string;
+    actionMetadata: {
+      direction: string;
+      text: string;
+    };
     screenshot: {
       name: string;
       width: number;
@@ -76,6 +81,7 @@ export const initialState: State = {
     },
   ],
   maxSteps: 10,
+  region: '',
   platform: {
     name: 'Android',
     version: '',
@@ -290,6 +296,7 @@ export const reducer = (current: State, action: Action): State => {
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',
+        region: testRecord.region,
         status: '',
         job: {
           id: testRecord.test_id,
@@ -305,6 +312,10 @@ export const reducer = (current: State, action: Action): State => {
               index: step.step_num,
               testRecordId: testRecord.test_id,
               action: step.action,
+              actionMetadata: {
+                direction: step.direction,
+                text: step.text,
+              },
               screenshot: {
                 name: step.img_name,
                 width: testRecord.screen_width ?? 0,
@@ -345,6 +356,7 @@ export const reducer = (current: State, action: Action): State => {
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',
+        region: testRecord.region,
         status: '',
         generationState: 'idle',
         job: {
@@ -361,6 +373,10 @@ export const reducer = (current: State, action: Action): State => {
               index: step.step_num,
               testRecordId: testRecord.test_id,
               action: step.action,
+              actionMetadata: {
+                direction: step.direction,
+                text: step.text,
+              },
               screenshot: {
                 name: step.img_name,
                 width: testRecord.screen_width ?? 0,

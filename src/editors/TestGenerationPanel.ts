@@ -435,7 +435,7 @@ export class TestGenerationPanel {
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
-    // executeClearHistoryLinkSelectionCommand();
+
     goal = goal.trim();
     appName = appName.trim();
 
@@ -446,6 +446,11 @@ export class TestGenerationPanel {
     }
     if (!goal) {
       throw new Error('No goal specified. Please add a goal.');
+    }
+    if (goal.length >= 360) {
+      throw new Error(
+        `Goal is too long (${goal.length}). Must be fewer than 360 characters.`,
+      );
     }
     if (!appName) {
       throw new Error(

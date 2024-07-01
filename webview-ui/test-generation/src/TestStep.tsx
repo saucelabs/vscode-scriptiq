@@ -11,8 +11,6 @@ import './TestStep.scss';
 // import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
-import thumbsUpIcon from './icons/icn-thumbs-up.svg';
-import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Action } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
@@ -126,57 +124,63 @@ export function TestStep(props: {
               </div>
               <div>ScriptIQ Reasoning</div>
               <div className="ratings">
-                <VSCodeButton appearance="icon" aria-label="like">
-                  <img
-                    className={classNames('rating', {
-                      selected: vote === 'like',
+                <VSCodeButton
+                  appearance="icon"
+                  aria-label="like"
+                  onClick={() => {
+                    const newRating = vote === 'like' ? 'norating' : 'like';
+                    dispatch({
+                      type: 'vote',
+                      value: {
+                        index: step.index,
+                        value: newRating,
+                      },
+                    });
+                    vscode.postMessage({
+                      action: 'send-user-rating',
+                      data: {
+                        rating: newRating,
+                        step: index,
+                        test_id: testRecordId,
+                      },
+                    });
+                  }}
+                >
+                  <span
+                    className={classNames('rating codicon', {
+                      'codicon-thumbsup': vote !== 'like',
+                      'codicon-thumbsup-filled': vote === 'like',
                     })}
-                    onClick={() => {
-                      const newRating = vote === 'like' ? 'norating' : 'like';
-                      dispatch({
-                        type: 'vote',
-                        value: {
-                          index: step.index,
-                          value: newRating,
-                        },
-                      });
-                      vscode.postMessage({
-                        action: 'send-user-rating',
-                        data: {
-                          rating: newRating,
-                          step: index,
-                          test_id: testRecordId,
-                        },
-                      });
-                    }}
-                    src={thumbsUpIcon}
                   />
                 </VSCodeButton>
-                <VSCodeButton appearance="icon" aria-label="dislike">
-                  <img
-                    className={classNames('rating', {
-                      selected: vote === 'dislike',
+                <VSCodeButton
+                  appearance="icon"
+                  aria-label="dislike"
+                  onClick={() => {
+                    const newRating =
+                      vote === 'dislike' ? 'norating' : 'dislike';
+                    dispatch({
+                      type: 'vote',
+                      value: {
+                        index: index,
+                        value: newRating,
+                      },
+                    });
+                    vscode.postMessage({
+                      action: 'send-user-rating',
+                      data: {
+                        rating: newRating,
+                        step: index,
+                        test_id: testRecordId,
+                      },
+                    });
+                  }}
+                >
+                  <span
+                    className={classNames('rating codicon', {
+                      'codicon-thumbsdown': vote !== 'dislike',
+                      'codicon-thumbsdown-filled': vote === 'dislike',
                     })}
-                    onClick={() => {
-                      const newRating =
-                        vote === 'dislike' ? 'norating' : 'dislike';
-                      dispatch({
-                        type: 'vote',
-                        value: {
-                          index: index,
-                          value: newRating,
-                        },
-                      });
-                      vscode.postMessage({
-                        action: 'send-user-rating',
-                        data: {
-                          rating: newRating,
-                          step: index,
-                          test_id: testRecordId,
-                        },
-                      });
-                    }}
-                    src={thumbsDownIcon}
                   />
                 </VSCodeButton>
               </div>

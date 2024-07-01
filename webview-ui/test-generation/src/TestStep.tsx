@@ -13,7 +13,7 @@ import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
-import { Action } from './state';
+import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
 
@@ -23,40 +23,7 @@ import { AbstractBaseGenerator, AppiumJava, AppiumPython } from './codegen';
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;
   language: 'python' | 'java';
-  step: {
-    index: number;
-    testRecordId: string;
-    action: string;
-    actionMetadata: {
-      direction: string;
-      text: string;
-    };
-    screenshot: {
-      name: string;
-      width: number;
-      height: number;
-      annotation: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      };
-    };
-    potential_identifiers: {
-      type: string;
-      value: string;
-      index: number;
-      checked: boolean;
-      depth: number;
-    }[];
-    event_reason: string;
-    assertionMatches: {
-      description: string;
-      value: 'true' | 'false';
-    }[];
-    screen_descs: string[];
-    vote?: string;
-  };
+  step: Step;
 }) {
   const { dispatch, language, step } = props;
   const {

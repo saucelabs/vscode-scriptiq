@@ -11,6 +11,42 @@ export interface Platform {
   version?: string;
 }
 
+export interface Step {
+  index: number;
+  testRecordId: string;
+  action: string;
+  actionMetadata: {
+    direction: string;
+    text: string;
+  };
+  screenshot: {
+    name: string;
+    width: number;
+    height: number;
+    annotation: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  };
+  potential_identifiers: {
+    type: string;
+    value: string;
+    index: number;
+    checked: boolean;
+    depth: number;
+  }[];
+  selectedIdentifier: number | 'skip';
+  event_reason: string;
+  vote?: string;
+  assertionMatches: {
+    description: string;
+    value: 'true' | 'false';
+  }[];
+  screen_descs: string[];
+}
+
 export interface State {
   appName: string;
   testGoal: string;
@@ -21,41 +57,7 @@ export interface State {
   device?: string;
   generationState: 'idle' | 'generating' | 'errored' | 'finishing';
 
-  steps?: {
-    index: number;
-    testRecordId: string;
-    action: string;
-    actionMetadata: {
-      direction: string;
-      text: string;
-    };
-    screenshot: {
-      name: string;
-      width: number;
-      height: number;
-      annotation: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      };
-    };
-    potential_identifiers: {
-      type: string;
-      value: string;
-      index: number;
-      checked: boolean;
-      depth: number;
-    }[];
-    selectedIdentifier: number | 'skip';
-    event_reason: string;
-    vote?: string;
-    assertionMatches: {
-      description: string;
-      value: 'true' | 'false';
-    }[];
-    screen_descs: string[];
-  }[];
+  steps?: Step[];
 
   job?: {
     id: string;

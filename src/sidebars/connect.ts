@@ -5,6 +5,7 @@ import { Memento } from '../memento';
 import * as toast from '../toast';
 import { errMsg } from '../error';
 import { isValidRegion } from '../types';
+import { Uri } from 'vscode';
 
 export class ConnectViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'scriptiq-connect';
@@ -30,6 +31,17 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
     };
 
     const nonce = getNonce();
+    // The CSS file from the React build output
+    const stylesUri = webviewView.webview.asWebviewUri(
+      Uri.joinPath(
+        this._extensionUri,
+        'webview-ui',
+        'connect',
+        'build',
+        'assets',
+        'index.css',
+      ),
+    );
     const scriptUri = webviewView.webview.asWebviewUri(
       vscode.Uri.joinPath(
         this._extensionUri,
@@ -64,6 +76,7 @@ export class ConnectViewProvider implements vscode.WebviewViewProvider {
             content="width=device-width, initial-scale=1.0"
           />
 
+          <link rel="stylesheet" type="text/css" href="${stylesUri}" />
           <title>Connect</title>
           <script nonce="${nonce}">
             window.creds = '${JSON.stringify(creds)}';

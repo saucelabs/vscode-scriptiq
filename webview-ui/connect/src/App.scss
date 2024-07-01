@@ -1,0 +1,13 @@
+.with-label {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    display: block;
+    color: var(--vscode-foreground);
+    cursor: pointer;
+    font-size: var(--vscode-font-size);
+    line-height: normal;
+    margin-bottom: 2px;
+  }
+}

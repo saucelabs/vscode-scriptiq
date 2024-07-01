@@ -6,6 +6,7 @@ import {
   VSCodeOption,
 } from '@vscode/webview-ui-toolkit/react';
 
+import './App.scss';
 import { vscode } from './utilities/vscode';
 
 function App() {
@@ -92,15 +93,8 @@ function App() {
           >
             Sauce Access Key
           </VSCodeTextField>
-          <section
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <label htmlFor="region-dropdown" style={{ marginBottom: '2px' }}>
-              Sauce Labs Data Center
-            </label>
+          <section className="with-label">
+            <label htmlFor="region-dropdown">Sauce Labs Data Center</label>
             <VSCodeDropdown
               onChange={(e) => {
                 console.log(e);

@@ -53,25 +53,10 @@ function App() {
   return (
     <>
       <header>
-        <p
-          style={{
-            fontWeight: '500',
-            textAlign: 'center',
-          }}
-        >
-          Create test scripts in minutes with the power of Sauce Labs AI.
-        </p>
+        <p>Create test scripts in minutes with the power of Sauce Labs AI.</p>
       </header>
       <main>
-        <form
-          id="credentials-form"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}
-          onSubmit={handleSave}
-        >
+        <form id="credentials-form" className="form" onSubmit={handleSave}>
           <VSCodeTextField
             onInput={(e) => {
               if (e.target && 'value' in e.target) {
@@ -114,7 +99,7 @@ function App() {
             </VSCodeDropdown>
           </section>
           <VSCodeButton
-            style={{ width: '81px' }}
+            className="submit-button"
             type="submit"
             formId="credentials-form"
           >

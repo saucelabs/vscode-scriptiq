@@ -9,7 +9,6 @@ import Prism from 'prismjs';
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
 // import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
-import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import { Action } from './state';
 import { Screenshot } from './Screenshot';
@@ -99,7 +98,7 @@ export function TestStep(props: {
               });
             }}
           >
-            <img className="icon button" src={fullScreenIcon} />
+            <span className="codicon codicon-screen-full" />
           </VSCodeButton>
         </div>
       </header>

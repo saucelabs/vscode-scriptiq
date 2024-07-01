@@ -73,7 +73,11 @@ export function TestStep(props: {
               });
             }}
           >
-            <img className="icon button" src={fullScreenIcon} />
+            <img
+              className="icon button"
+              src={fullScreenIcon}
+              alt="Open image in full screen."
+            />
           </VSCodeButton>
         </div>
       </header>
@@ -94,7 +98,11 @@ export function TestStep(props: {
           <section className="reasoning">
             <header>
               <div>
-                <img className="icon" src={botIcon} />
+                <img
+                  className="icon"
+                  src={botIcon}
+                  alt="Decorative Sauce Labs robot."
+                />
               </div>
               <div>ScriptIQ Reasoning</div>
               <div className="ratings">
@@ -122,6 +130,7 @@ export function TestStep(props: {
                       });
                     }}
                     src={thumbsUpIcon}
+                    alt="Positive feedback."
                   />
                 </VSCodeButton>
                 <VSCodeButton appearance="icon" aria-label="dislike">
@@ -149,6 +158,7 @@ export function TestStep(props: {
                       });
                     }}
                     src={thumbsDownIcon}
+                    alt="Negative feedback."
                   />
                 </VSCodeButton>
               </div>
@@ -223,6 +233,7 @@ export function TestStep(props: {
                       up: !showAlternatives,
                     })}
                     src={chevronDownIcon}
+                    alt="Show alternatives."
                   />
                 </div>
                 {showAlternatives && (

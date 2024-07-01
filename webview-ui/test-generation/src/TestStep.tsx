@@ -27,6 +27,10 @@ export function TestStep(props: {
     index: number;
     testRecordId: string;
     action: string;
+    actionMetadata: {
+      direction: string;
+      text: string;
+    };
     screenshot: {
       name: string;
       width: number;
@@ -65,6 +69,7 @@ export function TestStep(props: {
     potential_identifiers,
     action,
     vote,
+    actionMetadata,
   } = step;
   const [showAlternatives, setShowAlternatives] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | 'skip'>(0);
@@ -188,6 +193,12 @@ export function TestStep(props: {
               ))}
             </ul>
           </section>
+          {actionMetadata.text && (
+            <section className="set-text-action">
+              <header>Text Input</header>
+              <div>{actionMetadata.text}</div>
+            </section>
+          )}
           {assertionMatches.length > 0 &&
             assertionMatches.every((item) => !!item.description) && (
               <section className="assertions">

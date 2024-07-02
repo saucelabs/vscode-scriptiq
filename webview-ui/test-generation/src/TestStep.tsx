@@ -8,7 +8,8 @@ import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
-// import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
+import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
+import swipeIconUrl from './icons/icn-gesture-swipe-fill.svg';
 import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import thumbsUpIcon from './icons/icn-thumbs-up.svg';
@@ -48,6 +49,18 @@ export function TestStep(props: {
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
 
+  let actionIcon;
+  switch (action) {
+    case 'scroll':
+      actionIcon = swipeIconUrl;
+      break;
+    case 'click':
+      actionIcon = tapIconUrl;
+      break;
+    default:
+      actionIcon = null;
+  }
+
   useEffect(() => {
     Prism.highlightAll();
   }, [language, showAlternatives]);
@@ -55,9 +68,11 @@ export function TestStep(props: {
   return (
     <section className="test-step">
       <header>
-        {/* <div className="action-icon">
-          <img className="icon" src={tapIconUrl} />
-        </div> */}
+        {actionIcon && (
+          <div className="action-icon">
+            <img className="icon header" src={actionIcon} />
+          </div>
+        )}
         <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
           <VSCodeButton
@@ -74,7 +89,7 @@ export function TestStep(props: {
             }}
           >
             <img
-              className="icon button"
+              className="icon header"
               src={fullScreenIcon}
               alt="Open image in full screen."
             />

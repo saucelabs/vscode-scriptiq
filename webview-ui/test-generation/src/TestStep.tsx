@@ -200,8 +200,13 @@ export function TestStep(props: {
                     return (
                       <li>
                         <div>
+                          <span
+                            className={classNames('value codicon', {
+                              'codicon-check': match.value === 'true',
+                              'codicon-error': match.value === 'false',
+                            })}
+                          />
                           <div className="description">{match.description}</div>
-                          <div className="value">{match.value}</div>
                         </div>
                       </li>
                     );

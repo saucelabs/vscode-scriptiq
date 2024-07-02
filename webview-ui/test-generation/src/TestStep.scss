@@ -40,6 +40,14 @@ section.test-step {
       }
     }
   }
+
+  code {
+    color: var(--vscode-editor-foreground);
+    background: var(--vscode-editor-background);
+    font-size: var(--vscode-editor-font-size);
+    font-weight: var(--vscode-editor-font-weight);
+    font-family: var(--vscode-editor-font-family), monospace;
+  }
 }
 
 .set-text-action {

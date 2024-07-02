@@ -8,8 +8,7 @@ export default defineConfig({
     react(),
     prism({
       languages: ['java', 'python'],
-      theme: 'tomorrow',
-      css: true,
+      css: false,
     }),
   ],
   mode: 'development',

@@ -8,9 +8,10 @@ import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
-// import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
+import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
+import swipeIconUrl from './icons/icn-gesture-swipe-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
-import { Action } from './state';
+import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
 
@@ -19,36 +20,7 @@ import { AbstractBaseGenerator, AppiumJava, AppiumPython } from './codegen';
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;
   language: 'python' | 'java';
-  step: {
-    index: number;
-    testRecordId: string;
-    action: string;
-    screenshot: {
-      name: string;
-      width: number;
-      height: number;
-      annotation: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      };
-    };
-    potential_identifiers: {
-      type: string;
-      value: string;
-      index: number;
-      checked: boolean;
-      depth: number;
-    }[];
-    event_reason: string;
-    assertionMatches: {
-      description: string;
-      value: 'true' | 'false';
-    }[];
-    screen_descs: string[];
-    vote?: string;
-  };
+  step: Step;
 }) {
   const { dispatch, language, step } = props;
   const {
@@ -61,6 +33,7 @@ export function TestStep(props: {
     potential_identifiers,
     action,
     vote,
+    actionMetadata,
   } = step;
   const [showAlternatives, setShowAlternatives] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | 'skip'>(0);
@@ -72,6 +45,18 @@ export function TestStep(props: {
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
 
+  let actionIcon;
+  switch (action) {
+    case 'scroll':
+      actionIcon = swipeIconUrl;
+      break;
+    case 'click':
+      actionIcon = tapIconUrl;
+      break;
+    default:
+      actionIcon = null;
+  }
+
   useEffect(() => {
     Prism.highlightAll();
   }, [language, showAlternatives]);
@@ -79,9 +64,11 @@ export function TestStep(props: {
   return (
     <section className="test-step">
       <header>
-        {/* <div className="action-icon">
-          <img className="icon" src={tapIconUrl} />
-        </div> */}
+        {actionIcon && (
+          <div className="action-icon">
+            <img className="icon header" src={actionIcon} />
+          </div>
+        )}
         <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
           <VSCodeButton
@@ -118,7 +105,11 @@ export function TestStep(props: {
           <section className="reasoning">
             <header>
               <div>
-                <img className="icon" src={botIcon} />
+                <img
+                  className="icon"
+                  src={botIcon}
+                  alt="Decorative Sauce Labs robot."
+                />
               </div>
               <div>ScriptIQ Reasoning</div>
               <div className="ratings">
@@ -190,6 +181,12 @@ export function TestStep(props: {
               ))}
             </ul>
           </section>
+          {actionMetadata.text && (
+            <section className="set-text-action">
+              <header>Text Input</header>
+              <div>{actionMetadata.text}</div>
+            </section>
+          )}
           {assertionMatches.length > 0 &&
             assertionMatches.every((item) => !!item.description) && (
               <section className="assertions">

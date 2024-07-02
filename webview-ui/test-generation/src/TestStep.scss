@@ -14,7 +14,7 @@ section.test-step {
     .icon {
       width: 16px;
       height: 16px;
-      &.button {
+      &.header {
         filter: invert(92%) sepia(1%) saturate(103%) hue-rotate(314deg)
           brightness(88%) contrast(98%);
       }
@@ -39,6 +39,15 @@ section.test-step {
         padding: 4px;
       }
     }
+  }
+}
+
+.set-text-action {
+  header {
+    margin-bottom: 4px;
+  }
+  div {
+    padding-left: 4px;
   }
 }
 

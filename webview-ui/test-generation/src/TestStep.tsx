@@ -8,8 +8,8 @@ import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
-import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
-import swipeIconUrl from './icons/icn-gesture-swipe-fill.svg';
+import tapIconUrl from './icons/icn-gesture-tap.svg';
+import swipeIconUrl from './icons/icn-gesture-swipe.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
@@ -48,10 +48,13 @@ export function TestStep(props: {
   let actionIcon;
   switch (action) {
     case 'scroll':
-      actionIcon = swipeIconUrl;
+      actionIcon = <img className="icon" src={swipeIconUrl} />;
       break;
     case 'click':
-      actionIcon = tapIconUrl;
+      actionIcon = <img className="icon" src={tapIconUrl} />;
+      break;
+    case 'set_text':
+      actionIcon = <span className="codicon codicon-edit icon" />;
       break;
     default:
       actionIcon = null;
@@ -64,11 +67,7 @@ export function TestStep(props: {
   return (
     <section className="test-step">
       <header>
-        {actionIcon && (
-          <div className="action-icon">
-            <img className="icon header" src={actionIcon} />
-          </div>
-        )}
+        {actionIcon && <div className="action-icon">{actionIcon}</div>}
         <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
           <VSCodeButton

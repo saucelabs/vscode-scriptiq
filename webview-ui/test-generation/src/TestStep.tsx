@@ -13,7 +13,7 @@ import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
 import botIcon from './icons/icn-bot-fill.svg';
 import thumbsUpIcon from './icons/icn-thumbs-up.svg';
 import thumbsDownIcon from './icons/icn-thumbs-down.svg';
-import { Action } from './state';
+import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
 
@@ -23,36 +23,7 @@ import { AbstractBaseGenerator, AppiumJava, AppiumPython } from './codegen';
 export function TestStep(props: {
   dispatch: React.Dispatch<Action>;
   language: 'python' | 'java';
-  step: {
-    index: number;
-    testRecordId: string;
-    action: string;
-    screenshot: {
-      name: string;
-      width: number;
-      height: number;
-      annotation: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      };
-    };
-    potential_identifiers: {
-      type: string;
-      value: string;
-      index: number;
-      checked: boolean;
-      depth: number;
-    }[];
-    event_reason: string;
-    assertionMatches: {
-      description: string;
-      value: 'true' | 'false';
-    }[];
-    screen_descs: string[];
-    vote?: string;
-  };
+  step: Step;
 }) {
   const { dispatch, language, step } = props;
   const {
@@ -65,6 +36,7 @@ export function TestStep(props: {
     potential_identifiers,
     action,
     vote,
+    actionMetadata,
   } = step;
   const [showAlternatives, setShowAlternatives] = useState<boolean>(false);
   const [selected, setSelected] = useState<number | 'skip'>(0);
@@ -101,7 +73,11 @@ export function TestStep(props: {
               });
             }}
           >
-            <img className="icon button" src={fullScreenIcon} />
+            <img
+              className="icon button"
+              src={fullScreenIcon}
+              alt="Open image in full screen."
+            />
           </VSCodeButton>
         </div>
       </header>
@@ -122,7 +98,11 @@ export function TestStep(props: {
           <section className="reasoning">
             <header>
               <div>
-                <img className="icon" src={botIcon} />
+                <img
+                  className="icon"
+                  src={botIcon}
+                  alt="Decorative Sauce Labs robot."
+                />
               </div>
               <div>ScriptIQ Reasoning</div>
               <div className="ratings">
@@ -150,6 +130,7 @@ export function TestStep(props: {
                       });
                     }}
                     src={thumbsUpIcon}
+                    alt="Positive feedback."
                   />
                 </VSCodeButton>
                 <VSCodeButton appearance="icon" aria-label="dislike">
@@ -177,6 +158,7 @@ export function TestStep(props: {
                       });
                     }}
                     src={thumbsDownIcon}
+                    alt="Negative feedback."
                   />
                 </VSCodeButton>
               </div>
@@ -188,6 +170,12 @@ export function TestStep(props: {
               ))}
             </ul>
           </section>
+          {actionMetadata.text && (
+            <section className="set-text-action">
+              <header>Text Input</header>
+              <div>{actionMetadata.text}</div>
+            </section>
+          )}
           {assertionMatches.length > 0 &&
             assertionMatches.every((item) => !!item.description) && (
               <section className="assertions">
@@ -245,6 +233,7 @@ export function TestStep(props: {
                       up: !showAlternatives,
                     })}
                     src={chevronDownIcon}
+                    alt="Show alternatives."
                   />
                 </div>
                 {showAlternatives && (

@@ -48,7 +48,7 @@ export function TestStep(props: {
   let actionIcon;
   switch (action) {
     case 'scroll':
-      actionIcon = <img className="icon hader" src={swipeIconUrl} />;
+      actionIcon = <img className="icon header" src={swipeIconUrl} />;
       break;
     case 'click':
       actionIcon = <img className="icon header" src={tapIconUrl} />;

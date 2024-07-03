@@ -19,7 +19,6 @@ import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
-import chevronDownIcon from './icons/icn-chevron-down.svg';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -157,11 +156,11 @@ function App() {
           >
             Additional Settings
           </VSCodeLink>
-          <img
-            className={classNames('icon', {
-              up: !showAdditionalSettings,
+          <span
+            className={classNames('codicon', {
+              'codicon-chevron-down': showAdditionalSettings,
+              'codicon-chevron-right': !showAdditionalSettings,
             })}
-            src={chevronDownIcon}
           />
         </div>
 

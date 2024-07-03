@@ -1,9 +1,22 @@
+.vscode-dark {
+  --icon-header-filter: invert(70%) sepia(6%) saturate(51%) hue-rotate(169deg)
+    brightness(150%) contrast(90%);
+}
+
+.vscode-high-contrast {
+  --icon-header-filter: invert(70%) sepia(6%) saturate(51%) hue-rotate(169deg)
+    brightness(150%) contrast(200%);
+}
+
+.vscode-light {
+  --icon-header-filter: none;
+}
+
 section.test-step {
   display: flex;
   flex-direction: column;
   padding: 8px;
   row-gap: 4px;
-  color: rgb(204, 204, 204);
 
   header {
     display: flex;
@@ -16,8 +29,7 @@ section.test-step {
       width: 16px;
       height: 16px;
       &.header {
-        filter: invert(92%) sepia(1%) saturate(103%) hue-rotate(314deg)
-          brightness(88%) contrast(98%);
+        filter: var(--icon-header-filter);
       }
     }
   }
@@ -35,11 +47,19 @@ section.test-step {
       flex-grow: 1;
 
       > section {
-        background: var(--Sidebar-bg, rgba(120, 132, 131, 0.08));
+        background: var(--vscode-sideBar-background);
         border-radius: 2px;
         padding: 4px;
       }
     }
+  }
+
+  code {
+    color: var(--vscode-editor-foreground);
+    background: var(--vscode-editor-background);
+    font-size: var(--vscode-editor-font-size);
+    font-weight: var(--vscode-editor-font-weight);
+    font-family: var(--vscode-editor-font-family), monospace;
   }
 }
 
@@ -68,15 +88,19 @@ section.test-step {
 
       > div {
         display: flex;
-        background: rgba(234, 234, 234, 0.1);
         padding: 4px 8px;
         border-radius: 2px;
+        &:hover {
+          background: var(--vscode-list-hoverBackground);
+          color: var(--vscode-list-hoverForeground);
+        }
       }
     }
   }
 
   .value {
     text-transform: uppercase;
+    margin-right: 4px;
   }
 }
 
@@ -117,13 +141,5 @@ section.test-step {
 
   .rating {
     padding: 4px;
-    width: 16px;
-    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(270deg)
-      brightness(104%) contrast(101%);
-
-    &.selected {
-      filter: invert(85%) sepia(41%) saturate(7496%) hue-rotate(325deg)
-        brightness(104%) contrast(87%);
-    }
   }
 }

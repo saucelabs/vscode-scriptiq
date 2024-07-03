@@ -3,8 +3,6 @@ import {
   VSCodeTextField,
 } from '@vscode/webview-ui-toolkit/react';
 import { Action, Assertion } from './state';
-import trashIcon from './icons/icn-trash-fill.svg';
-import plusIcon from './icons/icn-plus-fill.svg';
 
 interface AssertionInputProps {
   dispatch: React.Dispatch<Action>;
@@ -49,14 +47,7 @@ export function AssertionInput(props: AssertionInputProps) {
           });
         }}
       >
-        <img
-          style={{
-            width: '16px',
-            filter:
-              'invert(92%) sepia(1%) saturate(103%) hue-rotate(314deg) brightness(88%) contrast(98%)',
-          }}
-          src={trashIcon}
-        />
+        <span className="codicon codicon-trash" />
       </VSCodeButton>
       <VSCodeButton
         appearance="icon"
@@ -65,14 +56,7 @@ export function AssertionInput(props: AssertionInputProps) {
           dispatch({ type: 'addAssertion', value: { key: assertion.key } })
         }
       >
-        <img
-          style={{
-            width: '16px',
-            filter:
-              'invert(92%) sepia(1%) saturate(103%) hue-rotate(314deg) brightness(88%) contrast(98%)',
-          }}
-          src={plusIcon}
-        />
+        <span className="codicon codicon-add" />
       </VSCodeButton>
     </div>
   );

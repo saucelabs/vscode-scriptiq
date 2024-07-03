@@ -6,6 +6,7 @@ import {
   VSCodeOption,
 } from '@vscode/webview-ui-toolkit/react';
 
+import './App.scss';
 import { vscode } from './utilities/vscode';
 
 function App() {
@@ -52,25 +53,10 @@ function App() {
   return (
     <>
       <header>
-        <p
-          style={{
-            fontWeight: '500',
-            textAlign: 'center',
-          }}
-        >
-          Create test scripts in minutes with the power of Sauce Labs AI.
-        </p>
+        <p>Create test scripts in minutes with the power of Sauce Labs AI.</p>
       </header>
       <main>
-        <form
-          id="credentials-form"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}
-          onSubmit={handleSave}
-        >
+        <form id="credentials-form" className="form" onSubmit={handleSave}>
           <VSCodeTextField
             onInput={(e) => {
               if (e.target && 'value' in e.target) {
@@ -92,15 +78,8 @@ function App() {
           >
             Sauce Access Key
           </VSCodeTextField>
-          <section
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <label htmlFor="region-dropdown" style={{ marginBottom: '2px' }}>
-              Sauce Labs Data Center
-            </label>
+          <section className="with-label">
+            <label htmlFor="region-dropdown">Sauce Labs Data Center</label>
             <VSCodeDropdown
               onChange={(e) => {
                 console.log(e);
@@ -120,7 +99,7 @@ function App() {
             </VSCodeDropdown>
           </section>
           <VSCodeButton
-            style={{ width: '81px' }}
+            className="submit-button"
             type="submit"
             formId="credentials-form"
           >

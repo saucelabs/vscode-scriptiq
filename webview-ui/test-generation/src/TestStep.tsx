@@ -8,17 +8,13 @@ import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
-import tapIconUrl from './icons/icn-gesture-tap-fill.svg';
-import swipeIconUrl from './icons/icn-gesture-swipe-fill.svg';
-import fullScreenIcon from './icons/icn-fullscreen-fill.svg';
+import tapIconUrl from './icons/icn-gesture-tap.svg';
+import swipeIconUrl from './icons/icn-gesture-swipe.svg';
 import botIcon from './icons/icn-bot-fill.svg';
-import thumbsUpIcon from './icons/icn-thumbs-up.svg';
-import thumbsDownIcon from './icons/icn-thumbs-down.svg';
 import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
 
-import chevronDownIcon from './icons/icn-chevron-down.svg';
 import { AbstractBaseGenerator, AppiumJava, AppiumPython } from './codegen';
 
 export function TestStep(props: {
@@ -52,10 +48,13 @@ export function TestStep(props: {
   let actionIcon;
   switch (action) {
     case 'scroll':
-      actionIcon = swipeIconUrl;
+      actionIcon = <img className="icon header" src={swipeIconUrl} />;
       break;
     case 'click':
-      actionIcon = tapIconUrl;
+      actionIcon = <img className="icon header" src={tapIconUrl} />;
+      break;
+    case 'set_text':
+      actionIcon = <span className="codicon codicon-edit icon" />;
       break;
     default:
       actionIcon = null;
@@ -68,11 +67,7 @@ export function TestStep(props: {
   return (
     <section className="test-step">
       <header>
-        {actionIcon && (
-          <div className="action-icon">
-            <img className="icon header" src={actionIcon} />
-          </div>
-        )}
+        {actionIcon && <div className="action-icon">{actionIcon}</div>}
         <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
           <VSCodeButton
@@ -88,11 +83,7 @@ export function TestStep(props: {
               });
             }}
           >
-            <img
-              className="icon header"
-              src={fullScreenIcon}
-              alt="Open image in full screen."
-            />
+            <span className="codicon codicon-screen-full" />
           </VSCodeButton>
         </div>
       </header>
@@ -121,59 +112,63 @@ export function TestStep(props: {
               </div>
               <div>ScriptIQ Reasoning</div>
               <div className="ratings">
-                <VSCodeButton appearance="icon" aria-label="like">
-                  <img
-                    className={classNames('rating', {
-                      selected: vote === 'like',
+                <VSCodeButton
+                  appearance="icon"
+                  aria-label="like"
+                  onClick={() => {
+                    const newRating = vote === 'like' ? 'norating' : 'like';
+                    dispatch({
+                      type: 'vote',
+                      value: {
+                        index: step.index,
+                        value: newRating,
+                      },
+                    });
+                    vscode.postMessage({
+                      action: 'send-user-rating',
+                      data: {
+                        rating: newRating,
+                        step: index,
+                        test_id: testRecordId,
+                      },
+                    });
+                  }}
+                >
+                  <span
+                    className={classNames('rating codicon', {
+                      'codicon-thumbsup': vote !== 'like',
+                      'codicon-thumbsup-filled': vote === 'like',
                     })}
-                    onClick={() => {
-                      const newRating = vote === 'like' ? 'norating' : 'like';
-                      dispatch({
-                        type: 'vote',
-                        value: {
-                          index: step.index,
-                          value: newRating,
-                        },
-                      });
-                      vscode.postMessage({
-                        action: 'send-user-rating',
-                        data: {
-                          rating: newRating,
-                          step: index,
-                          test_id: testRecordId,
-                        },
-                      });
-                    }}
-                    src={thumbsUpIcon}
-                    alt="Positive feedback."
                   />
                 </VSCodeButton>
-                <VSCodeButton appearance="icon" aria-label="dislike">
-                  <img
-                    className={classNames('rating', {
-                      selected: vote === 'dislike',
+                <VSCodeButton
+                  appearance="icon"
+                  aria-label="dislike"
+                  onClick={() => {
+                    const newRating =
+                      vote === 'dislike' ? 'norating' : 'dislike';
+                    dispatch({
+                      type: 'vote',
+                      value: {
+                        index: index,
+                        value: newRating,
+                      },
+                    });
+                    vscode.postMessage({
+                      action: 'send-user-rating',
+                      data: {
+                        rating: newRating,
+                        step: index,
+                        test_id: testRecordId,
+                      },
+                    });
+                  }}
+                >
+                  <span
+                    className={classNames('rating codicon', {
+                      'codicon-thumbsdown': vote !== 'dislike',
+                      'codicon-thumbsdown-filled': vote === 'dislike',
                     })}
-                    onClick={() => {
-                      const newRating =
-                        vote === 'dislike' ? 'norating' : 'dislike';
-                      dispatch({
-                        type: 'vote',
-                        value: {
-                          index: index,
-                          value: newRating,
-                        },
-                      });
-                      vscode.postMessage({
-                        action: 'send-user-rating',
-                        data: {
-                          rating: newRating,
-                          step: index,
-                          test_id: testRecordId,
-                        },
-                      });
-                    }}
-                    src={thumbsDownIcon}
-                    alt="Negative feedback."
                   />
                 </VSCodeButton>
               </div>
@@ -200,8 +195,13 @@ export function TestStep(props: {
                     return (
                       <li>
                         <div>
+                          <span
+                            className={classNames('value codicon', {
+                              'codicon-check': match.value === 'true',
+                              'codicon-error': match.value === 'false',
+                            })}
+                          />
                           <div className="description">{match.description}</div>
-                          <div className="value">{match.value}</div>
                         </div>
                       </li>
                     );
@@ -243,12 +243,11 @@ export function TestStep(props: {
                   >
                     View Step Alternatives
                   </VSCodeLink>
-                  <img
-                    className={classNames('icon', {
-                      up: !showAlternatives,
+                  <span
+                    className={classNames('codicon', {
+                      'codicon-chevron-down': showAlternatives,
+                      'codicon-chevron-right': !showAlternatives,
                     })}
-                    src={chevronDownIcon}
-                    alt="Show alternatives."
                   />
                 </div>
                 {showAlternatives && (

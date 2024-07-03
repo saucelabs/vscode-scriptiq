@@ -176,6 +176,18 @@ export class TestGenerationPanel {
         'index.css',
       ),
     );
+    // The CSS file to provide VSCode native icons
+    const codiconsUri = webview.asWebviewUri(
+      Uri.joinPath(
+        extensionUri,
+        'webview-ui',
+        'test-generation',
+        'node_modules',
+        '@vscode/codicons',
+        'dist',
+        'codicon.css',
+      ),
+    );
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
       Uri.joinPath(
@@ -204,6 +216,8 @@ export class TestGenerationPanel {
             content="style-src ${webview.cspSource}; script-src 'nonce-${nonce}';"
           />
           <link rel="stylesheet" type="text/css" href="${stylesUri}" />
+          <link rel="stylesheet" type="text/css" href="${codiconsUri}" />
+
           <title>Test Generation</title>
 
           <script nonce="${nonce}">

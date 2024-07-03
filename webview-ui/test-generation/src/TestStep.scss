@@ -1,3 +1,17 @@
+.vscode-dark {
+  --icon-header-filter: invert(70%) sepia(6%) saturate(51%) hue-rotate(169deg)
+    brightness(150%) contrast(90%);
+}
+
+.vscode-high-contrast {
+  --icon-header-filter: invert(70%) sepia(6%) saturate(51%) hue-rotate(169deg)
+    brightness(150%) contrast(200%);
+}
+
+.vscode-light {
+  --icon-header-filter: none;
+}
+
 section.test-step {
   display: flex;
   flex-direction: column;
@@ -15,8 +29,7 @@ section.test-step {
       width: 16px;
       height: 16px;
       &.header {
-        filter: invert(92%) sepia(1%) saturate(103%) hue-rotate(314deg)
-          brightness(88%) contrast(98%);
+        filter: var(--icon-header-filter);
       }
     }
   }

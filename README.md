@@ -28,7 +28,7 @@ automatically navigate the app and reach your desired outcome.
 4. Click "Generate Test" to let ScriptIQ navigate your app on a Sauce Labs real device.
 5. Review the test results and iterate on your test goals as needed.
 
-_Notes:_
+💡*Notes:*
 
 To install the downloaded ScriptIQ VSIX extension, follow these steps:
 

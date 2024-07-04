@@ -28,6 +28,18 @@ automatically navigate the app and reach your desired outcome.
 4. Click "Generate Test" to let ScriptIQ navigate your app on a Sauce Labs real device.
 5. Review the test results and iterate on your test goals as needed.
 
+💡 _Notes:_
+
+To install the downloaded ScriptIQ VSIX extension, follow these steps:
+
+1. From VSCode's main menu, select "Extensions".
+2. Click the `...` (View and More Actions) button at the top of the middle panel.
+3. Select "Install from VSIX..." and follow the prompts.
+
+For more installation details, please check [here](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix).
+
+![installation-instruction](installation-instruction.png)
+
 ScriptIQ brings the power of AI to mobile app testing, making it easier, and more accessible than ever.
 
 For more information and documentation, please visit the ScriptIQ documentation (coming soon).

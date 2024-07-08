@@ -114,7 +114,13 @@ section.test-step {
 .commands {
   .command {
     margin: 4px;
+
+    code {
+      display: flex;
+      flex-wrap: wrap;
+    }
   }
+
   .alternatives {
     .toggle {
       display: flex;

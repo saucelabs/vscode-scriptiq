@@ -188,6 +188,7 @@ export class TestGenerationPanel {
         'codicon.css',
       ),
     );
+
     // The JS file from the React build output
     const scriptUri = webview.asWebviewUri(
       Uri.joinPath(

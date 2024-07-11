@@ -2,6 +2,7 @@
 !media/**
 !webview-ui/connect/build/assets/**
 !webview-ui/test-generation/build/assets/**
+!webview-ui/test-generation/node_modules/@vscode/codicons/dist/**
 !dist/**
 !package.json
 !README.md

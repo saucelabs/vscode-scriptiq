@@ -222,6 +222,8 @@ export class TestGenerationPanel {
 
           <script nonce="${nonce}">
             window.historyPath = '${this.historyUri.toString()}';
+            window.extensionPath =
+              '${webview.asWebviewUri(extensionUri).toString()}';
           </script>
         </head>
         <body>

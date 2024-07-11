@@ -8,9 +8,6 @@ import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
-import tapIconUrl from './icons/icn-gesture-tap.svg';
-import swipeIconUrl from './icons/icn-gesture-swipe.svg';
-import botIcon from './icons/icn-bot-fill.svg';
 import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
@@ -44,14 +41,19 @@ export function TestStep(props: {
   }
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
+  const iconSrc = `${window.extensionPath}/media/icons`;
 
   let actionIcon;
   switch (action) {
     case 'scroll':
-      actionIcon = <img className="icon header" src={swipeIconUrl} />;
+      actionIcon = (
+        <img className="icon header" src={`${iconSrc}/icn-gesture-swipe.svg`} />
+      );
       break;
     case 'click':
-      actionIcon = <img className="icon header" src={tapIconUrl} />;
+      actionIcon = (
+        <img className="icon header" src={`${iconSrc}/icn-gesture-tap.svg`} />
+      );
       break;
     case 'set_text':
       actionIcon = <span className="codicon codicon-edit icon" />;
@@ -106,7 +108,7 @@ export function TestStep(props: {
               <div>
                 <img
                   className="icon"
-                  src={botIcon}
+                  src={`${iconSrc}/icn-bot-fill.svg`}
                   alt="Decorative Sauce Labs robot."
                 />
               </div>

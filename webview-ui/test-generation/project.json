@@ -1,0 +1,16 @@
+{
+  "name": "test-generation-webview",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "webview-ui/test-generation/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "outputs": ["{projectRoot}/build"],
+      "cache": true
+    },
+    "build:prod": {
+      "outputs": ["{projectRoot}/build"],
+      "cache": true
+    }
+  }
+}

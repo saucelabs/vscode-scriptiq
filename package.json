@@ -134,7 +134,6 @@
   "devDependencies": {
     "@eslint/js": "8.57.0",
     "@nx/eslint": "19.3.1",
-    "@nx/vite": "19.3.1",
     "@nx/web": "19.3.1",
     "@types/mocha": "10.0.6",
     "@types/node": "20.11.20",

@@ -178,7 +178,15 @@ export class TestGenerationPanel {
     );
     // The CSS file to provide VSCode native icons
     const codiconsUri = webview.asWebviewUri(
-      Uri.joinPath(extensionUri, 'media', 'codicon.css'),
+      Uri.joinPath(
+        extensionUri,
+        'webview-ui',
+        'test-generation',
+        'node_modules',
+        '@vscode/codicons',
+        'dist',
+        'codicon.css',
+      ),
     );
 
     // The JS file from the React build output

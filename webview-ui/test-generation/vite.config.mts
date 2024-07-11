@@ -14,6 +14,7 @@ export default defineConfig({
   mode: 'development',
   build: {
     outDir: 'build',
+    assetsInlineLimit: 12288, // DEVX-2976: Workaround for missing assets.
     rollupOptions: {
       output: {
         entryFileNames: `assets/[name].js`,

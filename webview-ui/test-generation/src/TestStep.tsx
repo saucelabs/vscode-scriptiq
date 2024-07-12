@@ -8,9 +8,9 @@ import Prism from 'prismjs';
 
 import { vscode } from './utilities/vscode';
 import './TestStep.scss';
-import tapIconUrl from './icons/icn-gesture-tap.svg';
-import swipeIconUrl from './icons/icn-gesture-swipe.svg';
-import botIcon from './icons/icn-bot-fill.svg';
+import TapIcon from './icons/icn-gesture-tap.svg?react';
+import SwipeIcon from './icons/icn-gesture-swipe.svg?react';
+import BotIcon from './icons/icn-bot-fill.svg?react';
 import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
@@ -45,19 +45,19 @@ export function TestStep(props: {
 
   const imgSrc = `${window.historyPath}/${testRecordId}/${screenshot.name}`;
 
-  let actionIcon;
+  let ActionIcon;
   switch (action) {
     case 'scroll':
-      actionIcon = <img className="icon header" src={swipeIconUrl} />;
+      ActionIcon = SwipeIcon;
       break;
     case 'click':
-      actionIcon = <img className="icon header" src={tapIconUrl} />;
+      ActionIcon = TapIcon;
       break;
-    case 'set_text':
-      actionIcon = <span className="codicon codicon-edit icon" />;
-      break;
+    // case 'set_text':
+    //   actionIcon = <span className="codicon codicon-edit icon" />;
+    //   break;
     default:
-      actionIcon = null;
+      ActionIcon = null;
   }
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function TestStep(props: {
   return (
     <section className="test-step">
       <header>
-        {actionIcon && <div className="action-icon">{actionIcon}</div>}
+        {ActionIcon && <ActionIcon className="icon header" />}
         <div className="title">Step {index + 1}</div>
         <div className="fullscreen">
           <VSCodeButton
@@ -104,11 +104,7 @@ export function TestStep(props: {
           <section className="reasoning">
             <header>
               <div>
-                <img
-                  className="icon"
-                  src={botIcon}
-                  alt="Decorative Sauce Labs robot."
-                />
+                <BotIcon className="icon" />
               </div>
               <div>ScriptIQ Reasoning</div>
               <div className="ratings">

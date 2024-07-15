@@ -1,17 +1,3 @@
-.vscode-dark {
-  --icon-header-filter: invert(70%) sepia(6%) saturate(51%) hue-rotate(169deg)
-    brightness(150%) contrast(90%);
-}
-
-.vscode-high-contrast {
-  --icon-header-filter: invert(70%) sepia(6%) saturate(51%) hue-rotate(169deg)
-    brightness(150%) contrast(200%);
-}
-
-.vscode-light {
-  --icon-header-filter: none;
-}
-
 section.test-step {
   display: flex;
   flex-direction: column;
@@ -29,7 +15,8 @@ section.test-step {
       width: 16px;
       height: 16px;
       &.header {
-        filter: var(--icon-header-filter);
+        color: var(--vscode-editor-foreground);
+        fill: currentColor;
       }
     }
   }
@@ -130,12 +117,8 @@ section.test-step {
 
     .icon {
       width: 12px;
-      filter: invert(43%) sepia(84%) saturate(1173%) hue-rotate(193deg)
-        brightness(101%) contrast(101%);
-
-      &.up {
-        transform: rotate(-90deg);
-      }
+      fill: currentColor;
+      color: hsla(152, 69%, 55%, 1);
     }
   }
 }

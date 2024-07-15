@@ -11,6 +11,7 @@ import './TestStep.scss';
 import TapIcon from './icons/icn-gesture-tap.svg?react';
 import SwipeIcon from './icons/icn-gesture-swipe.svg?react';
 import BotIcon from './icons/icn-bot-fill.svg?react';
+import TypeIcon from './icons/icn-gesture-typetext.svg?react';
 import { Action, Step } from './state';
 import { Screenshot } from './Screenshot';
 import { useEffect, useState } from 'react';
@@ -53,9 +54,9 @@ export function TestStep(props: {
     case 'click':
       ActionIcon = TapIcon;
       break;
-    // case 'set_text':
-    //   actionIcon = <span className="codicon codicon-edit icon" />;
-    //   break;
+    case 'set_text':
+      ActionIcon = TypeIcon;
+      break;
     default:
       ActionIcon = null;
   }

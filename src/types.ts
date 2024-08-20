@@ -22,6 +22,8 @@ export interface TestRecord {
   screen_width?: number;
   screen_height?: number;
   scriptiq_llm_version?: string;
+  tunnel_name?: string;
+  tunnel_owner?: string;
 }
 
 export interface TestStep {

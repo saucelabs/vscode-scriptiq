@@ -38,6 +38,8 @@ export function generateTest(
   assertions: string[],
   prevGoal: string = '',
   creds: Credentials,
+  tunnelName: string,
+  tunnelOwner: string,
 ): [
   WebSocket,
   Observable<
@@ -81,6 +83,8 @@ export function generateTest(
       platform: platform,
       platform_version: platformVersion,
       region: region,
+      tunnel_name: tunnelName,
+      tunnel_owner: tunnelOwner,
     };
 
     ws.onopen = () => {
@@ -90,6 +94,8 @@ export function generateTest(
           data: {
             username: username,
             access_key: accessKey,
+            tunnel_name: tunnelName,
+            tunnel_owner: tunnelOwner,
             app_name: appName,
             goal: goal,
             num_steps: maxTestSteps,

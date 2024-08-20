@@ -73,6 +73,8 @@ export class AppiumPython extends AbstractBaseGenerator {
     platform_version: string,
     region: string,
     platform: string,
+    tunnel_name: string,
+    tunnel_owner: string,
   ) {
     const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `import os
@@ -99,6 +101,8 @@ options = UiAutomator2Options().load_capabilities(
             "username": os.environ["SAUCE_USERNAME"],
             "accessKey": os.environ["SAUCE_ACCESS_KEY"],
             "appiumVersion": "latest",
+            "tunnelName": "${tunnel_name}",
+            "tunnelOwner": "${tunnel_owner}",
         },
     },
 )
@@ -151,6 +155,8 @@ driver.quit()\n`;
     platform_version: string,
     region: string,
     platform: string,
+    tunnel_name: string,
+    tunnel_owner: string,
     steps: any[],
   ) {
     const headerText = this.scriptHeaderCode(
@@ -160,6 +166,8 @@ driver.quit()\n`;
       platform_version,
       region,
       platform,
+      tunnel_name,
+      tunnel_owner,
     );
 
     let codeStepText = '';

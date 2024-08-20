@@ -47,6 +47,11 @@ export interface Step {
   screen_descs: string[];
 }
 
+export interface Tunnel {
+  name?: string;
+  owner?: string;
+}
+
 export interface State {
   appName: string;
   testGoal: string;
@@ -71,6 +76,8 @@ export interface State {
   credentials?: Credentials;
 
   language: 'python' | 'java';
+
+  tunnel: Tunnel;
 }
 
 export const initialState: State = {
@@ -91,6 +98,10 @@ export const initialState: State = {
   generationState: 'idle',
   status: '',
   language: 'python',
+  tunnel: {
+    name: '',
+    owner: '',
+  },
 };
 
 export type Action =
@@ -103,6 +114,8 @@ export type Action =
   | { type: 'setStatus'; value: State['status'] }
   | { type: 'setGenerationState'; value: State['generationState'] }
   | { type: 'setDevice'; value: string }
+  | { type: 'setTunnelName'; value: State['tunnel']['name'] }
+  | { type: 'setTunnelOwner'; value: State['tunnel']['owner'] }
   | { type: 'showTestRecord'; value: { testRecord: TestRecord; votes: Vote[] } }
   | { type: 'loadNewRecord'; value: TestRecord }
   | { type: 'addAssertion'; value: { key: string } }
@@ -341,6 +354,10 @@ export const reducer = (current: State, action: Action): State => {
           key: uuidv4(),
           value,
         })),
+        tunnel: {
+          name: testRecord.tunnel_name,
+          owner: testRecord.tunnel_owner,
+        },
       };
     }
     case 'showTestRecord': {
@@ -403,6 +420,10 @@ export const reducer = (current: State, action: Action): State => {
           key: uuidv4(),
           value,
         })),
+        tunnel: {
+          name: testRecord.tunnel_name,
+          owner: testRecord.tunnel_owner,
+        },
       };
     }
     case 'showVideo': {
@@ -411,6 +432,24 @@ export const reducer = (current: State, action: Action): State => {
         sessionId: action.value.sessionId,
         status: action.value.status,
         credentials: action.value.credentials,
+      };
+    }
+    case 'setTunnelName': {
+      return {
+        ...current,
+        tunnel: {
+          ...current.tunnel,
+          name: action.value,
+        },
+      };
+    }
+    case 'setTunnelOwner': {
+      return {
+        ...current,
+        tunnel: {
+          ...current.tunnel,
+          owner: action.value,
+        },
       };
     }
     default:

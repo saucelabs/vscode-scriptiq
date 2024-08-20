@@ -56,6 +56,7 @@ export class AppiumPython extends AbstractBaseGenerator {
   sendTextCode(text: string, platform: string, findElement = '') {
     if (platform == 'Android') {
       return `    element.click()
+    ${findElement.replace('\n', '')} 
     element.send_keys("${text}")
     driver.execute_script('mobile: performEditorAction', {'action': 'Go'})
     driver.execute_script('mobile: performEditorAction', {'action': 'Search'})\n`;

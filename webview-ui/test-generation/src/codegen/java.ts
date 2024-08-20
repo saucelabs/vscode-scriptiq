@@ -59,6 +59,7 @@ export class AppiumJava extends AbstractBaseGenerator {
   sendTextCode(text: string, platform: string, number = '', findElement = '') {
     if (platform == 'Android') {
       return `            element${number}.click();
+            ${findElement.replace('WebElement ', '').replace('\n', '')}
             element${number}.sendKeys("${text}");
             ((PressesKey) driver).pressKey(new KeyEvent(AndroidKey.ENTER));\n`;
     } else {

@@ -162,6 +162,8 @@ export class TestGenerationPanel {
                 message.data.platform,
                 message.data.platform_version,
                 message.data.assertions,
+                message.data.tunnel_name,
+                message.data.tunnel_owner,
                 '',
               );
             } catch (e) {
@@ -308,6 +310,8 @@ export class TestGenerationPanel {
     platform: Platform,
     platformVersion: string,
     assertions: string[],
+    tunnelName: string,
+    tunnelOwner: string,
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
@@ -367,6 +371,8 @@ export class TestGenerationPanel {
       assertions,
       prevGoal,
       creds,
+      tunnelName,
+      tunnelOwner,
     );
     this.socket = ws;
 

@@ -106,8 +106,16 @@ function App() {
     });
   }, []);
 
-  const { appName, assertions, testGoal, maxSteps, platform, status, steps } =
-    state;
+  const {
+    appName,
+    assertions,
+    testGoal,
+    maxSteps,
+    platform,
+    status,
+    steps,
+    tunnel,
+  } = state;
 
   return (
     <main>
@@ -166,6 +174,34 @@ function App() {
 
         {showAdditionalSettings && (
           <section className="inputs">
+            <VSCodeTextField
+              placeholder="Sauce Connect tunnel name"
+              onInput={(e) => {
+                if (e.target && 'value' in e.target) {
+                  dispatch({
+                    type: 'setTunnelName',
+                    value: e.target.value as string,
+                  });
+                }
+              }}
+              value={state.tunnel?.name ?? ''}
+            >
+              Tunnel Name
+            </VSCodeTextField>
+            <VSCodeTextField
+              placeholder="Sauce Connect tunnel owner"
+              onInput={(e) => {
+                if (e.target && 'value' in e.target) {
+                  dispatch({
+                    type: 'setTunnelOwner',
+                    value: e.target.value as string,
+                  });
+                }
+              }}
+              value={state.tunnel?.owner ?? ''}
+            >
+              Tunnel Owner
+            </VSCodeTextField>
             <VSCodeTextField
               value={maxSteps.toString()}
               onInput={(e) => {
@@ -260,6 +296,8 @@ function App() {
                   devices: state.device ? [state.device] : [],
                   platform: platform.name,
                   platform_version: platform.version,
+                  tunnel_name: tunnel?.name,
+                  tunnel_owner: tunnel?.owner,
                 },
               });
             }}
@@ -377,6 +415,8 @@ function App() {
                           state.job?.platform.version ?? '',
                           state.region ?? '',
                           state.platform.name,
+                          state.tunnel?.name ?? '',
+                          state.tunnel?.owner ?? '',
                           steps,
                         );
 

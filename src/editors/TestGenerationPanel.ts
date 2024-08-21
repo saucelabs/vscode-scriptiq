@@ -243,7 +243,7 @@ export class TestGenerationPanel {
 
   /**
    * Sets up an event listener to listen for messages passed from the webview context and
-   * executes code based on the message that is recieved.
+   * executes code based on the message that is received.
    *
    * @param webview A reference to the extension webview
    * @param context A reference to the extension context
@@ -265,6 +265,8 @@ export class TestGenerationPanel {
                 message.data.platform,
                 message.data.platform_version,
                 message.data.assertions,
+                message.data.tunnel_name,
+                message.data.tunnel_owner,
                 '',
               );
             } catch (e) {
@@ -447,6 +449,8 @@ export class TestGenerationPanel {
     platform: Platform,
     platformVersion: string,
     assertions: string[],
+    tunnel_name: string,
+    tunnel_owner: string,
     prevGoal: string,
   ) {
     const creds = this.getCredentials();
@@ -512,6 +516,8 @@ export class TestGenerationPanel {
       assertions,
       prevGoal,
       creds,
+      tunnel_name,
+      tunnel_owner,
     );
     this._socket = ws;
 

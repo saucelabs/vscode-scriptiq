@@ -75,6 +75,8 @@ export class AppiumJava extends AbstractBaseGenerator {
     platform_version: string,
     region: string,
     platform: string,
+    tunnel_name: string,
+    tunnel_owner: string,
   ) {
     const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     const split_goal = this.splitComments(goal, false, `Goal: `);
@@ -133,6 +135,8 @@ public class TestGenerationAssistantTest {
         sauceOptions.setCapability("name", name.getMethodName() + ": " + "${goal}");
         sauceOptions.setCapability("username", System.getenv("SAUCE_USERNAME"));
         sauceOptions.setCapability("accessKey", System.getenv("SAUCE_ACCESS_KEY"));
+        sauceOptions.setCapability("tunnelName", "${tunnel_name}");
+        sauceOptions.setCapability("tunnelOwner", "${tunnel_owner}");
 
         capabilities.setCapability("sauce:options", sauceOptions);
     }
@@ -190,6 +194,8 @@ public class TestGenerationAssistantTest {
     platform_version: string,
     region: string,
     platform: string,
+    tunnel_name: string,
+    tunnel_owner: string,
     steps: any[],
   ) {
     const headerText = this.scriptHeaderCode(
@@ -199,6 +205,8 @@ public class TestGenerationAssistantTest {
       platform_version,
       region,
       platform,
+      tunnel_name,
+      tunnel_owner,
     );
 
     let codeStepText = '';

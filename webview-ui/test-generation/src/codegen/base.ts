@@ -54,6 +54,8 @@ export abstract class AbstractBaseGenerator {
     platform_version: string,
     region: string,
     platform: string,
+    tunnel_name: string,
+    tunnel_owner: string,
   ): string;
 
   /**
@@ -82,6 +84,8 @@ export abstract class AbstractBaseGenerator {
     platform_version: string,
     region: string,
     platform: string,
+    tunnel_name: string,
+    tunnel_owner: string,
     steps: any[],
   ): string;
 

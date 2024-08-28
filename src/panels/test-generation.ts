@@ -58,7 +58,7 @@ export class TestGenerationPanel {
 
     console.log(
       'Webview resource roots:',
-      this.panel.webview.options.localResourceRoots?.map((root) => root.path),
+      this.panel.webview.options.localResourceRoots?.map((root) => root.fsPath),
     );
 
     const iconUri = vscode.Uri.joinPath(

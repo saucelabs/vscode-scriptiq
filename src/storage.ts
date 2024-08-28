@@ -31,7 +31,7 @@ export class GlobalStorage {
    * structure.
    */
   init() {
-    fs.mkdirSync(this.getHistoryUri().path, { recursive: true });
+    fs.mkdirSync(this.getHistoryUri().fsPath, { recursive: true });
   }
 
   isSchemaUpToDate(version: string): boolean {
@@ -65,7 +65,7 @@ export class GlobalStorage {
       return;
     }
 
-    fs.rmSync(this.getHistoryUri(id).path, { recursive: true });
+    fs.rmSync(this.getHistoryUri(id).fsPath, { recursive: true });
   }
 
   getTestRecord(id: string): TestRecord {
@@ -73,7 +73,7 @@ export class GlobalStorage {
       throw new Error('failed to retrieve test record: missing ID');
     }
 
-    const dest = this.getHistoryUri(id, 'data.json').path;
+    const dest = this.getHistoryUri(id, 'data.json').fsPath;
     const data = fs.readFileSync(dest, {
       encoding: 'utf-8',
     });
@@ -102,7 +102,7 @@ export class GlobalStorage {
       throw new Error('failed to persist test record: missing test goal');
     }
 
-    const dest = this.getHistoryUri(record.test_id, 'data.json').path;
+    const dest = this.getHistoryUri(record.test_id, 'data.json').fsPath;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
 
     fs.writeFileSync(dest, JSON.stringify(record), {
@@ -116,7 +116,7 @@ export class GlobalStorage {
         'failed to retrieve test record related votes: missing test_record ID',
       );
     }
-    const dest = this.getHistoryUri(test_id, 'votes.json').path;
+    const dest = this.getHistoryUri(test_id, 'votes.json').fsPath;
     // Return a default empty array if votes.json is not found.
     if (!fs.existsSync(dest)) {
       return [];
@@ -134,7 +134,7 @@ export class GlobalStorage {
         'failed to persist test_record related votes: missing test_record ID',
       );
     }
-    const dest = this.getHistoryUri(test_id, 'votes.json').path;
+    const dest = this.getHistoryUri(test_id, 'votes.json').fsPath;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.writeFileSync(dest, JSON.stringify(votes), { encoding: 'utf-8' });
   }
@@ -144,7 +144,7 @@ export class GlobalStorage {
     name: string,
     data: ReadableStream,
   ) {
-    const dest = this.getHistoryUri(testID, name).path;
+    const dest = this.getHistoryUri(testID, name).fsPath;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
 
     const fileStream = fs.createWriteStream(dest);
@@ -153,6 +153,6 @@ export class GlobalStorage {
 
   clearHistory() {
     console.log('Removing test records from local storage...');
-    fs.rmSync(this.getHistoryUri().path, { recursive: true });
+    fs.rmSync(this.getHistoryUri().fsPath, { recursive: true });
   }
 }

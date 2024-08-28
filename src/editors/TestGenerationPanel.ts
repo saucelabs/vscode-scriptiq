@@ -313,7 +313,7 @@ export class TestGenerationPanel {
                   this._storage.getHistoryUri(),
                   message.data.testRecordId,
                   message.data.filename,
-                ).path,
+                ).fsPath,
               ),
             );
             return;

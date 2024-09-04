@@ -296,8 +296,8 @@ function App() {
                   devices: state.device ? [state.device] : [],
                   platform: platform.name,
                   platform_version: platform.version,
-                  tunnel_name: tunnel?.name,
-                  tunnel_owner: tunnel?.owner,
+                  tunnel_name: tunnel?.name ?? '',
+                  tunnel_owner: tunnel?.owner ?? '',
                 },
               });
             }}

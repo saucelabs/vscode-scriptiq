@@ -19,6 +19,8 @@ import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
+import { getHTTPServer } from './../../../src/api/http';
+import { Credentials, AppInfo, isAppInfo } from './../../../src/types';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -117,24 +119,98 @@ function App() {
     tunnel,
   } = state;
 
+  let creds: Credentials = {
+    username: '',
+    accessKey: '',
+    region: 'us-west-1',
+  };
+  try {
+    const parsedCreds = JSON.parse(window.creds);
+    if (
+      parsedCreds &&
+      typeof parsedCreds === 'object' &&
+      'username' in parsedCreds &&
+      'accessKey' in parsedCreds &&
+      'region' in parsedCreds
+    ) {
+      creds = parsedCreds;
+    }
+  } catch {
+    // NOTE: if the credentials can't be parsed just ignore and assume it is unset
+  }
+  const [fetchedAppNames, setFetchedAppNames] = useState<AppInfo[]>([]);
+
+  useEffect(() => {
+    const fetchAppNames = async () => {
+      try {
+        const response = await fetch(`${getHTTPServer(creds.region)}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization:
+              'Basic ' + btoa(creds.username + ':' + creds.accessKey),
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        if (data && Array.isArray(data.items) && data.items.every(isAppInfo)) {
+          setFetchedAppNames(data.items);
+          // Print names to console
+          console.log('Fetched App Names:');
+          data.items.forEach((app: AppInfo) => {
+            console.log(app.name);
+          });
+        } else {
+          console.error('Unexpected data format from API');
+        }
+      } catch (error) {
+        console.error('Error fetching app names:', error);
+      }
+    };
+
+    if (creds.username && creds.accessKey) {
+      fetchAppNames();
+    }
+  }, [creds]);
+
+  const appNames: string[] = fetchedAppNames.map((map) => map.name);
+  const appNameToPlatform = new Map<string, string>();
+  fetchedAppNames.forEach((item) =>
+    appNameToPlatform.set(item.name, item.kind),
+  );
+  const optionElements: JSX.Element[] = [];
+  for (let i = 0; i < appNames.length; i++) {
+    optionElements.push(<VSCodeOption>{appNames[i]}</VSCodeOption>);
+  }
+
   return (
     <main>
       <section className="inputs">
         <h2>What do you want to test?</h2>
-        <VSCodeTextField
-          value={appName}
-          placeholder="From Sauce Labs App Storage, e.g. test.apk"
-          onInput={(e) => {
-            if (e.target && 'value' in e.target) {
-              dispatch({
-                type: 'setAppName',
-                value: e.target.value as string,
-              });
-            }
-          }}
-        >
-          Application Name
-        </VSCodeTextField>
+        <section className="with-label">
+          <label>App Name</label>
+          <VSCodeDropdown
+            onInput={(e) => {
+              if (e.target && 'value' in e.target) {
+                const appName: string = e.target.value as string;
+                dispatch({
+                  type: 'setAppName',
+                  value: {
+                    appName: appName as string,
+                    platformName: appNameToPlatform.get(appName) as
+                      | 'ios'
+                      | 'android',
+                  },
+                });
+              }
+            }}
+            value={appName}
+          >
+            {optionElements}
+          </VSCodeDropdown>
+        </section>
         <VSCodeTextArea
           resize="both"
           value={testGoal}
@@ -223,23 +299,6 @@ function App() {
             >
               Cut off steps at
             </VSCodeTextField>
-            <section className="with-label">
-              <label>Platform</label>
-              <VSCodeDropdown
-                onInput={(e) => {
-                  if (e.target && 'value' in e.target) {
-                    dispatch({
-                      type: 'setPlatformName',
-                      value: e.target.value as 'iOS' | 'Android',
-                    });
-                  }
-                }}
-                value={platform.name}
-              >
-                <VSCodeOption>Android</VSCodeOption>
-                <VSCodeOption>iOS</VSCodeOption>
-              </VSCodeDropdown>
-            </section>
             <VSCodeTextField
               onInput={(e) => {
                 if (e.target && 'value' in e.target) {

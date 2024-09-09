@@ -162,7 +162,7 @@ export function isStoppedResponse(data: unknown): data is StoppedResponse {
   );
 }
 
-export type Platform = 'Android' | 'iOS';
+export type Platform = 'android' | 'ios';
 
 export function isValidRegion(region: unknown): region is Region {
   if (typeof region !== 'string') {
@@ -185,5 +185,24 @@ export function isWebSocketError(data: unknown): data is WebSocketError {
     data != null &&
     'type' in data &&
     data.type == 'com.saucelabs.scriptiq.error'
+  );
+}
+
+export interface AppInfo {
+  id: string;
+  name: string;
+  kind: string;
+}
+
+export function isAppInfo(data: unknown): data is AppInfo {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'id' in data &&
+    typeof data.id === 'string' &&
+    'name' in data &&
+    typeof data.name === 'string' &&
+    'kind' in data &&
+    typeof data.kind === 'string'
   );
 }

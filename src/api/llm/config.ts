@@ -14,7 +14,7 @@ export function getHTTPServer(region: Region): string {
   return `https://${getDomain(region)}/v1/scriptiq-llm`;
 }
 
-function getDomain(region: Region): string {
+export function getDomain(region: Region): string {
   switch (region) {
     case 'staging':
       return 'api.staging.saucelabs.net';

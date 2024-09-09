@@ -7,7 +7,7 @@ export interface Assertion {
 }
 
 export interface Platform {
-  name: 'iOS' | 'Android';
+  name: 'ios' | 'android';
   version?: string;
 }
 
@@ -92,7 +92,7 @@ export const initialState: State = {
   maxSteps: 10,
   region: '',
   platform: {
-    name: 'Android',
+    name: 'android',
     version: '',
   },
   generationState: 'idle',
@@ -106,7 +106,13 @@ export const initialState: State = {
 
 export type Action =
   | { type: 'clear' }
-  | { type: 'setAppName'; value: State['appName'] }
+  | {
+      type: 'setAppName';
+      value: {
+        appName: State['appName'];
+        platformName: State['platform']['name'];
+      };
+    }
   | { type: 'setTestGoal'; value: State['testGoal'] }
   | { type: 'setMaxSteps'; value: string }
   | { type: 'setPlatformName'; value: State['platform']['name'] }
@@ -247,7 +253,11 @@ export const reducer = (current: State, action: Action): State => {
     case 'setAppName':
       return {
         ...current,
-        appName: action.value,
+        appName: action.value.appName,
+        platform: {
+          ...current.platform,
+          name: action.value.platformName,
+        },
       };
     case 'setTestGoal':
       return {

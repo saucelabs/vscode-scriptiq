@@ -202,6 +202,7 @@ export class TestGenerationPanel {
     );
 
     const nonce = getNonce();
+    const creds = this._memento.getCredentials();
 
     return html`
       <!doctype html>
@@ -223,6 +224,7 @@ export class TestGenerationPanel {
 
           <script nonce="${nonce}">
             window.historyPath = '${this.historyUri.toString()}';
+            window.creds = '${JSON.stringify(creds)}';
           </script>
         </head>
         <body>
@@ -482,13 +484,13 @@ export class TestGenerationPanel {
     // application name is implemented, such as fetching an app list and
     // allowing selection from a dropdown menu.
     const androidFileEnding = /.+\.(apk|aab)$/;
-    if (platform === 'Android' && !androidFileEnding.test(appName)) {
+    if (platform === 'android' && !androidFileEnding.test(appName)) {
       throw new Error(
         'Invalid app filename. For Android, allowed file types are: apk, aab.',
       );
     }
     const iosFileEnding = /.+\.(ipa|app)$/;
-    if (platform === 'iOS' && !iosFileEnding.test(appName)) {
+    if (platform === 'ios' && !iosFileEnding.test(appName)) {
       throw new Error(
         'Invalid app filename. For iOS, allowed file types are: ipa, app.',
       );

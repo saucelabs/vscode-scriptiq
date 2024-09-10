@@ -19,8 +19,6 @@ import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
-import { getHTTPServer } from './../../../src/api/http';
-import { Credentials, AppInfo, isAppInfo } from './../../../src/types';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -65,6 +63,12 @@ function App() {
           });
           dispatch({
             type: 'loadNewRecord',
+            value: message.data,
+          });
+          break;
+        case 'load-app-names':
+          dispatch({
+            type: 'loadAppNames',
             value: message.data,
           });
           break;
@@ -117,72 +121,24 @@ function App() {
     status,
     steps,
     tunnel,
+    loadedAppInfo,
   } = state;
 
-  let creds: Credentials = {
-    username: '',
-    accessKey: '',
-    region: 'us-west-1',
-  };
-  try {
-    const parsedCreds = JSON.parse(window.creds);
-    if (
-      parsedCreds &&
-      typeof parsedCreds === 'object' &&
-      'username' in parsedCreds &&
-      'accessKey' in parsedCreds &&
-      'region' in parsedCreds
-    ) {
-      creds = parsedCreds;
-    }
-  } catch {
-    // NOTE: if the credentials can't be parsed just ignore and assume it is unset
-  }
-  const [fetchedAppNames, setFetchedAppNames] = useState<AppInfo[]>([]);
-
-  useEffect(() => {
-    const fetchAppNames = async () => {
-      try {
-        const response = await fetch(`${getHTTPServer(creds.region)}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization:
-              'Basic ' + btoa(creds.username + ':' + creds.accessKey),
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        if (data && Array.isArray(data.items) && data.items.every(isAppInfo)) {
-          setFetchedAppNames(data.items);
-          // Print names to console
-          console.log('Fetched App Names:');
-          data.items.forEach((app: AppInfo) => {
-            console.log(app.name);
-          });
-        } else {
-          console.error('Unexpected data format from API');
-        }
-      } catch (error) {
-        console.error('Error fetching app names:', error);
-      }
-    };
-
-    if (creds.username && creds.accessKey) {
-      fetchAppNames();
-    }
-  }, [creds]);
-
-  const appNames: string[] = fetchedAppNames.map((map) => map.name);
+  const loadedAppNames: string[] = loadedAppInfo.map((map) => map.name);
   const appNameToPlatform = new Map<string, string>();
-  fetchedAppNames.forEach((item) =>
-    appNameToPlatform.set(item.name, item.kind),
-  );
+  loadedAppInfo.forEach((item) => appNameToPlatform.set(item.name, item.kind));
+  let seenHistoryAppName = false;
   const optionElements: JSX.Element[] = [];
-  for (let i = 0; i < appNames.length; i++) {
-    optionElements.push(<VSCodeOption>{appNames[i]}</VSCodeOption>);
+  for (let i = 0; i < loadedAppNames.length; i++) {
+    optionElements.push(<VSCodeOption>{loadedAppNames[i]}</VSCodeOption>);
+    if (loadedAppNames[i] == appName) {
+      seenHistoryAppName = true;
+    }
+  }
+  if (!seenHistoryAppName) {
+    optionElements.push(
+      <VSCodeOption className="app-not-loaded">{appName}</VSCodeOption>,
+    );
   }
 
   return (
@@ -207,6 +163,15 @@ function App() {
               }
             }}
             value={appName}
+            className={
+              optionElements.some(
+                (option) =>
+                  option.props.className === 'app-not-loaded' &&
+                  option.props.children === appName,
+              )
+                ? 'app-not-loaded'
+                : ''
+            }
           >
             {optionElements}
           </VSCodeDropdown>
@@ -262,7 +227,7 @@ function App() {
               }}
               value={state.tunnel?.name ?? ''}
             >
-              Tunnel Name
+              Tunnel Name (optional)
             </VSCodeTextField>
             <VSCodeTextField
               placeholder="Sauce Connect tunnel owner"
@@ -276,7 +241,7 @@ function App() {
               }}
               value={state.tunnel?.owner ?? ''}
             >
-              Tunnel Owner
+              Tunnel Owner (optional)
             </VSCodeTextField>
             <VSCodeTextField
               value={maxSteps.toString()}

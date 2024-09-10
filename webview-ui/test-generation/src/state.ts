@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Credentials, TestRecord, Vote } from '../../../src/types';
+import { Credentials, TestRecord, Vote, AppInfo } from '../../../src/types';
 
 export interface Assertion {
   value: string;
@@ -78,6 +78,8 @@ export interface State {
   language: 'python' | 'java';
 
   tunnel: Tunnel;
+
+  loadedAppInfo: AppInfo[];
 }
 
 export const initialState: State = {
@@ -102,6 +104,7 @@ export const initialState: State = {
     name: '',
     owner: '',
   },
+  loadedAppInfo: [],
 };
 
 export type Action =
@@ -124,6 +127,7 @@ export type Action =
   | { type: 'setTunnelOwner'; value: State['tunnel']['owner'] }
   | { type: 'showTestRecord'; value: { testRecord: TestRecord; votes: Vote[] } }
   | { type: 'loadNewRecord'; value: TestRecord }
+  | { type: 'loadAppNames'; value: AppInfo[] }
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
@@ -368,6 +372,14 @@ export const reducer = (current: State, action: Action): State => {
           name: testRecord.tunnel_name,
           owner: testRecord.tunnel_owner,
         },
+      };
+    }
+    case 'loadAppNames': {
+      const appNamesInfo = action.value;
+
+      return {
+        ...current,
+        loadedAppInfo: appNamesInfo,
       };
     }
     case 'showTestRecord': {

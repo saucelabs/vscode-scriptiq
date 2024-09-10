@@ -1,8 +1,8 @@
 import { fetch } from 'undici';
 
 import { GlobalStorage } from '../../storage';
-import { Credentials, Vote } from '../../types';
-import { getHTTPServer } from './config';
+import { Credentials, Vote, isAppInfo, AppInfo } from '../../types';
+import { getHTTPServer, getDomain } from './config';
 
 /**
  * Download image from imgURL and save it to `imgDir/imgName`.
@@ -70,5 +70,30 @@ export async function sendUserRating(
   });
   if (!resp.ok) {
     throw new Error('Unexpected status code: ' + resp.status);
+  }
+}
+
+export async function fetchAppNames(creds: Credentials): Promise<any[]> {
+  const response = await fetch(
+    `https://${getDomain(creds.region)}/v1/storage/files`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa(`${creds.username}:${creds.accessKey}`),
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  const data = (await response.json()) as { items: AppInfo[] };
+
+  if (data && Array.isArray(data.items) && data.items.every(isAppInfo)) {
+    return data.items;
+  } else {
+    throw new Error('Unexpected data format from API');
   }
 }

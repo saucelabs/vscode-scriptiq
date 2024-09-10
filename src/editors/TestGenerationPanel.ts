@@ -16,10 +16,12 @@ import { errMsg } from '../error';
 import { Memento } from '../memento';
 import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
-import { Credentials, Platform } from '../types';
+import { Credentials, Platform, isAppInfo } from '../types';
 import { generateTest } from '../api/llm/ws';
 import { sendUserRating } from '../api/llm/http';
 import { executeUpdateHistoryLinksCommand } from '../commands';
+import { getDomain } from '../api/llm/config';
+import { fetchAppNames } from '../api/llm/http';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -94,6 +96,8 @@ export class TestGenerationPanel {
       TestGenerationPanel.currentPanel._testRecordNavigation = true;
     }
 
+    TestGenerationPanel.currentPanel.loadAppNames();
+
     if (!TestGenerationPanel.currentPanel._testRecordNavigation) {
       toast.showError('Cannot open other panels while running tests.');
       return;
@@ -153,6 +157,31 @@ export class TestGenerationPanel {
     });
   }
 
+  private loadAppNames() {
+    const creds = this._memento.getCredentials();
+
+    if (!creds?.username || !creds?.accessKey || !creds?.region) {
+      toast.showError(
+        'Please set your Sauce Labs credentials in the extension settings.',
+      );
+      return;
+    }
+
+    fetchAppNames(creds)
+      .then((appNames) => {
+        this._msgQueue.enqueue({
+          action: 'load-app-names',
+          data: appNames,
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching app names:', error);
+        toast.showError(
+          'Failed to load app names. Please check your credentials and try again.',
+        );
+      });
+  }
+
   /**
    * Defines and returns the HTML that should be rendered within the webview panel.
    *
@@ -202,7 +231,6 @@ export class TestGenerationPanel {
     );
 
     const nonce = getNonce();
-    const creds = this._memento.getCredentials();
 
     return html`
       <!doctype html>
@@ -224,7 +252,6 @@ export class TestGenerationPanel {
 
           <script nonce="${nonce}">
             window.historyPath = '${this.historyUri.toString()}';
-            window.creds = '${JSON.stringify(creds)}';
           </script>
         </head>
         <body>

@@ -124,10 +124,15 @@ function App() {
     loadedAppInfo,
   } = state;
 
-  const loadedAppNames: string[] = loadedAppInfo.map((map) => map.name);
+  const filteredAppInfo = loadedAppInfo.filter((item) =>
+    ['android', 'ios'].includes(item.kind),
+  );
+  const loadedAppNames: string[] = filteredAppInfo.map((map) => map.name);
   const appNameToPlatform = new Map<string, string>();
-  loadedAppInfo.forEach((item) => appNameToPlatform.set(item.name, item.kind));
-  let seenHistoryAppName = false;
+  filteredAppInfo.forEach((item) =>
+    appNameToPlatform.set(item.name, item.kind),
+  );
+  let seenHistoryAppName = appName == ''; // if appName is empty, we don't need to add appName later
   const optionElements: JSX.Element[] = [];
   for (let i = 0; i < loadedAppNames.length; i++) {
     optionElements.push(<VSCodeOption>{loadedAppNames[i]}</VSCodeOption>);
@@ -165,9 +170,7 @@ function App() {
             value={appName}
             className={
               optionElements.some(
-                (option) =>
-                  option.props.className === 'app-not-loaded' &&
-                  option.props.children === appName,
+                (option) => option.props.className === 'app-not-loaded',
               )
                 ? 'app-not-loaded'
                 : ''

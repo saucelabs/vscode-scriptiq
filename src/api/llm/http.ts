@@ -73,7 +73,7 @@ export async function sendUserRating(
   }
 }
 
-export async function fetchAppNames(creds: Credentials): Promise<any[]> {
+export async function fetchAppNames(creds: Credentials) {
   const response = await fetch(
     `https://${getDomain(creds.region)}/v1/storage/files`,
     {

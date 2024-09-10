@@ -16,11 +16,10 @@ import { errMsg } from '../error';
 import { Memento } from '../memento';
 import { GlobalStorage } from '../storage';
 import { getNonce, html } from '../html';
-import { Credentials, Platform, isAppInfo } from '../types';
+import { Credentials, Platform } from '../types';
 import { generateTest } from '../api/llm/ws';
 import { sendUserRating } from '../api/llm/http';
 import { executeUpdateHistoryLinksCommand } from '../commands';
-import { getDomain } from '../api/llm/config';
 import { fetchAppNames } from '../api/llm/http';
 
 const MAX_HISTORY_LEN = 100;

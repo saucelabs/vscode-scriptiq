@@ -124,14 +124,9 @@ function App() {
     loadedAppInfo,
   } = state;
 
-  const filteredAppInfo = loadedAppInfo.filter((item) =>
-    ['android', 'ios'].includes(item.kind),
-  );
-  const loadedAppNames: string[] = filteredAppInfo.map((map) => map.name);
+  const loadedAppNames: string[] = loadedAppInfo.map((map) => map.name);
   const appNameToPlatform = new Map<string, string>();
-  filteredAppInfo.forEach((item) =>
-    appNameToPlatform.set(item.name, item.kind),
-  );
+  loadedAppInfo.forEach((item) => appNameToPlatform.set(item.name, item.kind));
   let seenHistoryAppName = appName == ''; // if appName is empty, we don't need to add appName later
   const optionElements: JSX.Element[] = [];
   for (let i = 0; i < loadedAppNames.length; i++) {

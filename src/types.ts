@@ -162,7 +162,7 @@ export function isStoppedResponse(data: unknown): data is StoppedResponse {
   );
 }
 
-export type Platform = 'android' | 'ios';
+export type Platform = 'android' | 'ios' | 'Android' | 'iOS';
 
 export function isValidRegion(region: unknown): region is Region {
   if (typeof region !== 'string') {
@@ -194,7 +194,7 @@ export interface AppInfo {
   kind: string;
 }
 
-export function isAppInfo(data: unknown): data is AppInfo {
+function isAppInfo(data: unknown): data is AppInfo {
   return (
     typeof data === 'object' &&
     data !== null &&
@@ -204,5 +204,21 @@ export function isAppInfo(data: unknown): data is AppInfo {
     typeof data.name === 'string' &&
     'kind' in data &&
     typeof data.kind === 'string'
+  );
+}
+
+interface AppStorageFilesApiResponse {
+  items: AppInfo[];
+}
+
+export function isAppStorageFilesApiResponse(
+  data: unknown,
+): data is AppStorageFilesApiResponse {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'items' in data &&
+    Array.isArray(data.items) &&
+    data.items.every(isAppInfo)
   );
 }

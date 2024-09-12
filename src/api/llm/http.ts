@@ -1,7 +1,7 @@
 import { fetch } from 'undici';
 
 import { GlobalStorage } from '../../storage';
-import { Credentials, Vote, isAppInfo, AppInfo } from '../../types';
+import { Credentials, Vote, isAppStorageFilesApiResponse } from '../../types';
 import { getHTTPServer, getDomain } from './config';
 
 /**
@@ -73,7 +73,7 @@ export async function sendUserRating(
   }
 }
 
-export async function fetchAppNames(creds: Credentials) {
+export async function fetchApps(creds: Credentials) {
   const response = await fetch(
     `https://${getDomain(creds.region)}/v1/storage/files?kind=ios&kind=android`,
     {
@@ -86,13 +86,13 @@ export async function fetchAppNames(creds: Credentials) {
   );
 
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw new Error('Network response was not ok: ' + response.status);
   }
 
-  const data = (await response.json()) as { items: AppInfo[] };
+  const data = await response.json();
 
-  if (data && Array.isArray(data.items) && data.items.every(isAppInfo)) {
-    return data.items;
+  if (isAppStorageFilesApiResponse(data)) {
+    return data.items.filter((item) => !item.name.endsWith('zip'));
   } else {
     throw new Error('Unexpected data format from API');
   }

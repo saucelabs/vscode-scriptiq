@@ -20,7 +20,7 @@ import { Credentials, Platform } from '../types';
 import { generateTest } from '../api/llm/ws';
 import { sendUserRating } from '../api/llm/http';
 import { executeUpdateHistoryLinksCommand } from '../commands';
-import { fetchAppNames } from '../api/llm/http';
+import { fetchApps } from '../api/llm/http';
 
 const MAX_HISTORY_LEN = 100;
 
@@ -71,6 +71,10 @@ export class TestGenerationPanel {
     if (TestGenerationPanel.currentPanel) {
       // If the webview panel already exists reveal it
       TestGenerationPanel.currentPanel._panel.reveal(ViewColumn.One);
+      if (typeof testID !== 'string') {
+        // when webview panel already exists, only load names if testID is not a string
+        TestGenerationPanel.currentPanel.loadApps();
+      }
     } else {
       // If a webview panel does not already exist create and show a new one
       const panel = window.createWebviewPanel(
@@ -93,9 +97,10 @@ export class TestGenerationPanel {
         storage,
       );
       TestGenerationPanel.currentPanel._testRecordNavigation = true;
-    }
 
-    TestGenerationPanel.currentPanel.loadAppNames();
+      // when webview panel doesn't exist, always load app names
+      TestGenerationPanel.currentPanel.loadApps();
+    }
 
     if (!TestGenerationPanel.currentPanel._testRecordNavigation) {
       toast.showError('Cannot open other panels while running tests.');
@@ -156,7 +161,7 @@ export class TestGenerationPanel {
     });
   }
 
-  private loadAppNames() {
+  private loadApps() {
     const creds = this._memento.getCredentials();
 
     if (!creds?.username || !creds?.accessKey || !creds?.region) {
@@ -166,7 +171,7 @@ export class TestGenerationPanel {
       return;
     }
 
-    fetchAppNames(creds)
+    fetchApps(creds)
       .then((appNames) => {
         this._msgQueue.enqueue({
           action: 'load-app-names',

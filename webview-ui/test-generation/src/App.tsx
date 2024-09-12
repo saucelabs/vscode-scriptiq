@@ -19,6 +19,7 @@ import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
+import { AppInfo } from '../../../src/types';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -125,7 +126,6 @@ function App() {
   } = state;
 
   apps.sort((a, b) => a.name.localeCompare(b.name));
-
   return (
     <main>
       <section className="inputs">
@@ -134,13 +134,18 @@ function App() {
           <label>App Name</label>
           <VSCodeDropdown
             onInput={(e) => {
-              if (e.target && 'value' in e.target && 'key' in e.target) {
+              console.log('on input');
+              console.log(e.target);
+              if (e.target && 'value' in e.target) {
                 const appName: string = e.target.value as string;
+                const appInfo = apps.find(
+                  (app) => app.name === appName,
+                ) as AppInfo;
                 dispatch({
                   type: 'setAppName',
                   value: {
                     appName: appName as string,
-                    platformName: e.target.key as 'ios' | 'android',
+                    platformName: appInfo.kind as 'ios' | 'android',
                   },
                 });
               }
@@ -150,12 +155,10 @@ function App() {
           >
             {appName !== '' &&
             !apps.some((appInfo) => appInfo.name === appName) ? (
-              <VSCodeOption className="app-not-loaded" key={platform.name}>
-                {appName}
-              </VSCodeOption>
+              <VSCodeOption className="app-not-loaded">{appName}</VSCodeOption>
             ) : null}
             {apps.map((appInfo) => (
-              <VSCodeOption key={appInfo.kind}>{appInfo.name}</VSCodeOption>
+              <VSCodeOption>{appInfo.name}</VSCodeOption>
             ))}
           </VSCodeDropdown>
         </section>

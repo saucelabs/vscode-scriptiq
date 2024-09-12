@@ -375,11 +375,14 @@ export const reducer = (current: State, action: Action): State => {
       };
     }
     case 'loadAppNames': {
-      const appNamesInfo = action.value;
+      const apps = action.value;
+      if (apps) {
+        apps.sort((a, b) => a.name.localeCompare(b.name));
+      }
 
       return {
         ...current,
-        apps: appNamesInfo,
+        apps: apps,
       };
     }
     case 'showTestRecord': {

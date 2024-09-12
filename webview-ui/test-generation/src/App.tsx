@@ -125,7 +125,6 @@ function App() {
     apps,
   } = state;
 
-  apps.sort((a, b) => a.name.localeCompare(b.name));
   return (
     <main>
       <section className="inputs">

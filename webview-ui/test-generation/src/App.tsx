@@ -121,25 +121,10 @@ function App() {
     status,
     steps,
     tunnel,
-    loadedAppInfo,
+    apps,
   } = state;
 
-  const loadedAppNames: string[] = loadedAppInfo.map((map) => map.name);
-  const appNameToPlatform = new Map<string, string>();
-  loadedAppInfo.forEach((item) => appNameToPlatform.set(item.name, item.kind));
-  let seenHistoryAppName = appName == ''; // if appName is empty, we don't need to add appName later
-  const optionElements: JSX.Element[] = [];
-  for (let i = 0; i < loadedAppNames.length; i++) {
-    optionElements.push(<VSCodeOption>{loadedAppNames[i]}</VSCodeOption>);
-    if (loadedAppNames[i] == appName) {
-      seenHistoryAppName = true;
-    }
-  }
-  if (!seenHistoryAppName) {
-    optionElements.push(
-      <VSCodeOption className="app-not-loaded">{appName}</VSCodeOption>,
-    );
-  }
+  apps.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <main>
@@ -149,29 +134,29 @@ function App() {
           <label>App Name</label>
           <VSCodeDropdown
             onInput={(e) => {
-              if (e.target && 'value' in e.target) {
+              if (e.target && 'value' in e.target && 'key' in e.target) {
                 const appName: string = e.target.value as string;
                 dispatch({
                   type: 'setAppName',
                   value: {
                     appName: appName as string,
-                    platformName: appNameToPlatform.get(appName) as
-                      | 'ios'
-                      | 'android',
+                    platformName: e.target.key as 'ios' | 'android',
                   },
                 });
               }
             }}
             value={appName}
-            className={
-              optionElements.some(
-                (option) => option.props.className === 'app-not-loaded',
-              )
-                ? 'app-not-loaded'
-                : ''
-            }
+            className="app-list"
           >
-            {optionElements}
+            {appName !== '' &&
+            !apps.some((appInfo) => appInfo.name === appName) ? (
+              <VSCodeOption className="app-not-loaded" key={platform.name}>
+                {appName}
+              </VSCodeOption>
+            ) : null}
+            {apps.map((appInfo) => (
+              <VSCodeOption key={appInfo.kind}>{appInfo.name}</VSCodeOption>
+            ))}
           </VSCodeDropdown>
         </section>
         <VSCodeTextArea

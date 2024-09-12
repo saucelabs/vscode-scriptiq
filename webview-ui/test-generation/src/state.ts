@@ -7,7 +7,7 @@ export interface Assertion {
 }
 
 export interface Platform {
-  name: 'ios' | 'android';
+  name: 'ios' | 'android' | 'iOS' | 'Android';
   version?: string;
 }
 
@@ -79,7 +79,7 @@ export interface State {
 
   tunnel: Tunnel;
 
-  loadedAppInfo: AppInfo[];
+  apps: AppInfo[];
 }
 
 export const initialState: State = {
@@ -104,7 +104,7 @@ export const initialState: State = {
     name: '',
     owner: '',
   },
-  loadedAppInfo: [],
+  apps: [],
 };
 
 export type Action =
@@ -379,7 +379,7 @@ export const reducer = (current: State, action: Action): State => {
 
       return {
         ...current,
-        loadedAppInfo: appNamesInfo,
+        apps: appNamesInfo,
       };
     }
     case 'showTestRecord': {

@@ -192,6 +192,7 @@ export interface AppInfo {
   id: string;
   name: string;
   kind: string;
+  metadata: Map<unknown, unknown>;
 }
 
 function isAppInfo(data: unknown): data is AppInfo {
@@ -203,7 +204,9 @@ function isAppInfo(data: unknown): data is AppInfo {
     'name' in data &&
     typeof data.name === 'string' &&
     'kind' in data &&
-    typeof data.kind === 'string'
+    typeof data.kind === 'string' &&
+    'metadata' in data &&
+    typeof data.metadata === 'object'
   );
 }
 

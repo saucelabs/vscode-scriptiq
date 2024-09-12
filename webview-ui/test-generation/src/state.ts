@@ -321,7 +321,7 @@ export const reducer = (current: State, action: Action): State => {
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {
-          name: testRecord.platform,
+          name: testRecord.platform.toLowerCase() as 'android' | 'ios',
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',
@@ -396,7 +396,7 @@ export const reducer = (current: State, action: Action): State => {
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {
-          name: testRecord.platform,
+          name: testRecord.platform.toLowerCase() as 'android' | 'ios',
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',

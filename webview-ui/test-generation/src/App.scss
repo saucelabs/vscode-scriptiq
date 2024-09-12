@@ -68,7 +68,8 @@
   row-gap: 8px;
 }
 
-.app-not-loaded {
+.app-not-loaded,
+.app-list:has(.app-not-loaded) {
   color: var(--vscode-input-placeholderForeground);
 }
 

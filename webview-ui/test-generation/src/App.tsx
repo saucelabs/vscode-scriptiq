@@ -134,8 +134,6 @@ function App() {
           <label>App Name</label>
           <VSCodeDropdown
             onInput={(e) => {
-              console.log('on input');
-              console.log(e.target);
               if (e.target && 'value' in e.target) {
                 const appName: string = e.target.value as string;
                 const appInfo = apps.find(

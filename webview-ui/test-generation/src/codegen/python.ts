@@ -42,7 +42,7 @@ export class AppiumPython extends AbstractBaseGenerator {
   }
 
   scrollCode(direction: string, platform: string) {
-    const commandName = platform == 'android' ? 'scrollGesture' : 'scroll';
+    const commandName = platform == 'Android' ? 'scrollGesture' : 'scroll';
     return `    driver.execute_script(
         "mobile: ${commandName}",
         {
@@ -54,7 +54,7 @@ export class AppiumPython extends AbstractBaseGenerator {
   }
 
   sendTextCode(text: string, platform: string, findElement = '') {
-    if (platform == 'android') {
+    if (platform == 'Android') {
       return `    element.click()
     ${findElement.replace('\n', '')} 
     element.send_keys("${text}")
@@ -77,7 +77,7 @@ export class AppiumPython extends AbstractBaseGenerator {
     tunnel_name: string,
     tunnel_owner: string,
   ) {
-    const automationName = platform == 'android' ? 'UiAutomator2' : 'xcuitest';
+    const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `import os
 
 from appium import webdriver

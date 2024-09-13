@@ -30,7 +30,7 @@ export abstract class AbstractBaseGenerator {
   /**
    * Lines of code to scroll given an element
    * @param direction the element will be scrolled (down, up, left, right)
-   * @param platform the test was run on (android, ios)
+   * @param platform the test was run on (Android, iOS)
    * @returns string with html of code
    */
   abstract scrollCode(direction: string, platform: string): string;
@@ -38,7 +38,7 @@ export abstract class AbstractBaseGenerator {
   /**
    * Lines of code to send text given an element
    * @param text that is being sent
-   * @param platform the test was run on (android, ios)
+   * @param platform the test was run on (Android, iOS)
    * @returns string with html of code
    */
   abstract sendTextCode(text: string, platform: string): string;

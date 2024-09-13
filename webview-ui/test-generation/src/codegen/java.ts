@@ -48,7 +48,7 @@ export class AppiumJava extends AbstractBaseGenerator {
   }
 
   scrollCode(direction: string, platform: string, number = '') {
-    const commandName = platform == 'android' ? 'scrollGesture' : 'scroll';
+    const commandName = platform == 'Android' ? 'scrollGesture' : 'scroll';
     return `            driver.executeScript("mobile: ${commandName}", ImmutableMap.of(
                 "elementId", element${number},
                 "direction", "${direction}",
@@ -57,7 +57,7 @@ export class AppiumJava extends AbstractBaseGenerator {
   }
 
   sendTextCode(text: string, platform: string, number = '', findElement = '') {
-    if (platform == 'android') {
+    if (platform == 'Android') {
       return `            element${number}.click();
             ${findElement.replace('WebElement ', '').replace('\n', '')}
             element${number}.sendKeys("${text}");
@@ -78,7 +78,7 @@ export class AppiumJava extends AbstractBaseGenerator {
     tunnel_name: string,
     tunnel_owner: string,
   ) {
-    const automationName = platform == 'android' ? 'UiAutomator2' : 'xcuitest';
+    const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     const split_goal = this.splitComments(goal, false, `Goal: `);
     return `package com.example;
     

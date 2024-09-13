@@ -141,7 +141,7 @@ export class AppiumJava extends CodeTemplate {
     region,
     platform,
   ) {
-    const automationName = platform == 'android' ? 'UiAutomator2' : 'xcuitest';
+    const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `
 <span ${this.code_class_class}>import</span> com.google.common.collect.<span ${this.code_created_classes_class}>ImmutableMap</span>;
 <span ${this.code_class_class}>import</span> io.appium.java_client.<span ${this.code_created_classes_class}>AppiumDriver</span>;

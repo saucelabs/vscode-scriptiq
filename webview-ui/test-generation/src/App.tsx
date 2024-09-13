@@ -142,7 +142,7 @@ function App() {
                   type: 'setAppName',
                   value: {
                     appName: appName as string,
-                    platformName: appInfo.kind as 'ios' | 'android',
+                    platformName: appInfo.kind as 'iOS' | 'Android',
                   },
                 });
               }

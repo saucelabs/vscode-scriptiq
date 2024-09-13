@@ -375,7 +375,16 @@ export const reducer = (current: State, action: Action): State => {
       };
     }
     case 'loadAppNames': {
-      const apps = action.value;
+      let apps = action.value;
+      apps = apps.filter(
+        (item) =>
+          item.metadata === null ||
+          !('is_simulator' in item.metadata) ||
+          item.metadata.is_simulator === false,
+      );
+      apps.forEach((app) => {
+        app.kind = app.kind === 'android' ? 'Android' : 'iOS';
+      });
       if (apps) {
         apps.sort((a, b) => a.name.localeCompare(b.name));
       }
@@ -396,7 +405,7 @@ export const reducer = (current: State, action: Action): State => {
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {
-          name: testRecord.platform.toLowerCase() as 'android' | 'ios',
+          name: testRecord.platform as 'Android' | 'iOS',
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',

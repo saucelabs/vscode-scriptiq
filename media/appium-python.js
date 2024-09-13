@@ -137,7 +137,7 @@ export class AppiumPython extends CodeTemplate {
     region,
     platform,
   ) {
-    const automationName = platform == 'android' ? 'UiAutomator2' : 'xcuitest';
+    const automationName = platform == 'Android' ? 'UiAutomator2' : 'xcuitest';
     return `<span ${this.code_parameter_class}>import</span> os
 
 <span ${this.code_parameter_class}>from</span> appium <span ${this.code_parameter_class}>import</span> webdriver

@@ -180,9 +180,7 @@ export class TestGenerationPanel {
       })
       .catch((error) => {
         console.error('Error fetching app names:', error);
-        toast.showError(
-          'Failed to load app names. Please check your credentials and try again.',
-        );
+        toast.showError(`Failed to load app names: ${errMsg(error)}.`);
       });
   }
 
@@ -515,13 +513,13 @@ export class TestGenerationPanel {
     // application name is implemented, such as fetching an app list and
     // allowing selection from a dropdown menu.
     const androidFileEnding = /.+\.(apk|aab)$/;
-    if (platform === 'android' && !androidFileEnding.test(appName)) {
+    if (platform === 'Android' && !androidFileEnding.test(appName)) {
       throw new Error(
         'Invalid app filename. For Android, allowed file types are: apk, aab.',
       );
     }
     const iosFileEnding = /.+\.(ipa|app)$/;
-    if (platform === 'ios' && !iosFileEnding.test(appName)) {
+    if (platform === 'iOS' && !iosFileEnding.test(appName)) {
       throw new Error(
         'Invalid app filename. For iOS, allowed file types are: ipa, app.',
       );

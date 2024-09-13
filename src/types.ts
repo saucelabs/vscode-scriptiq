@@ -162,7 +162,7 @@ export function isStoppedResponse(data: unknown): data is StoppedResponse {
   );
 }
 
-export type Platform = 'android' | 'ios' | 'Android' | 'iOS';
+export type Platform = 'Android' | 'iOS';
 
 export function isValidRegion(region: unknown): region is Region {
   if (typeof region !== 'string') {
@@ -192,7 +192,9 @@ export interface AppInfo {
   id: string;
   name: string;
   kind: string;
-  metadata: Map<unknown, unknown>;
+  metadata: {
+    is_simulator?: boolean;
+  };
 }
 
 function isAppInfo(data: unknown): data is AppInfo {

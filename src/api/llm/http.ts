@@ -92,12 +92,8 @@ export async function fetchApps(creds: Credentials) {
   const data = await response.json();
 
   if (isAppStorageFilesApiResponse(data)) {
-    return data.items.filter(
-      (item) =>
-        !('is_simulator' in item.metadata) ||
-        item.metadata.is_simulator === false,
-    );
+    return data.items;
   } else {
-    throw new Error('Unexpected data format from API');
+    throw new Error('Unexpected data format from API: ' + data);
   }
 }

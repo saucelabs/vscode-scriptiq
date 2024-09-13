@@ -151,6 +151,8 @@ function App() {
             className="app-list"
           >
             {appName !== '' &&
+            !apps.some((appInfo) => appInfo.name === appName) &&
+            apps.length > 0 &&
             !apps.some((appInfo) => appInfo.name === appName) ? (
               <VSCodeOption className="app-not-loaded">{appName}</VSCodeOption>
             ) : null}

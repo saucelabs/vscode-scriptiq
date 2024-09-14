@@ -118,7 +118,6 @@ export type Action =
     }
   | { type: 'setTestGoal'; value: State['testGoal'] }
   | { type: 'setMaxSteps'; value: string }
-  | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
   | { type: 'setGenerationState'; value: State['generationState'] }
@@ -277,14 +276,6 @@ export const reducer = (current: State, action: Action): State => {
         maxSteps,
       };
     }
-    case 'setPlatformName':
-      return {
-        ...current,
-        platform: {
-          ...current.platform,
-          name: action.value,
-        },
-      };
     case 'setPlatformVersion':
       return {
         ...current,
@@ -321,7 +312,7 @@ export const reducer = (current: State, action: Action): State => {
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {
-          name: testRecord.platform as 'Android' | 'iOS',
+          name: testRecord.platform,
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',
@@ -405,7 +396,7 @@ export const reducer = (current: State, action: Action): State => {
         appName: testRecord.app_name,
         testGoal: testRecord.goal,
         platform: {
-          name: testRecord.platform as 'Android' | 'iOS',
+          name: testRecord.platform,
           version: testRecord.platform_version,
         },
         maxSteps: testRecord.max_test_steps ?? '',

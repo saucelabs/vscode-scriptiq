@@ -188,16 +188,16 @@ export function isWebSocketError(data: unknown): data is WebSocketError {
   );
 }
 
-export interface AppInfo {
+export interface ApiAppInfo {
   id: string;
   name: string;
   kind: string;
   metadata: {
     is_simulator?: boolean;
-  };
+  } | null;
 }
 
-function isAppInfo(data: unknown): data is AppInfo {
+function isApiAppInfo(data: unknown): data is ApiAppInfo {
   return (
     typeof data === 'object' &&
     data !== null &&
@@ -212,8 +212,17 @@ function isAppInfo(data: unknown): data is AppInfo {
   );
 }
 
+export interface AppInfo {
+  id: string;
+  name: string;
+  platformName: Platform;
+  metadata: {
+    is_simulator?: boolean;
+  } | null;
+}
+
 interface AppStorageFilesApiResponse {
-  items: AppInfo[];
+  items: ApiAppInfo[];
 }
 
 export function isAppStorageFilesApiResponse(
@@ -224,6 +233,6 @@ export function isAppStorageFilesApiResponse(
     data !== null &&
     'items' in data &&
     Array.isArray(data.items) &&
-    data.items.every(isAppInfo)
+    data.items.every(isApiAppInfo)
   );
 }

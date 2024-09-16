@@ -368,14 +368,8 @@ export const reducer = (current: State, action: Action): State => {
     case 'loadAppNames': {
       let apps = action.value;
       apps = apps.filter(
-        (item) =>
-          item.metadata === null ||
-          !('is_simulator' in item.metadata) ||
-          item.metadata.is_simulator === false,
+        (item) => item.metadata === null || !item.metadata.is_simulator,
       );
-      apps.forEach((app) => {
-        app.kind = app.kind === 'android' ? 'Android' : 'iOS';
-      });
       if (apps) {
         apps.sort((a, b) => a.name.localeCompare(b.name));
       }

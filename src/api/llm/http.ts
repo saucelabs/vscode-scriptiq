@@ -1,7 +1,12 @@
 import { fetch } from 'undici';
 
 import { GlobalStorage } from '../../storage';
-import { Credentials, Vote, isAppStorageFilesApiResponse } from '../../types';
+import {
+  Credentials,
+  Vote,
+  AppInfo,
+  isAppStorageFilesApiResponse,
+} from '../../types';
 import { getHTTPServer, getDomain } from './config';
 
 /**
@@ -92,7 +97,13 @@ export async function fetchApps(creds: Credentials) {
   const data = await response.json();
 
   if (isAppStorageFilesApiResponse(data)) {
-    return data.items;
+    const appData: AppInfo[] = data.items.map((app) => ({
+      id: app.id,
+      name: app.name,
+      platformName: app.kind === 'android' ? 'Android' : 'iOS',
+      metadata: app.metadata,
+    }));
+    return appData;
   } else {
     throw new Error('Unexpected data format from API: ' + data);
   }

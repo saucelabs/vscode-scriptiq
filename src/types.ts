@@ -187,3 +187,52 @@ export function isWebSocketError(data: unknown): data is WebSocketError {
     data.type == 'com.saucelabs.scriptiq.error'
   );
 }
+
+export interface ApiAppInfo {
+  id: string;
+  name: string;
+  kind: string;
+  metadata: {
+    is_simulator?: boolean;
+  } | null;
+}
+
+function isApiAppInfo(data: unknown): data is ApiAppInfo {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'id' in data &&
+    typeof data.id === 'string' &&
+    'name' in data &&
+    typeof data.name === 'string' &&
+    'kind' in data &&
+    typeof data.kind === 'string' &&
+    'metadata' in data &&
+    typeof data.metadata === 'object'
+  );
+}
+
+export interface AppInfo {
+  id: string;
+  name: string;
+  platformName: Platform;
+  metadata: {
+    is_simulator?: boolean;
+  } | null;
+}
+
+interface AppStorageFilesApiResponse {
+  items: ApiAppInfo[];
+}
+
+export function isAppStorageFilesApiResponse(
+  data: unknown,
+): data is AppStorageFilesApiResponse {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'items' in data &&
+    Array.isArray(data.items) &&
+    data.items.every(isApiAppInfo)
+  );
+}

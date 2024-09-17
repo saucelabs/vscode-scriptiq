@@ -1,8 +1,13 @@
 import { fetch } from 'undici';
 
 import { GlobalStorage } from '../../storage';
-import { Credentials, Vote } from '../../types';
-import { getHTTPServer } from './config';
+import {
+  Credentials,
+  Vote,
+  AppInfo,
+  isAppStorageFilesApiResponse,
+} from '../../types';
+import { getHTTPServer, getDomain } from './config';
 
 /**
  * Download image from imgURL and save it to `imgDir/imgName`.
@@ -70,5 +75,36 @@ export async function sendUserRating(
   });
   if (!resp.ok) {
     throw new Error('Unexpected status code: ' + resp.status);
+  }
+}
+
+export async function fetchApps(creds: Credentials) {
+  const response = await fetch(
+    `https://${getDomain(creds.region)}/v1/storage/files?kind=ios&kind=android`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Basic ' + btoa(`${creds.username}:${creds.accessKey}`),
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok: ' + response.status);
+  }
+
+  const data = await response.json();
+
+  if (isAppStorageFilesApiResponse(data)) {
+    const appData: AppInfo[] = data.items.map((app) => ({
+      id: app.id,
+      name: app.name,
+      platformName: app.kind === 'android' ? 'Android' : 'iOS',
+      metadata: app.metadata,
+    }));
+    return appData;
+  } else {
+    throw new Error('Unexpected data format from API: ' + data);
   }
 }

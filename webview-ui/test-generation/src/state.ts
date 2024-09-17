@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Credentials, TestRecord, Vote } from '../../../src/types';
+import { Credentials, TestRecord, Vote, AppInfo } from '../../../src/types';
 
 export interface Assertion {
   value: string;
@@ -78,6 +78,8 @@ export interface State {
   language: 'python' | 'java';
 
   tunnel: Tunnel;
+
+  apps: AppInfo[];
 }
 
 export const initialState: State = {
@@ -102,14 +104,20 @@ export const initialState: State = {
     name: '',
     owner: '',
   },
+  apps: [],
 };
 
 export type Action =
   | { type: 'clear' }
-  | { type: 'setAppName'; value: State['appName'] }
+  | {
+      type: 'setAppName';
+      value: {
+        appName: State['appName'];
+        platformName: State['platform']['name'];
+      };
+    }
   | { type: 'setTestGoal'; value: State['testGoal'] }
   | { type: 'setMaxSteps'; value: string }
-  | { type: 'setPlatformName'; value: State['platform']['name'] }
   | { type: 'setPlatformVersion'; value: State['platform']['version'] }
   | { type: 'setStatus'; value: State['status'] }
   | { type: 'setGenerationState'; value: State['generationState'] }
@@ -118,6 +126,7 @@ export type Action =
   | { type: 'setTunnelOwner'; value: State['tunnel']['owner'] }
   | { type: 'showTestRecord'; value: { testRecord: TestRecord; votes: Vote[] } }
   | { type: 'loadNewRecord'; value: TestRecord }
+  | { type: 'loadAppNames'; value: AppInfo[] }
   | { type: 'addAssertion'; value: { key: string } }
   | { type: 'removeAssertion'; value: { key: string } }
   | { type: 'setAssertionValue'; value: { key: string; value: string } }
@@ -247,7 +256,11 @@ export const reducer = (current: State, action: Action): State => {
     case 'setAppName':
       return {
         ...current,
-        appName: action.value,
+        appName: action.value.appName,
+        platform: {
+          ...current.platform,
+          name: action.value.platformName,
+        },
       };
     case 'setTestGoal':
       return {
@@ -263,14 +276,6 @@ export const reducer = (current: State, action: Action): State => {
         maxSteps,
       };
     }
-    case 'setPlatformName':
-      return {
-        ...current,
-        platform: {
-          ...current.platform,
-          name: action.value,
-        },
-      };
     case 'setPlatformVersion':
       return {
         ...current,
@@ -358,6 +363,20 @@ export const reducer = (current: State, action: Action): State => {
           name: testRecord.tunnel_name,
           owner: testRecord.tunnel_owner,
         },
+      };
+    }
+    case 'loadAppNames': {
+      let apps = action.value;
+      apps = apps.filter(
+        (item) => item.metadata === null || !item.metadata.is_simulator,
+      );
+      if (apps) {
+        apps.sort((a, b) => a.name.localeCompare(b.name));
+      }
+
+      return {
+        ...current,
+        apps: apps,
       };
     }
     case 'showTestRecord': {

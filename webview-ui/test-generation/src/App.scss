@@ -68,6 +68,11 @@
   row-gap: 8px;
 }
 
+.app-not-loaded,
+.app-list:has(.app-not-loaded) {
+  color: var(--vscode-input-placeholderForeground);
+}
+
 footer {
   margin: 8px 0 16px 0;
   .controls {

@@ -19,6 +19,7 @@ import { PostedMessage } from './types';
 import { AssertionInput } from './AssertionInput';
 import { Preview } from './Preview';
 import { AbstractBaseGenerator, AppiumPython, AppiumJava } from './codegen';
+import { AppInfo } from '../../../src/types';
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -63,6 +64,12 @@ function App() {
           });
           dispatch({
             type: 'loadNewRecord',
+            value: message.data,
+          });
+          break;
+        case 'load-app-names':
+          dispatch({
+            type: 'loadAppNames',
             value: message.data,
           });
           break;
@@ -115,26 +122,44 @@ function App() {
     status,
     steps,
     tunnel,
+    apps,
   } = state;
 
   return (
     <main>
       <section className="inputs">
         <h2>What do you want to test?</h2>
-        <VSCodeTextField
-          value={appName}
-          placeholder="From Sauce Labs App Storage, e.g. test.apk"
-          onInput={(e) => {
-            if (e.target && 'value' in e.target) {
-              dispatch({
-                type: 'setAppName',
-                value: e.target.value as string,
-              });
-            }
-          }}
-        >
-          Application Name
-        </VSCodeTextField>
+        <section className="with-label">
+          <label>App Name</label>
+          <VSCodeDropdown
+            onInput={(e) => {
+              if (e.target && 'value' in e.target) {
+                const appName: string = e.target.value as string;
+                const appInfo = apps.find(
+                  (app) => app.name === appName,
+                ) as AppInfo;
+                dispatch({
+                  type: 'setAppName',
+                  value: {
+                    appName: appName,
+                    platformName: appInfo.platformName,
+                  },
+                });
+              }
+            }}
+            value={appName}
+            className="app-list"
+          >
+            {appName !== '' &&
+            apps.length > 0 &&
+            !apps.some((appInfo) => appInfo.name === appName) ? (
+              <VSCodeOption className="app-not-loaded">{appName}</VSCodeOption>
+            ) : null}
+            {apps.map((appInfo) => (
+              <VSCodeOption>{appInfo.name}</VSCodeOption>
+            ))}
+          </VSCodeDropdown>
+        </section>
         <VSCodeTextArea
           resize="both"
           value={testGoal}
@@ -186,7 +211,7 @@ function App() {
               }}
               value={state.tunnel?.name ?? ''}
             >
-              Tunnel Name
+              Tunnel Name (optional)
             </VSCodeTextField>
             <VSCodeTextField
               placeholder="Sauce Connect tunnel owner"
@@ -200,7 +225,7 @@ function App() {
               }}
               value={state.tunnel?.owner ?? ''}
             >
-              Tunnel Owner
+              Tunnel Owner (optional)
             </VSCodeTextField>
             <VSCodeTextField
               value={maxSteps.toString()}
@@ -223,23 +248,6 @@ function App() {
             >
               Cut off steps at
             </VSCodeTextField>
-            <section className="with-label">
-              <label>Platform</label>
-              <VSCodeDropdown
-                onInput={(e) => {
-                  if (e.target && 'value' in e.target) {
-                    dispatch({
-                      type: 'setPlatformName',
-                      value: e.target.value as 'iOS' | 'Android',
-                    });
-                  }
-                }}
-                value={platform.name}
-              >
-                <VSCodeOption>Android</VSCodeOption>
-                <VSCodeOption>iOS</VSCodeOption>
-              </VSCodeDropdown>
-            </section>
             <VSCodeTextField
               onInput={(e) => {
                 if (e.target && 'value' in e.target) {

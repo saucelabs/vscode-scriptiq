@@ -32,7 +32,7 @@ automatically navigate the app and reach your desired outcome.
 
    ![activity-bar-icon](activity-bar-icon.png)
 
-7. Input and save credentials (only need to do once unless new credentials necessary).
+7. Input and save credentials (do this once, unless new credentials are necessary).
 8. Describe your test goal in plain English.
 9. Click "Generate Test" to let ScriptIQ navigate your app on a Sauce Labs real device.
 10. Review the test results and iterate on your test goals as needed.

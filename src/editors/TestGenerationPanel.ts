@@ -23,6 +23,7 @@ import { executeUpdateHistoryLinksCommand } from '../commands';
 import { fetchApps } from '../api/llm/http';
 
 const MAX_HISTORY_LEN = 100;
+const MAX_TEST_STEPS = 40;
 
 export class TestGenerationPanel {
   public static currentPanel: TestGenerationPanel | undefined;
@@ -525,9 +526,9 @@ export class TestGenerationPanel {
       );
     }
 
-    if (maxTestSteps < 1 || maxTestSteps > 20) {
+    if (maxTestSteps < 1 || maxTestSteps > MAX_TEST_STEPS) {
       throw new Error(
-        'Invalid number of test steps. Please enter a value between 1 and 20.',
+        `Invalid number of test steps. Please enter a value between 1 and ${MAX_TEST_STEPS}.`,
       );
     }
 

@@ -2,7 +2,7 @@
   "name": "vscode-scriptiq",
   "displayName": "ScriptIQ",
   "description": "A VSCode extension for auto-generating Android tests with LLM and Sauce Labs RDC.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "repository": {
     "type": "git",

@@ -327,16 +327,6 @@ function App() {
           >
             Cancel
           </VSCodeButton>
-          <VSCodeButton
-            appearance="secondary"
-            onClick={() => {
-              dispatch({
-                type: 'clear',
-              });
-            }}
-          >
-            Clear
-          </VSCodeButton>
         </section>
       </section>
       {state.generationState === 'generating' ||

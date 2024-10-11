@@ -25,10 +25,11 @@ export function Screenshot(props: ScreenshotProps) {
     if (!context) {
       return;
     }
+
     const img = new Image();
     img.src = src;
 
-    img.onload = () => {
+    const onload = () => {
       context.drawImage(img, 0, 0, imgWidth, imgHeight);
 
       if (annotation) {
@@ -44,6 +45,18 @@ export function Screenshot(props: ScreenshotProps) {
         context.stroke();
       }
     };
-  }, [ref, annotation, src, imgWidth, imgHeight]);
+    img.addEventListener('load', onload);
+
+    return () => img.removeEventListener('load', onload);
+  }, [
+    ref,
+    annotation.x,
+    annotation.y,
+    annotation.width,
+    annotation.height,
+    src,
+    imgWidth,
+    imgHeight,
+  ]);
   return <canvas ref={ref} width={imgWidth} height={imgHeight} />;
 }

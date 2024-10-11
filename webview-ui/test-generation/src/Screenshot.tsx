@@ -31,8 +31,6 @@ export function Screenshot(props: ScreenshotProps) {
     img.onload = () => {
       context.drawImage(img, 0, 0, imgWidth, imgHeight);
 
-      context.strokeRect(0, 0, imgWidth, imgHeight);
-
       if (annotation) {
         context.lineWidth = 3;
         context.rect(

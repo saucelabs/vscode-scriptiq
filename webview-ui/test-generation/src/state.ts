@@ -374,8 +374,17 @@ export const reducer = (current: State, action: Action): State => {
         apps.sort((a, b) => a.name.localeCompare(b.name));
       }
 
+      // NOTE: Avoid assigning an empty string to appName
+      // since the VSCodeDropdown won't show an empty selection
+      // after its options are populated after first render.
+      let appName = current.appName;
+      if (apps.length > 0 && appName === '') {
+        appName = apps[0].name;
+      }
+
       return {
         ...current,
+        appName,
         apps: apps,
       };
     }

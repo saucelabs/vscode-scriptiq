@@ -8,6 +8,10 @@ import * as toast from '../toast';
 import { errMsg } from '../error';
 import { executeShowTestGenerationPanelCommand } from '../commands';
 
+function isTestRecord(maybe: TestStep | TestRecord): maybe is TestRecord {
+  return 'app_name' in maybe;
+}
+
 export class HistoryProvider
   implements vscode.TreeDataProvider<TestStep | TestRecord>
 {
@@ -21,7 +25,7 @@ export class HistoryProvider
   getTreeItem(
     element: TestStep | TestRecord,
   ): vscode.TreeItem | Thenable<vscode.TreeItem> {
-    if ('app_name' in element) {
+    if (isTestRecord(element)) {
       return new TestRecordItem(element);
     }
     return new TestStepItem(element);
@@ -31,14 +35,34 @@ export class HistoryProvider
     element?: TestStep | TestRecord | undefined,
   ): vscode.ProviderResult<TestRecord[] | TestStep[]> {
     if (element) {
-      if ('all_steps' in element) {
-        return (element as TestRecord).all_steps;
+      if (isTestRecord(element)) {
+        return element.all_steps;
       }
     } else {
       const ids = this._memento.getTestIDs();
       const testRecords = this._storage.getTestRecords(ids);
 
       return testRecords;
+    }
+  }
+
+  getParent(
+    element: TestStep | TestRecord,
+  ): vscode.ProviderResult<TestStep | TestRecord> {
+    if (isTestRecord(element)) {
+      return null;
+    } else {
+      const ids = this._memento.getTestIDs();
+      const testRecords = this._storage.getTestRecords(ids);
+
+      // NOTE: A TestStep has no explicit reference to its TestRecord
+      // so we're finding its parent using TestStep's img_url. img_url
+      // contains the jobID so it should be unique enough to find the
+      // parent TestRecord
+      const parent = testRecords.find((tr) => {
+        tr.all_steps?.some((step) => step.img_url === element.img_url);
+      });
+      return parent;
     }
   }
 

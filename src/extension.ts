@@ -78,9 +78,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     if (testID) {
       const testRecord = storage.getTestRecord(testID);
-      if (testRecord) {
-        historyTree.reveal(testRecord, { select: true, focus: true });
-      }
+      historyTree.reveal(testRecord, { select: true, focus: true });
     }
   });
 }

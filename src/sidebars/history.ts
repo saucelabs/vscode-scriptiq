@@ -51,19 +51,18 @@ export class HistoryProvider
   ): vscode.ProviderResult<TestStep | TestRecord> {
     if (isTestRecord(element)) {
       return null;
-    } else {
-      const ids = this._memento.getTestIDs();
-      const testRecords = this._storage.getTestRecords(ids);
-
-      // NOTE: A TestStep has no explicit reference to its TestRecord
-      // so we're finding its parent using TestStep's img_url. img_url
-      // contains the jobID so it should be unique enough to find the
-      // parent TestRecord
-      const parent = testRecords.find((tr) => {
-        tr.all_steps?.some((step) => step.img_url === element.img_url);
-      });
-      return parent;
     }
+    const ids = this._memento.getTestIDs();
+    const testRecords = this._storage.getTestRecords(ids);
+
+    // NOTE: A TestStep has no explicit reference to its TestRecord
+    // so we're finding its parent using TestStep's img_url. img_url
+    // contains the jobID so it should be unique enough to find the
+    // parent TestRecord
+    const parent = testRecords.find((tr) => {
+      tr.all_steps?.some((step) => step.img_url === element.img_url);
+    });
+    return parent;
   }
 
   private _onDidChangeTreeData: vscode.EventEmitter<

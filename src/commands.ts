@@ -19,15 +19,15 @@ export function executeShowTestGenerationPanelCommand(testID?: string) {
 
 export function registerUpdateHistoryLinksCommand(
   ctx: vscode.ExtensionContext,
-  callback: (selected?: number) => void,
+  callback: (testID?: string) => void,
 ) {
   ctx.subscriptions.push(
     vscode.commands.registerCommand(UPDATE_HISTORY_LINKS_ID, callback),
   );
 }
 
-export function executeUpdateHistoryLinksCommand(selected?: number) {
-  vscode.commands.executeCommand(UPDATE_HISTORY_LINKS_ID, selected);
+export function executeUpdateHistoryLinksCommand(testID?: string) {
+  vscode.commands.executeCommand(UPDATE_HISTORY_LINKS_ID, testID);
 }
 
 // Update the history side panel with the latest test records. Optionally

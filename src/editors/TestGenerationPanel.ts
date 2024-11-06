@@ -392,7 +392,7 @@ export class TestGenerationPanel {
       toast.showError(`Failed to add test record to history: ${errMsg(e)}`);
     }
 
-    executeUpdateHistoryLinksCommand(0);
+    executeUpdateHistoryLinksCommand(testID);
   }
 
   private getCredentials(): Credentials | undefined {

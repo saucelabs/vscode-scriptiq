@@ -54,12 +54,9 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   const historyProvider = new HistoryProvider(storage, memento);
-  context.subscriptions.push(
-    vscode.window.registerTreeDataProvider(
-      HistoryProvider.viewType,
-      historyProvider,
-    ),
-  );
+  const historyTree = vscode.window.createTreeView(HistoryProvider.viewType, {
+    treeDataProvider: historyProvider,
+  });
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -76,8 +73,13 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
   );
 
-  registerUpdateHistoryLinksCommand(context, () => {
+  registerUpdateHistoryLinksCommand(context, (testID?: string) => {
     historyProvider.refresh();
+
+    if (testID) {
+      const testRecord = storage.getTestRecord(testID);
+      historyTree.reveal(testRecord, { select: true, focus: true });
+    }
   });
 }
 

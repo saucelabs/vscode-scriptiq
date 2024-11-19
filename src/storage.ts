@@ -65,12 +65,11 @@ export class GlobalStorage {
   verifyTestIDs(ids: string[]): string[] {
     return ids.filter((id) => {
       const uri = this.getHistoryUri(id);
-      try {
-        return fs.existsSync(uri.fsPath);
-      } catch (err) {
-        console.error(`Failed to check existence for ${uri.fsPath}: ${err}`);
-        return false;
+      if (fs.existsSync(uri.fsPath)) {
+        return true;
       }
+      console.error(`Test record not found: ${uri.fsPath}`);
+      return false;
     });
   }
 

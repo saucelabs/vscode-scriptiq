@@ -66,7 +66,7 @@ export class GlobalStorage {
       try {
         return fs.existsSync(uri.fsPath);
       } catch (err) {
-        console.log(`Failed to check existence for ${uri.fsPath}: ${err}`);
+        console.error(`Failed to check existence for ${uri.fsPath}: ${err}`);
         return false;
       }
     });

@@ -37,6 +37,9 @@ export async function activate(context: vscode.ExtensionContext) {
     }
     await memento.saveSchemaVersion(storage.schemaVersion);
   }
+  const testIDs = memento.getTestIDs();
+  const verifiedIDs = storage.verifyTestIds(testIDs);
+  await memento.saveTestIDs(verifiedIDs);
 
   registerShowTestGenerationPanelCommand(context, (testID?: string) => {
     TestGenerationPanel.render(context, memento, storage, testID);

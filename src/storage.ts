@@ -52,12 +52,24 @@ export class GlobalStorage {
    * to create a more specific Uri.
    */
   getHistoryUri(...segments: string[]): vscode.Uri {
-    // Example: $USER/Library/Application Support/Code/User/globalStorage/undefined_publisher.vscode-scriptiq/v1/scriptiq_history
+    // Example: /Users/$USER/Library/Application\ Support/Code/User/globalStorage/saucelabs.vscode-scriptiq/v1/scriptiq_history/
     return vscode.Uri.joinPath(
       this.storageUri,
       'scriptiq_history',
       ...segments,
     );
+  }
+
+  verifyTestIds(ids: string[]): string[] {
+    return ids.filter((id) => {
+      const uri = this.getHistoryUri(id);
+      try {
+        return fs.existsSync(uri.fsPath);
+      } catch (err) {
+        console.log(`Failed to check existence for ${uri.fsPath}: ${err}`);
+        return false;
+      }
+    });
   }
 
   deleteTestRecord(id: string) {

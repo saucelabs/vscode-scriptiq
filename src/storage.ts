@@ -60,7 +60,9 @@ export class GlobalStorage {
     );
   }
 
-  verifyTestIds(ids: string[]): string[] {
+  // Verifies the existence of test IDs by checking their corresponding URIs on the disk.
+  // Returns a filtered array containing only the IDs that have corresponding URIs.
+  verifyTestIDs(ids: string[]): string[] {
     return ids.filter((id) => {
       const uri = this.getHistoryUri(id);
       try {

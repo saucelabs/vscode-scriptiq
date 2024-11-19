@@ -38,6 +38,14 @@ export async function activate(context: vscode.ExtensionContext) {
     await memento.saveSchemaVersion(storage.schemaVersion);
   }
 
+  // Perform an integrity check at startup to ensure the test IDs stored in memento
+  // correspond to files that exist on disk.
+  // This prevents issues caused by stale or invalid entries, ensuring the application
+  // starts with a clean state.
+  const testIDs = memento.getTestIDs();
+  const verifiedIDs = storage.verifyTestIDs(testIDs);
+  await memento.saveTestIDs(verifiedIDs);
+
   registerShowTestGenerationPanelCommand(context, (testID?: string) => {
     TestGenerationPanel.render(context, memento, storage, testID);
   });

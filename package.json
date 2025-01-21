@@ -160,6 +160,6 @@
     "@fontsource/dm-mono": "5.0.18",
     "@types/sizzle": "2.3.8",
     "rxjs": "7.8.1",
-    "undici": "6.20.1"
+    "undici": "6.21.1"
   }
 }
